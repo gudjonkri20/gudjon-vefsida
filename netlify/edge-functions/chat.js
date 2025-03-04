@@ -1,5 +1,4 @@
 // Simple Edge Function that uses fetch directly instead of the OpenAI SDK
-// This avoids the "global is not defined" error in the Edge runtime
 
 export default async (request, context) => {
   // Handle CORS preflight requests
@@ -108,7 +107,7 @@ export default async (request, context) => {
           'Authorization': `Bearer ${context.env.OPENAI_API_KEY}`
         },
         body: JSON.stringify({
-          model: "gpt-4", // Upgraded from gpt-3.5-turbo to gpt-4
+          model: "gpt-4o", // Upgraded from gpt-4 to gpt-4o
           messages: [
             {
               role: "system",

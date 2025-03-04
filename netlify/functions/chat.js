@@ -105,12 +105,12 @@ exports.handler = async function(event, context) {
       dangerouslyAllowBrowser: false // Ensure server-side only
     });
     
-    console.log("Sending request to OpenAI API with model: gpt-4");
+    console.log("Sending request to OpenAI API with model: gpt-4o");
     
     try {
-      // Use the chat completions API with gpt-4
+      // Use the chat completions API with gpt-4o
       const response = await openai.chat.completions.create({
-        model: "gpt-4", // Upgraded from gpt-3.5-turbo to gpt-4
+        model: "gpt-4o", // Upgraded from gpt-4 to gpt-4o
         messages: [
           {
             role: "system",
@@ -133,7 +133,7 @@ exports.handler = async function(event, context) {
         temperature: 0.7,
       });
 
-      console.log("OpenAI Response received from gpt-4");
+      console.log("OpenAI Response received from gpt-4o");
       
       const botResponse = response.choices[0]?.message?.content || "I'm sorry, I couldn't generate a response.";
 
