@@ -52,7 +52,7 @@ const ChatBot: React.FC<ChatBotProps> = ({ aboutContent }) => {
     setApiError(null);
 
     try {
-      // Try the local fallback first to avoid timeouts
+      // Generate local response immediately as a fallback
       const localResponse = generateLocalResponse(input, aboutContent);
       
       // Try the Netlify function with a timeout
@@ -151,7 +151,7 @@ const ChatBot: React.FC<ChatBotProps> = ({ aboutContent }) => {
         <h2 className="text-xl font-semibold">Ask Me Anything</h2>
         <div className="flex justify-between items-center">
           <p className="text-sm text-gray-300">
-            Powered by GPT-4o
+            Powered by GPT-3.5-turbo
           </p>
           {apiError && (
             <p className="text-xs text-red-300">
