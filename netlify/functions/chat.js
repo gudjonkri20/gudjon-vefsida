@@ -1,6 +1,12 @@
-import { OpenAI } from 'openai';
+// Import OpenAI with CommonJS syntax for better compatibility with Netlify Functions
+const { OpenAI } = require("openai");
 
-export const handler = async function(event, context) {
+// Polyfill global for Node.js environments where it might not be defined
+if (typeof global === 'undefined') {
+  global = {};
+}
+
+exports.handler = async function(event, context) {
   console.log("Function invoked with method:", event.httpMethod);
   
   // Handle OPTIONS request for CORS
@@ -93,7 +99,7 @@ export const handler = async function(event, context) {
       };
     }
 
-    // Initialize OpenAI client
+    // Initialize OpenAI client with CommonJS configuration
     const openai = new OpenAI({
       apiKey: process.env.OPENAI_API_KEY,
       dangerouslyAllowBrowser: false // Ensure server-side only
