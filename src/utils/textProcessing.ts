@@ -97,70 +97,80 @@ export function findRelevantChunks(query: string, chunks: string[], topK: number
 
 // Generate a local response based on the query and about content
 export function generateLocalResponse(query: string, aboutContent: string): string {
-  const lowerQuery = query.toLowerCase();
-  
-  // Split the content into chunks
-  const chunks = splitTextIntoChunks(aboutContent);
-  
-  // Find relevant chunks
-  const relevantChunks = findRelevantChunks(query, chunks);
-  
-  if (relevantChunks.length === 0) {
-    // Handle case where no relevant chunks were found
-    return "I don't have specific information about that. Would you like to know about Guðjón's education, work experience, technical skills, or languages?";
-  }
-  
-  // Extract sections using more robust regex patterns
-  const extractSection = (sectionName: string): string | null => {
-    const regex = new RegExp(`## ${sectionName}[\\s\\S]*?((?=## )|$)`, 'i');
-    const match = aboutContent.match(regex);
-    return match ? match[0] : null;
-  };
-  
-  // Check for common question types
-  if (lowerQuery.includes('experience') || lowerQuery.includes('work') || lowerQuery.includes('job') || lowerQuery.includes('career')) {
-    const workSection = extractSection('Work Experience');
-    if (workSection) {
-      return `Here's information about Guðjón's work experience:\n${workSection.replace(/## Work Experience/i, '').trim()}`;
-    }
-  }
-  
-  if (lowerQuery.includes('education') || lowerQuery.includes('study') || lowerQuery.includes('degree') || 
-      lowerQuery.includes('university') || lowerQuery.includes('school') || lowerQuery.includes('college')) {
-    const educationSection = extractSection('Education');
-    if (educationSection) {
-      return `Here's information about Guðjón's education:\n${educationSection.replace(/## Education/i, '').trim()}`;
-    }
-  }
-  
-  if (lowerQuery.includes('skill') || lowerQuery.includes('technology') || lowerQuery.includes('tech') || 
-      lowerQuery.includes('programming') || lowerQuery.includes('language') || lowerQuery.includes('framework')) {
-    const skillsSection = extractSection('Technical Skills');
-    if (skillsSection) {
-      return `Here are Guðjón's technical skills:\n${skillsSection.replace(/## Technical Skills/i, '').trim()}`;
-    }
-  }
-  
-  // Basic greetings
-  if (lowerQuery.includes('hello') || lowerQuery.includes('hi') || lowerQuery.includes('hey')) {
-    return "Hello! I'm Guðjón's personal assistant. How can I help you today?";
-  }
-  
-  if (lowerQuery.includes('thank')) {
-    return "You're welcome! Is there anything else you'd like to know about Guðjón?";
-  }
-  
-  // If we have relevant chunks but no specific section match, create a response from the chunks
-  const relevantInfo = relevantChunks.map(chunk => {
-    // Try to extract a section title if present
-    const sectionMatch = chunk.match(/^#+\s+(.*?)$/m);
-    const sectionTitle = sectionMatch ? sectionMatch[1] : "Relevant information";
+  try {
+    const lowerQuery = query.toLowerCase();
     
-    // Clean up the chunk for presentation
-    const cleanedChunk = chunk.replace(/^#+\s+.*?$/m, '').trim();
+    // Split the content into chunks
+    const chunks = splitTextIntoChunks(aboutContent);
     
-    return `**${sectionTitle}**\n${cleanedChunk}`;
-  }).join('\n\n');
-  
-  return `Here's what I found about "${query}":\n\n${relevantInfo}`;
+    // Find relevant chunks
+    const relevantChunks = findRelevantChunks(query, chunks);
+    
+    if (relevantChunks.length === 0) {
+      // Handle case where no relevant chunks were found
+      return "I don't have specific information about that. Would you like to know about Guðjón's education, work experience, technical skills, or languages?";
+    }
+    
+    // Extract sections using more robust regex patterns
+    const extractSection = (sectionName: string): string | null => {
+      try {
+        const regex = new RegExp(`## ${sectionName}[\\s\\S]*?((?=## )|$)`, 'i');
+        const match = aboutContent.match(regex);
+        return match ? match[0] : null;
+      } catch (error) {
+        console.error(`Error extracting section ${sectionName}:`, error);
+        return null;
+      }
+    };
+    
+    // Check for common question types
+    if (lowerQuery.includes('experience') || lowerQuery.includes('work') || lowerQuery.includes('job') || lowerQuery.includes('career')) {
+      const workSection = extractSection('Work Experience');
+      if (workSection) {
+        return `Here's information about Guðjón's work experience:\n${workSection.replace(/## Work Experience/i, '').trim()}`;
+      }
+    }
+    
+    if (lowerQuery.includes('education') || lowerQuery.includes('study') || lowerQuery.includes('degree') || 
+        lowerQuery.includes('university') || lowerQuery.includes('school') || lowerQuery.includes('college')) {
+      const educationSection = extractSection('Education');
+      if (educationSection) {
+        return `Here's information about Guðjón's education:\n${educationSection.replace(/## Education/i, '').trim()}`;
+      }
+    }
+    
+    if (lowerQuery.includes('skill') || lowerQuery.includes('technology') || lowerQuery.includes('tech') || 
+        lowerQuery.includes('programming') || lowerQuery.includes('language') || lowerQuery.includes('framework')) {
+      const skillsSection = extractSection('Technical Skills');
+      if (skillsSection) {
+        return `Here are Guðjón's technical skills:\n${skillsSection.replace(/## Technical Skills/i, '').trim()}`;
+      }
+    }
+    
+    // Basic greetings
+    if (lowerQuery.includes('hello') || lowerQuery.includes('hi') || lowerQuery.includes('hey')) {
+      return "Hello! I'm Guðjón's personal assistant. How can I help you today?";
+    }
+    
+    if (lowerQuery.includes('thank')) {
+      return "You're welcome! Is there anything else you'd like to know about Guðjón?";
+    }
+    
+    // If we have relevant chunks but no specific section match, create a response from the chunks
+    const relevantInfo = relevantChunks.map(chunk => {
+      // Try to extract a section title if present
+      const sectionMatch = chunk.match(/^#+\s+(.*?)$/m);
+      const sectionTitle = sectionMatch ? sectionMatch[1] : "Relevant information";
+      
+      // Clean up the chunk for presentation
+      const cleanedChunk = chunk.replace(/^#+\s+.*?$/m, '').trim();
+      
+      return `**${sectionTitle}**\n${cleanedChunk}`;
+    }).join('\n\n');
+    
+    return `Here's what I found about "${query}":\n\n${relevantInfo}`;
+  } catch (error) {
+    console.error("Error in generateLocalResponse:", error);
+    return "I'm sorry, I encountered an error while processing your question. Could you try asking something else about Guðjón's background or experience?";
+  }
 }
