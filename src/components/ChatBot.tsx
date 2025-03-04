@@ -55,13 +55,10 @@ const ChatBot: React.FC<ChatBotProps> = ({ aboutContent }) => {
       // Generate local response immediately as a fallback
       const localResponse = generateLocalResponse(input, aboutContent);
       
-      // Try the Netlify function with a timeout
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 8000);
-      
+      // Try the edge function first (it's more reliable in Netlify)
       try {
-        console.log("Sending request to /.netlify/functions/chat");
-        const response = await fetch('/.netlify/functions/chat', {
+        console.log("Trying /api/chat-edge");
+        const edgeResponse = await fetch('/api/chat-edge', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -70,14 +67,12 @@ const ChatBot: React.FC<ChatBotProps> = ({ aboutContent }) => {
             message: input,
             aboutContent: aboutContent,
           }),
-          signal: controller.signal,
+          // Set a timeout for edge function
+          signal: AbortSignal.timeout(6000),
         });
         
-        clearTimeout(timeoutId);
-        console.log("Response status:", response.status);
-        
-        if (response.ok) {
-          const data = await response.json();
+        if (edgeResponse.ok) {
+          const data = await edgeResponse.json();
           const botMessage: Message = {
             id: (Date.now() + 1).toString(),
             text: data.response,
@@ -87,15 +82,15 @@ const ChatBot: React.FC<ChatBotProps> = ({ aboutContent }) => {
           setMessages((prev) => [...prev, botMessage]);
           return; // Exit early if successful
         } else {
-          throw new Error(`Function returned status ${response.status}`);
+          throw new Error(`Edge function returned status ${edgeResponse.status}`);
         }
-      } catch (functionError) {
-        console.error("Function error:", functionError);
+      } catch (edgeError) {
+        console.error("Edge function error:", edgeError);
         
-        // Try the edge function as second fallback
+        // Try the Netlify function as second option
         try {
-          console.log("Function failed, trying /api/chat-edge");
-          const edgeResponse = await fetch('/api/chat-edge', {
+          console.log("Edge function failed, trying /.netlify/functions/chat");
+          const response = await fetch('/.netlify/functions/chat', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -104,12 +99,13 @@ const ChatBot: React.FC<ChatBotProps> = ({ aboutContent }) => {
               message: input,
               aboutContent: aboutContent,
             }),
-            // Set a shorter timeout for edge function
-            signal: AbortSignal.timeout(6000),
+            signal: AbortSignal.timeout(8000),
           });
           
-          if (edgeResponse.ok) {
-            const data = await edgeResponse.json();
+          console.log("Response status:", response.status);
+          
+          if (response.ok) {
+            const data = await response.json();
             const botMessage: Message = {
               id: (Date.now() + 1).toString(),
               text: data.response,
@@ -119,18 +115,18 @@ const ChatBot: React.FC<ChatBotProps> = ({ aboutContent }) => {
             setMessages((prev) => [...prev, botMessage]);
             return; // Exit early if successful
           } else {
-            throw new Error(`Edge function returned status ${edgeResponse.status}`);
+            throw new Error(`Function returned status ${response.status}`);
           }
-        } catch (edgeError) {
-          console.error("Edge function error:", edgeError);
-          throw edgeError; // Let the outer catch handle it
+        } catch (functionError) {
+          console.error("Function error:", functionError);
+          throw functionError; // Let the outer catch handle it
         }
       }
     } catch (error) {
       console.error('Error generating response:', error);
       setApiError(`API Error: ${error instanceof Error ? error.message : String(error)}`);
       
-      // Use the local fallback response we generated earlier
+      // Use the local fallback response
       console.log("Using local fallback response");
       const localResponse = generateLocalResponse(input, aboutContent);
       const botMessage: Message = {
@@ -151,7 +147,7 @@ const ChatBot: React.FC<ChatBotProps> = ({ aboutContent }) => {
         <h2 className="text-xl font-semibold">Ask Me Anything</h2>
         <div className="flex justify-between items-center">
           <p className="text-sm text-gray-300">
-            Powered by GPT-3.5-turbo
+            AI Assistant
           </p>
           {apiError && (
             <p className="text-xs text-red-300">

@@ -3,9 +3,7 @@ const globalPolyfill = typeof global !== 'undefined' ? global :
   typeof self !== 'undefined' ? self : 
   typeof window !== 'undefined' ? window : {};
 
-// Import OpenAI with global polyfill
-import { OpenAI } from 'openai';
-
+// Simple edge function that doesn't use OpenAI directly
 export default async (request, context) => {
   // Handle CORS preflight requests
   if (request.method === "OPTIONS") {
@@ -83,8 +81,7 @@ export default async (request, context) => {
       );
     }
 
-    // Skip OpenAI API call in edge function and use fallback
-    // This avoids the global reference issues with OpenAI in edge environments
+    // Generate a simple response without using OpenAI
     const simpleResponse = generateSimpleResponse(message, aboutContent);
     return new Response(
       JSON.stringify({ 

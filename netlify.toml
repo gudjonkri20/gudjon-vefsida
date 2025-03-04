@@ -29,6 +29,7 @@
   path = "/api/chat-edge"
   function = "chat"
 
-# Add environment variable placeholder to remind users
-# [build.environment]
-#   # OPENAI_API_KEY should be set in Netlify UI
+# Explicitly set the build environment
+[build.environment]
+  NODE_VERSION = "18"
+  NPM_VERSION = "9"
