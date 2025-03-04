@@ -108,6 +108,41 @@ function generateFallbackResponse(query, aboutContent) {
       return "I don't have specific information about that. Would you like to know about Guðjón's education, work experience, technical skills, or languages?";
     }
     
+    // Extract sections using more robust regex patterns
+    const extractSection = (sectionName) => {
+      try {
+        const regex = new RegExp(`## ${sectionName}[\\s\\S]*?((?=## )|$)`, 'i');
+        const match = aboutContent.match(regex);
+        return match ? match[0] : null;
+      } catch (error) {
+        return null;
+      }
+    };
+    
+    // Check for common question types
+    if (lowerQuery.includes('experience') || lowerQuery.includes('work') || lowerQuery.includes('job') || lowerQuery.includes('career')) {
+      const workSection = extractSection('Work Experience');
+      if (workSection) {
+        return `Here's information about Guðjón's work experience:\n${workSection.replace(/## Work Experience/i, '').trim()}`;
+      }
+    }
+    
+    if (lowerQuery.includes('education') || lowerQuery.includes('study') || lowerQuery.includes('degree') || 
+        lowerQuery.includes('university') || lowerQuery.includes('school') || lowerQuery.includes('college')) {
+      const educationSection = extractSection('Education');
+      if (educationSection) {
+        return `Here's information about Guðjón's education:\n${educationSection.replace(/## Education/i, '').trim()}`;
+      }
+    }
+    
+    if (lowerQuery.includes('skill') || lowerQuery.includes('technology') || lowerQuery.includes('tech') || 
+        lowerQuery.includes('programming') || lowerQuery.includes('language') || lowerQuery.includes('framework')) {
+      const skillsSection = extractSection('Technical Skills');
+      if (skillsSection) {
+        return `Here are Guðjón's technical skills:\n${skillsSection.replace(/## Technical Skills/i, '').trim()}`;
+      }
+    }
+    
     // Basic response based on relevant chunks
     return `Here's what I found about "${query}":\n\n${relevantChunks.join('\n\n---\n\n')}`;
   } catch (error) {
@@ -192,13 +227,9 @@ export default async (request, context) => {
       );
     }
 
-    // Log environment variables for debugging (without exposing sensitive data)
-    console.log("Environment variables available:", Object.keys(context.env).join(", "));
-    console.log("OPENAI_API_KEY exists:", !!context.env.OPENAI_API_KEY);
-    
-    // Check for API key
-    if (!context.env.OPENAI_API_KEY) {
-      console.error("OPENAI_API_KEY is not set in edge function environment");
+    // Check if we have the API key in environment
+    if (!context.env || !context.env.OPENAI_API_KEY) {
+      console.log("OPENAI_API_KEY is not available in edge function environment");
       
       // Generate a fallback response instead of failing
       const fallbackResponse = generateFallbackResponse(message, aboutContent);
@@ -227,7 +258,10 @@ export default async (request, context) => {
     const contextualInfo = relevantChunks.join('\n\n---\n\n');
     
     try {
-      // Make direct API call to OpenAI
+      // Make direct API call to OpenAI with a timeout
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+      
       const openaiResponse = await fetch('https://api.openai.com/v1/chat/completions', {
         method: 'POST',
         headers: {
@@ -254,8 +288,11 @@ export default async (request, context) => {
           ],
           max_tokens: 500,
           temperature: 0.7
-        })
+        }),
+        signal: controller.signal
       });
+      
+      clearTimeout(timeoutId);
 
       if (!openaiResponse.ok) {
         const errorData = await openaiResponse.json();
