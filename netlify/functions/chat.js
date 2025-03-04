@@ -1,6 +1,6 @@
-const { OpenAI } = require("openai");
+import { OpenAI } from 'openai';
 
-exports.handler = async function(event, context) {
+export const handler = async function(event, context) {
   console.log("Function invoked with method:", event.httpMethod);
   
   // Handle OPTIONS request for CORS

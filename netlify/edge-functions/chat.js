@@ -1,4 +1,92 @@
-status: 500,
+import { OpenAI } from 'openai';
+
+export default async (request, context) => {
+  // Handle CORS preflight requests
+  if (request.method === "OPTIONS") {
+    return new Response(null, {
+      status: 204,
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "POST, OPTIONS",
+        "Access-Control-Allow-Headers": "Content-Type",
+      },
+    });
+  }
+
+  // Only allow POST requests
+  if (request.method !== "POST") {
+    return new Response(
+      JSON.stringify({ error: "Method Not Allowed" }),
+      {
+        status: 405,
+        headers: {
+          "Content-Type": "application/json",
+          "Access-Control-Allow-Origin": "*",
+        },
+      }
+    );
+  }
+
+  try {
+    // Parse the request body
+    let requestBody;
+    try {
+      requestBody = await request.json();
+    } catch (parseError) {
+      console.error("Error parsing request body:", parseError);
+      return new Response(
+        JSON.stringify({ 
+          error: "Invalid request body", 
+          details: "Could not parse JSON" 
+        }),
+        {
+          status: 400,
+          headers: {
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*",
+          },
+        }
+      );
+    }
+
+    const { message, aboutContent } = requestBody;
+
+    if (!message) {
+      return new Response(
+        JSON.stringify({ error: "Message is required" }),
+        {
+          status: 400,
+          headers: {
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*",
+          },
+        }
+      );
+    }
+
+    if (!aboutContent || aboutContent.trim() === '') {
+      return new Response(
+        JSON.stringify({ error: "About content is required" }),
+        {
+          status: 400,
+          headers: {
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*",
+          },
+        }
+      );
+    }
+
+    // Check for API key
+    if (!context.env.OPENAI_API_KEY) {
+      console.error("OPENAI_API_KEY is not set");
+      return new Response(
+        JSON.stringify({ 
+          error: "OpenAI API key is not configured",
+          details: "The OPENAI_API_KEY environment variable is not set"
+        }),
+        {
+          status: 500,
           headers: {
             "Content-Type": "application/json",
             "Access-Control-Allow-Origin": "*",
