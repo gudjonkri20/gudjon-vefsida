@@ -108,7 +108,7 @@ export default async (request, context) => {
           'Authorization': `Bearer ${context.env.OPENAI_API_KEY}`
         },
         body: JSON.stringify({
-          model: "gpt-3.5-turbo",
+          model: "gpt-4", // Upgraded from gpt-3.5-turbo to gpt-4
           messages: [
             {
               role: "system",

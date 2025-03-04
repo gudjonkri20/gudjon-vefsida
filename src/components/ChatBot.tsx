@@ -147,7 +147,7 @@ const ChatBot: React.FC<ChatBotProps> = ({ aboutContent }) => {
         <h2 className="text-xl font-semibold">Ask Me Anything</h2>
         <div className="flex justify-between items-center">
           <p className="text-sm text-gray-300">
-            Powered by GPT-3.5-turbo
+            Powered by GPT-4
           </p>
           {apiError && (
             <p className="text-xs text-red-300">
