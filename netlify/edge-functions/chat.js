@@ -1,4 +1,5 @@
-import { OpenAI } from 'openai';
+// Simple Edge Function that uses fetch directly instead of the OpenAI SDK
+// This avoids the "global is not defined" error in the Edge runtime
 
 export default async (request, context) => {
   // Handle CORS preflight requests
@@ -97,42 +98,47 @@ export default async (request, context) => {
       );
     }
 
-    // Initialize OpenAI client
-    const client = new OpenAI({ 
-      apiKey: context.env.OPENAI_API_KEY
-    });
-    
-    console.log("Sending request to OpenAI API with model: gpt-3.5-turbo");
-    
     try {
-      // Use the chat completions API with gpt-3.5-turbo
-      const completion = await client.chat.completions.create({
-        model: "gpt-3.5-turbo",
-        messages: [
-          {
-            role: "system",
-            content: `You are a personal assistant for Guðjón Kristjánsson. Answer questions based on the following information about him: 
-            
-            ${aboutContent}
-            
-            Always respond as if you are representing Guðjón. When referring to him, use "Guðjón" or "he" rather than "I". 
-            
-            Be helpful, friendly, and professional. If you don't know the answer to a question, say so politely and suggest asking about topics that are covered in his profile.
-            
-            Keep your responses concise and to the point.`,
-          },
-          {
-            role: "user",
-            content: message,
-          },
-        ],
-        max_tokens: 500,
-        temperature: 0.7,
+      // Use fetch directly to call OpenAI API instead of using the SDK
+      // This avoids Node.js compatibility issues in the Edge runtime
+      const openaiResponse = await fetch('https://api.openai.com/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${context.env.OPENAI_API_KEY}`
+        },
+        body: JSON.stringify({
+          model: "gpt-3.5-turbo",
+          messages: [
+            {
+              role: "system",
+              content: `You are a personal assistant for Guðjón Kristjánsson. Answer questions based on the following information about him: 
+              
+              ${aboutContent}
+              
+              Always respond as if you are representing Guðjón. When referring to him, use "Guðjón" or "he" rather than "I". 
+              
+              Be helpful, friendly, and professional. If you don't know the answer to a question, say so politely and suggest asking about topics that are covered in his profile.
+              
+              Keep your responses concise and to the point.`,
+            },
+            {
+              role: "user",
+              content: message,
+            },
+          ],
+          max_tokens: 500,
+          temperature: 0.7,
+        })
       });
 
-      console.log("OpenAI Response received from gpt-3.5-turbo");
-      
-      const botResponse = completion.choices[0]?.message?.content || "I'm sorry, I couldn't generate a response.";
+      if (!openaiResponse.ok) {
+        const errorData = await openaiResponse.json();
+        throw new Error(`OpenAI API error: ${openaiResponse.status} - ${JSON.stringify(errorData)}`);
+      }
+
+      const data = await openaiResponse.json();
+      const botResponse = data.choices[0]?.message?.content || "I'm sorry, I couldn't generate a response.";
 
       return new Response(
         JSON.stringify({ response: botResponse }),

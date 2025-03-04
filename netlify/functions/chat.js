@@ -1,3 +1,4 @@
+// Use CommonJS syntax for regular Netlify Functions
 const { OpenAI } = require("openai");
 
 // Suppress punycode deprecation warning
