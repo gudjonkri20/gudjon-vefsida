@@ -78,18 +78,25 @@ exports.handler = async function(event, context) {
     // Check for API key
     if (!process.env.OPENAI_API_KEY) {
       console.error("OPENAI_API_KEY is not set");
+      // Fall back to local response generation instead of failing
+      const simpleResponse = generateSimpleResponse(message, aboutContent);
       return {
-        statusCode: 500,
+        statusCode: 200,
         headers: {
           "Access-Control-Allow-Origin": "*",
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ 
-          error: "OpenAI API key is not configured",
-          details: "The OPENAI_API_KEY environment variable is not set"
+          response: simpleResponse,
+          note: "This is a fallback response due to missing API key"
         }),
       };
     }
+
+    // Log API key info for debugging (without revealing the key)
+    console.log("OPENAI_API_KEY exists:", !!process.env.OPENAI_API_KEY);
+    console.log("OPENAI_API_KEY length:", process.env.OPENAI_API_KEY.length);
+    console.log("OPENAI_API_KEY first 4 chars:", process.env.OPENAI_API_KEY.substring(0, 4));
 
     // Initialize OpenAI client
     const openai = new OpenAI({
@@ -99,43 +106,60 @@ exports.handler = async function(event, context) {
     
     console.log("Sending request to OpenAI API with model: gpt-4o");
     
-    // Use the chat completions API with gpt-4o
-    const response = await openai.chat.completions.create({
-      model: "gpt-4o",
-      messages: [
-        {
-          role: "system",
-          content: `You are a personal assistant for Guðjón Kristjánsson. Answer questions based on the following information about him: 
-          
-          ${aboutContent}
-          
-          Always respond as if you are representing Guðjón. When referring to him, use "Guðjón" or "he" rather than "I". 
-          
-          Be helpful, friendly, and professional. If you don't know the answer to a question, say so politely and suggest asking about topics that are covered in his profile.
-          
-          Keep your responses concise and to the point.`,
-        },
-        {
-          role: "user",
-          content: message,
-        },
-      ],
-      max_tokens: 500,
-      temperature: 0.7,
-    });
+    try {
+      // Use the chat completions API with gpt-4o
+      const response = await openai.chat.completions.create({
+        model: "gpt-4o",
+        messages: [
+          {
+            role: "system",
+            content: `You are a personal assistant for Guðjón Kristjánsson. Answer questions based on the following information about him: 
+            
+            ${aboutContent}
+            
+            Always respond as if you are representing Guðjón. When referring to him, use "Guðjón" or "he" rather than "I". 
+            
+            Be helpful, friendly, and professional. If you don't know the answer to a question, say so politely and suggest asking about topics that are covered in his profile.
+            
+            Keep your responses concise and to the point.`,
+          },
+          {
+            role: "user",
+            content: message,
+          },
+        ],
+        max_tokens: 500,
+        temperature: 0.7,
+      });
 
-    console.log("OpenAI Response received from gpt-4o");
-    
-    const botResponse = response.choices[0]?.message?.content || "I'm sorry, I couldn't generate a response.";
+      console.log("OpenAI Response received from gpt-4o");
+      
+      const botResponse = response.choices[0]?.message?.content || "I'm sorry, I couldn't generate a response.";
 
-    return {
-      statusCode: 200,
-      headers: {
-        "Content-Type": "application/json",
-        "Access-Control-Allow-Origin": "*"
-      },
-      body: JSON.stringify({ response: botResponse }),
-    };
+      return {
+        statusCode: 200,
+        headers: {
+          "Content-Type": "application/json",
+          "Access-Control-Allow-Origin": "*"
+        },
+        body: JSON.stringify({ response: botResponse }),
+      };
+    } catch (openaiError) {
+      console.error("OpenAI API Error:", openaiError);
+      // Fall back to local response generation
+      const simpleResponse = generateSimpleResponse(message, aboutContent);
+      return {
+        statusCode: 200,
+        headers: {
+          "Content-Type": "application/json",
+          "Access-Control-Allow-Origin": "*"
+        },
+        body: JSON.stringify({ 
+          response: simpleResponse,
+          note: "This is a fallback response due to an API error"
+        }),
+      };
+    }
   } catch (error) {
     console.error("Error:", error);
     
