@@ -1,6 +1,9 @@
 // Import OpenAI with CommonJS syntax for better compatibility with Netlify Functions
 const { OpenAI } = require("openai");
 
+// Suppress punycode deprecation warning
+process.noDeprecation = true;
+
 // Polyfill global for Node.js environments where it might not be defined
 if (typeof global === 'undefined') {
   global = {};
@@ -112,41 +115,60 @@ exports.handler = async function(event, context) {
     const relevantChunks = findRelevantChunks(message, chunks, 3);
     const contextualInfo = relevantChunks.join('\n\n---\n\n');
     
-    // Use the chat completions API with gpt-3.5-turbo
-    const response = await openai.chat.completions.create({
-      model: "gpt-3.5-turbo",
-      messages: [
-        {
-          role: "system",
-          content: `You are a personal assistant for Guðjón Kristjánsson. Answer questions based on the following information about him: 
-          
-          ${contextualInfo}
-          
-          Always respond as if you are representing Guðjón. When referring to him, use "Guðjón" or "he" rather than "I". 
-          
-          Be helpful, friendly, and professional. If you don't know the answer to a question, say so politely and suggest asking about topics that are covered in his profile.`,
-        },
-        {
-          role: "user",
-          content: message,
-        },
-      ],
-      max_tokens: 500,
-      temperature: 0.7,
-    });
+    try {
+      // Use the chat completions API with gpt-3.5-turbo
+      const response = await openai.chat.completions.create({
+        model: "gpt-3.5-turbo",
+        messages: [
+          {
+            role: "system",
+            content: `You are a personal assistant for Guðjón Kristjánsson. Answer questions based on the following information about him: 
+            
+            ${contextualInfo}
+            
+            Always respond as if you are representing Guðjón. When referring to him, use "Guðjón" or "he" rather than "I". 
+            
+            Be helpful, friendly, and professional. If you don't know the answer to a question, say so politely and suggest asking about topics that are covered in his profile.`,
+          },
+          {
+            role: "user",
+            content: message,
+          },
+        ],
+        max_tokens: 500,
+        temperature: 0.7,
+      });
 
-    console.log("OpenAI Response received from gpt-3.5-turbo");
-    
-    const botResponse = response.choices[0]?.message?.content || "I'm sorry, I couldn't generate a response.";
+      console.log("OpenAI Response received from gpt-3.5-turbo");
+      
+      const botResponse = response.choices[0]?.message?.content || "I'm sorry, I couldn't generate a response.";
 
-    return {
-      statusCode: 200,
-      headers: {
-        "Content-Type": "application/json",
-        "Access-Control-Allow-Origin": "*"
-      },
-      body: JSON.stringify({ response: botResponse }),
-    };
+      return {
+        statusCode: 200,
+        headers: {
+          "Content-Type": "application/json",
+          "Access-Control-Allow-Origin": "*"
+        },
+        body: JSON.stringify({ response: botResponse }),
+      };
+    } catch (openaiError) {
+      console.error("OpenAI API Error:", openaiError);
+      
+      // Generate a fallback response
+      const fallbackResponse = generateLocalResponse(message, aboutContent);
+      
+      return {
+        statusCode: 200,
+        headers: {
+          "Content-Type": "application/json",
+          "Access-Control-Allow-Origin": "*"
+        },
+        body: JSON.stringify({ 
+          response: fallbackResponse,
+          warning: "Using fallback response generator (OpenAI API error)"
+        }),
+      };
+    }
   } catch (error) {
     console.error("Error:", error);
     return {
@@ -162,6 +184,30 @@ exports.handler = async function(event, context) {
     };
   }
 };
+
+// Generate a local response based on the query and about content
+function generateLocalResponse(query, aboutContent) {
+  try {
+    const lowerQuery = query.toLowerCase();
+    
+    // Split the content into chunks
+    const chunks = splitTextIntoChunks(aboutContent);
+    
+    // Find relevant chunks
+    const relevantChunks = findRelevantChunks(query, chunks);
+    
+    if (relevantChunks.length === 0) {
+      // Handle case where no relevant chunks were found
+      return "I don't have specific information about that. Would you like to know about Guðjón's education, work experience, technical skills, or languages?";
+    }
+    
+    // Basic response based on relevant chunks
+    return `Here's what I found about "${query}":\n\n${relevantChunks.join('\n\n---\n\n')}`;
+  } catch (error) {
+    console.error("Error in generateLocalResponse:", error);
+    return "I'm sorry, I encountered an error while processing your question. Could you try asking something else about Guðjón's background or experience?";
+  }
+}
 
 // Split text into chunks of roughly equal size
 function splitTextIntoChunks(text, chunkSize = 1000, overlap = 100) {
