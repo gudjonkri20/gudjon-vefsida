@@ -56,6 +56,17 @@ export default defineConfig({
     sourcemap: true,
     // Make build more tolerant of errors
     emptyOutDir: true,
+    rollupOptions: {
+      // External dependencies that shouldn't be bundled
+      external: [],
+      output: {
+        // Ensure proper chunking
+        manualChunks: {
+          vendor: ['react', 'react-dom', 'react-router-dom'],
+          ui: ['lucide-react', 'react-markdown', 'remark-gfm'],
+        }
+      }
+    }
   },
   // Improve asset handling
   resolve: {
