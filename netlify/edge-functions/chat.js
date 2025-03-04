@@ -1,9 +1,5 @@
-// Add polyfill for global
-const globalPolyfill = typeof global !== 'undefined' ? global : 
-  typeof self !== 'undefined' ? self : 
-  typeof window !== 'undefined' ? window : {};
+import { OpenAI } from 'openai';
 
-// Simple edge function that doesn't use OpenAI directly
 export default async (request, context) => {
   // Handle CORS preflight requests
   if (request.method === "OPTIONS") {
@@ -81,21 +77,91 @@ export default async (request, context) => {
       );
     }
 
-    // Generate a simple response without using OpenAI
-    const simpleResponse = generateSimpleResponse(message, aboutContent);
-    return new Response(
-      JSON.stringify({ 
-        response: simpleResponse,
-        note: "This is a response from the edge function"
-      }),
-      {
-        status: 200,
-        headers: {
-          "Content-Type": "application/json",
-          "Access-Control-Allow-Origin": "*",
-        },
-      }
-    );
+    // Check for API key
+    if (!context.env.OPENAI_API_KEY) {
+      console.error("OPENAI_API_KEY is not set in environment variables");
+      // Fall back to simple response generation
+      const simpleResponse = generateSimpleResponse(message, aboutContent);
+      return new Response(
+        JSON.stringify({ 
+          response: simpleResponse,
+          note: "This is a fallback response due to missing API key"
+        }),
+        {
+          status: 200,
+          headers: {
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*",
+          },
+        }
+      );
+    }
+
+    // Initialize OpenAI client
+    const client = new OpenAI({ 
+      apiKey: context.env.OPENAI_API_KEY
+    });
+    
+    console.log("Sending request to OpenAI API with model: gpt-3.5-turbo");
+    
+    try {
+      // Use the chat completions API with gpt-3.5-turbo
+      const completion = await client.chat.completions.create({
+        model: "gpt-3.5-turbo",
+        messages: [
+          {
+            role: "system",
+            content: `You are a personal assistant for Guðjón Kristjánsson. Answer questions based on the following information about him: 
+            
+            ${aboutContent}
+            
+            Always respond as if you are representing Guðjón. When referring to him, use "Guðjón" or "he" rather than "I". 
+            
+            Be helpful, friendly, and professional. If you don't know the answer to a question, say so politely and suggest asking about topics that are covered in his profile.
+            
+            Keep your responses concise and to the point.`,
+          },
+          {
+            role: "user",
+            content: message,
+          },
+        ],
+        max_tokens: 500,
+        temperature: 0.7,
+      });
+
+      console.log("OpenAI Response received from gpt-3.5-turbo");
+      
+      const botResponse = completion.choices[0]?.message?.content || "I'm sorry, I couldn't generate a response.";
+
+      return new Response(
+        JSON.stringify({ response: botResponse }),
+        {
+          status: 200,
+          headers: {
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*",
+          },
+        }
+      );
+    } catch (openaiError) {
+      console.error("OpenAI API Error:", openaiError);
+      // Fall back to simple response generation
+      const simpleResponse = generateSimpleResponse(message, aboutContent);
+      return new Response(
+        JSON.stringify({ 
+          response: simpleResponse,
+          note: "This is a fallback response due to an API error"
+        }),
+        {
+          status: 200,
+          headers: {
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*",
+          },
+        }
+      );
+    }
   } catch (error) {
     console.error("Error:", error);
     
@@ -107,7 +173,7 @@ export default async (request, context) => {
       return new Response(
         JSON.stringify({ 
           response: simpleResponse,
-          note: "This is a fallback response due to an error"
+          note: "This is a fallback response due to an API error"
         }),
         {
           status: 200,

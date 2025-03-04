@@ -68,7 +68,7 @@ const ChatBot: React.FC<ChatBotProps> = ({ aboutContent }) => {
             aboutContent: aboutContent,
           }),
           // Set a timeout for edge function
-          signal: AbortSignal.timeout(6000),
+          signal: AbortSignal.timeout(10000),
         });
         
         if (edgeResponse.ok) {
@@ -99,7 +99,7 @@ const ChatBot: React.FC<ChatBotProps> = ({ aboutContent }) => {
               message: input,
               aboutContent: aboutContent,
             }),
-            signal: AbortSignal.timeout(8000),
+            signal: AbortSignal.timeout(12000),
           });
           
           console.log("Response status:", response.status);
@@ -147,7 +147,7 @@ const ChatBot: React.FC<ChatBotProps> = ({ aboutContent }) => {
         <h2 className="text-xl font-semibold">Ask Me Anything</h2>
         <div className="flex justify-between items-center">
           <p className="text-sm text-gray-300">
-            AI Assistant
+            Powered by GPT-3.5-turbo
           </p>
           {apiError && (
             <p className="text-xs text-red-300">
