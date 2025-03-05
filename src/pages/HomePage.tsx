@@ -7,6 +7,23 @@ const HomePage: React.FC = () => {
   const [aboutContent, setAboutContent] = useState<string>('');
   const [isLoading, setIsLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
+  const [avatarUrl, setAvatarUrl] = useState<string>('');
+
+  useEffect(() => {
+    const fetchGithubAvatar = async () => {
+      try {
+        const response = await fetch('https://api.github.com/users/gudjonkri20');
+        if (response.ok) {
+          const data = await response.json();
+          setAvatarUrl(data.avatar_url);
+        }
+      } catch (error) {
+        console.error('Error fetching GitHub avatar:', error);
+      }
+    };
+
+    fetchGithubAvatar();
+  }, []);
 
   useEffect(() => {
     const fetchAboutContent = async () => {
@@ -66,7 +83,7 @@ const HomePage: React.FC = () => {
               </a>
             </div>
             <div className="flex space-x-6">
-              <a href="https://github.com/yourusername" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-white">
+              <a href="https://github.com/gudjonkri20" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-white">
                 <Github size={24} />
               </a>
               <a href="https://linkedin.com/in/gu%C3%B0j%C3%B3n-kristj%C3%A1nsson-7a3b083b/" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-white">
@@ -80,7 +97,7 @@ const HomePage: React.FC = () => {
           <div className="flex justify-center">
             <div className="relative w-64 h-64 md:w-80 md:h-80 rounded-full overflow-hidden border-4 border-blue-400">
               <img
-                src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=774&q=80"
+                src={avatarUrl || 'https://github.com/gudjonkri20.png'}
                 alt="Guðjón Kristjánsson"
                 className="w-full h-full object-cover"
               />
