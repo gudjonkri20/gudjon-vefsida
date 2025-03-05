@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowRight, Github, Linkedin, Mail, Download } from 'lucide-react';
+import { ArrowRight, Github, Linkedin, Mail } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import ChatBot from '../components/ChatBot';
 
@@ -75,12 +75,6 @@ const HomePage: React.FC = () => {
               >
                 View Projects
               </Link>
-              <a
-                href="/resume.pdf"
-                className="inline-flex items-center px-6 py-3 border border-gray-300 text-base font-medium rounded-md text-white hover:bg-gray-700 transition"
-              >
-                Resume <Download className="ml-2" size={18} />
-              </a>
             </div>
             <div className="flex space-x-6">
               <a href="https://github.com/gudjonkri20" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-white">
@@ -106,7 +100,7 @@ const HomePage: React.FC = () => {
         </div>
         
         <div className="mt-16">
-          <h2 className="text-2xl font-bold mb-8 text-center">Ask Me Anything</h2>
+          <h2 className="text-2xl font-bold mb-8 text-center">Get To Know Me</h2>
           <div className="max-w-3xl mx-auto">
             {isLoading ? (
               <div className="bg-white shadow-md rounded-lg p-8 text-center text-gray-800">

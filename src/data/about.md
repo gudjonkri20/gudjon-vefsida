@@ -1,9 +1,7 @@
 # About Guðjón Kristjánsson
 
 ## Personal Overview
-I am 31 years old and have recently moved back from Denmark with my girlfriend and son.  
-I am punctual, disciplined, conscientious, and a quick learner. I am calm, composed, and a good communicator. I work well under pressure and can juggle multiple tasks simultaneously.  
-If I were to describe myself briefly, I would say that I am organized, patient, punctual, persistent, and very good at personal communication.  
+I am punctual, disciplined, conscientious, and a quick learner. I am calm, composed, and a good communicator. I work well under pressure and can juggle multiple tasks simultaneously. 
 I speak fluent English, essentially at a native level.
 
 ---
@@ -151,21 +149,6 @@ Graduates find employment in professions requiring knowledge of cognitive functi
 - Certified forklift operator  
 - Assisted with a major clinical research project at the University of Iceland  
 - Attended various courses organized by the City of Reykjavík (professional development)  
-
----
-
-## Recommendations (Meðmæli)
-- **Þröstur Ingi Þórðarson – CyberPilot**  
-  - *Email:* throstur91@gmail.com  
-  - *Sími:* +45 42 94 12 33  
-
-- **Chris Mathys – Professor at Aarhus University** (teaches Data Science at Master's level)  
-  - *Email:* chmathys@cas.au.dk  
-  - *Sími:* +45 87 16 29 06  
-
-- **Margrét Richter – Reykjavíkurborg**  
-  - *Email:* margret.richter@reykjavik.is  
-  - *Sími:* 693 0876  
 
 ---
 

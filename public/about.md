@@ -1,9 +1,7 @@
 # About Guðjón Kristjánsson
 
 ## Personal Overview
-I am 31 years old and have recently moved back from Denmark with my girlfriend and son.  
-I am punctual, disciplined, conscientious, and a quick learner. I am calm, composed, and a good communicator. I work well under pressure and can juggle multiple tasks simultaneously.  
-If I were to describe myself briefly, I would say that I am organized, patient, punctual, persistent, and very good at personal communication.  
+I am punctual, disciplined, conscientious, and a quick learner. I am calm, composed, and a good communicator. I work well under pressure and can juggle multiple tasks simultaneously. 
 I speak fluent English, essentially at a native level.
 
 ---
