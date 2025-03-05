@@ -154,21 +154,6 @@ Graduates find employment in professions requiring knowledge of cognitive functi
 
 ---
 
-## Recommendations (Meðmæli)
-- **Þröstur Ingi Þórðarson – CyberPilot**  
-  - *Email:* throstur91@gmail.com  
-  - *Sími:* +45 42 94 12 33  
-
-- **Chris Mathys – Professor at Aarhus University** (teaches Data Science at Master's level)  
-  - *Email:* chmathys@cas.au.dk  
-  - *Sími:* +45 87 16 29 06  
-
-- **Margrét Richter – Reykjavíkurborg**  
-  - *Email:* margret.richter@reykjavik.is  
-  - *Sími:* 693 0876  
-
----
-
 ## Contact
 - **LinkedIn:** https://www.linkedin.com/in/gu%C3%B0j%C3%B3n-kristj%C3%A1nsson-7a3b083b/
 - **Email:** gudjonk6@gmail.com

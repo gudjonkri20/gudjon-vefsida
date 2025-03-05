@@ -7,37 +7,44 @@ interface Project {
   description: string;
   image: string;
   technologies: string[];
-  githubUrl: string;
+  githubUrl?: string;
   liveUrl?: string;
+  huggingfaceUrl?: string;
 }
 
 const projects: Project[] = [
   {
     id: 1,
-    title: 'Project One',
-    description: 'A comprehensive web application that allows users to manage their tasks efficiently.',
-    image: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1744&q=80',
-    technologies: ['React', 'Node.js', 'MongoDB', 'Express'],
-    githubUrl: 'https://github.com/yourusername/project-one',
-    liveUrl: 'https://project-one.example.com',
+    title: 'Age and Gender Bias in Icelandic ASR Systems',
+    description: 'Masters thesis project investigating bias in Icelandic automatic speech recognition systems. The project uses the Samrómur Milljón dataset and fine-tunes the wav2vec2-large-xlsr-53 model to analyze performance differences across demographic groups.',
+    image: 'https://huggingface.co/front/assets/huggingface_logo-noborder.svg',
+    technologies: ['Python', 'PyTorch', 'Transformers', 'wav2vec2', 'Speech Recognition', 'Machine Learning'],
+    huggingfaceUrl: 'https://huggingface.co/collections/gudjonk93/masters-project-6790dd537bd0b8ddcd36f95d',
   },
   {
     id: 2,
-    title: 'Project Two',
-    description: 'An e-commerce platform with advanced filtering and search capabilities.',
-    image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1715&q=80',
-    technologies: ['React', 'Redux', 'Firebase', 'Stripe'],
-    githubUrl: 'https://github.com/yourusername/project-two',
-    liveUrl: 'https://project-two.example.com',
+    title: 'IceBERT Question Answering Model',
+    description: 'A fine-tuned BERT model for Icelandic question answering, based on IceBERT. The model is trained to understand and answer questions in Icelandic, demonstrating strong performance on natural language understanding tasks.',
+    image: 'https://huggingface.co/front/assets/huggingface_logo-noborder.svg',
+    technologies: ['Python', 'PyTorch', 'Transformers', 'BERT', 'Natural Language Processing', 'Question Answering'],
+    huggingfaceUrl: 'https://huggingface.co/gudjonk93/IceBERT-finetuned-NQiIv.1.1',
   },
   {
     id: 3,
-    title: 'Project Three',
-    description: 'A data visualization dashboard for analyzing and presenting complex datasets.',
-    image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1740&q=80',
-    technologies: ['D3.js', 'React', 'TypeScript', 'Node.js'],
-    githubUrl: 'https://github.com/yourusername/project-three',
+    title: 'Personal Website',
+    description: 'My personal website built with React, TypeScript, and Tailwind CSS. Features include a responsive design, AI-powered chatbot using GPT-4o, and integration with Netlify for serverless functions.',
+    image: 'https://raw.githubusercontent.com/gudjonkri20/gudjon-vefsida/main/public/website-preview.png',
+    technologies: ['React', 'TypeScript', 'Tailwind CSS', 'OpenAI', 'Netlify'],
+    githubUrl: 'https://github.com/gudjonkri20/gudjon-vefsida',
   },
+  {
+    id: 4,
+    title: 'Decision Making Exam Project',
+    description: 'A Bayesian analysis project examining the relationship between offshore household wealth and Public Goods Game outcomes. Uses hierarchical modeling to investigate how wealth affects both group contributions and individual decision-making parameters including conditional cooperation, learning weight, and initial beliefs.',
+    image: 'https://raw.githubusercontent.com/gudjonkri20/DecisionMakingExam/main/preview.png',
+    technologies: ['Python', 'Bayesian Analysis', 'Statistical Modeling', 'Data Analysis', 'R'],
+    githubUrl: 'https://github.com/gudjonkri20/DecisionMakingExam',
+  }
 ];
 
 const ProjectsPage: React.FC = () => {
@@ -53,7 +60,7 @@ const ProjectsPage: React.FC = () => {
                 <img 
                   src={project.image} 
                   alt={project.title} 
-                  className="w-full h-full object-cover transition-transform duration-500 hover:scale-110"
+                  className="w-full h-full object-contain p-4"
                 />
               </div>
               <div className="p-6">
@@ -70,15 +77,17 @@ const ProjectsPage: React.FC = () => {
                   ))}
                 </div>
                 <div className="flex space-x-4">
-                  <a 
-                    href={project.githubUrl} 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center text-gray-700 hover:text-gray-900"
-                  >
-                    <Github size={18} className="mr-1" />
-                    Code
-                  </a>
+                  {project.githubUrl && (
+                    <a 
+                      href={project.githubUrl} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center text-gray-700 hover:text-gray-900"
+                    >
+                      <Github size={18} className="mr-1" />
+                      Code
+                    </a>
+                  )}
                   {project.liveUrl && (
                     <a 
                       href={project.liveUrl} 
@@ -88,6 +97,17 @@ const ProjectsPage: React.FC = () => {
                     >
                       <ExternalLink size={18} className="mr-1" />
                       Live Demo
+                    </a>
+                  )}
+                  {project.huggingfaceUrl && (
+                    <a 
+                      href={project.huggingfaceUrl} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center text-blue-600 hover:text-blue-800"
+                    >
+                      <ExternalLink size={18} className="mr-1" />
+                      View on Hugging Face
                     </a>
                   )}
                 </div>
