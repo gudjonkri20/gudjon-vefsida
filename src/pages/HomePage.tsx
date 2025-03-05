@@ -60,7 +60,7 @@ const HomePage: React.FC = () => {
               AI and Data Science expert
             </h2>
             <p className="text-lg text-gray-300 mb-8">
-              I'm passionate about AI development
+              I have a strong passion for AI development, with hands-on experience in building, fine-tuning, and applying a variety of machine learning models. I am skilled in leveraging pre-existing models and frameworks, and I constantly stay updated on the latest trends and advancements in AI to ensure I am using the most effective techniques. My expertise spans across problem-solving, data processing, and model optimization, allowing me to create impactful AI solutions.
             </p>
             <div className="flex flex-wrap gap-4 mb-8">
               <Link
