@@ -1,7 +1,7 @@
 {
   "siteTitle": "Guðjón Kristjánsson",
-  "siteTagline": "AI engineer & advisor",
-  "metaDescription": "AI/ML engineer at Icelandia ehf. Building production AI systems — chatbots, MCP servers, ML pipelines, and automation. Available for advisory, training, and implementation work.",
+  "siteTagline": "AI Specialist & advisor",
+  "metaDescription": "AI Specialist at Icelandia. Background in building production AI systems — chatbots, MCP servers, ML pipelines, and automation. Available for advisory and training.",
 
   "nav": {
     "home": "Home",
@@ -20,11 +20,11 @@
   },
 
   "hero": {
-    "eyebrow": "AI engineer & advisor",
+    "eyebrow": "AI Specialist & advisor",
     "headline": "I build production AI systems.",
-    "subline": "AI/ML engineer at Icelandia ehf. I ship chatbots, MCP servers, ML pipelines, and automation that runs in real life — not slides. Available for advisory, training, and implementation work.",
+    "subline": "AI Specialist at Icelandia. Background in chatbots, MCP servers, ML pipelines, and automation — systems that run in real life, not slides. Available for advisory and training.",
     "ctaPrimary": "See my work",
-    "ctaSecondary": "Hire me for advisory",
+    "ctaSecondary": "Get in touch",
     "stats": {
       "production": "production systems shipped",
       "mcp": "MCP servers live",
@@ -45,7 +45,7 @@
 
   "projects": {
     "title": "Projects",
-    "subtitle": "Production AI systems, research, and side projects. Anything marked Internal was built for Icelandia ehf and is described at a high level only.",
+    "subtitle": "Production AI systems, research, and side projects. Anything marked Internal was built for Icelandia and is described at a high level only.",
     "filter": {
       "all": "All",
       "chatbot": "Chatbots",
@@ -59,7 +59,7 @@
     },
     "status": {
       "public": "Public",
-      "internal": "Internal — for Icelandia ehf",
+      "internal": "Internal — for Icelandia",
       "research": "Research",
       "side": "Side project"
     },
@@ -80,18 +80,18 @@
 
   "services": {
     "title": "Services",
-    "subtitle": "I help companies use AI in ways that pay off — through audits, hands-on builds, and training.",
+    "subtitle": "Light-touch ways to work with me — advisory and training. I'm not available for implementation work.",
     "format": "Format",
-    "ctaLabel": "Email me about this",
+    "ctaLabel": "Get in touch",
     "footnote": "Iceland-based. Comfortable working in Icelandic or English."
   },
 
   "about": {
     "title": "About",
-    "subtitle": "AI/ML engineer at Icelandia ehf in Iceland. Background in cognitive science and psychology.",
+    "subtitle": "AI Specialist at Icelandia. Background in cognitive science and psychology.",
     "now": {
       "title": "Now",
-      "body": "AI Specialist at Icelandia ehf (formerly Reykjavik Excursions). Building production AI for tour operations, customer support, and revenue forecasting."
+      "body": "AI Specialist at Icelandia (formerly Reykjavik Excursions). Building production AI for tour operations, customer support, and revenue forecasting."
     },
     "background": {
       "title": "Background",
@@ -118,8 +118,8 @@
       "title": "Selected experience",
       "items": {
         "icelandia": {
-          "title": "Icelandia ehf · AI Specialist · 2024–present",
-          "body": "Building the AI stack: chatbots, MCP servers, ML demand forecasting, email-to-booking automation, and analytics dashboards."
+          "title": "Icelandia · AI Specialist · 2024–present",
+          "body": "Building the AI stack: chatbots, MCP servers, ML forecasting, automation, and analytics dashboards."
         },
         "cyberpilot": {
           "title": "CyberPilot · Programming & Data · 2022–2024",

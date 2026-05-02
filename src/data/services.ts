@@ -2,77 +2,38 @@ import type { Service } from '../types';
 
 export const services: Service[] = [
   {
-    slug: 'audit',
+    slug: 'advisory',
     title: {
-      en: 'AI Audit & Strategy',
-      is: 'AI-úttekt og stefnumótun',
+      en: 'Advisory',
+      is: 'Ráðgjöf',
     },
     tagline: {
-      en: 'A clear-eyed look at where AI moves the needle for your business.',
-      is: 'Skýr sýn á hvar gervigreindin skiptir mestu máli fyrir reksturinn.',
+      en: 'A second opinion on what AI can — and cannot — do for your business.',
+      is: 'Annað sjónarhorn á hvað gervigreind getur (og getur ekki) gert fyrir reksturinn þinn.',
     },
     description: {
-      en: 'A focused engagement (typically one week) to review your stack, processes, and data, identify the highest-ROI AI opportunities, and deliver a prioritized roadmap with build-or-buy guidance.',
-      is: 'Markviss vinna (yfirleitt ein vika) þar sem ég fer yfir tæknistafla, ferla og gögn, greini bestu tækifærin fyrir gervigreind og skila forgangsröðuðu vegakorti með ráðgjöf um eigin þróun eða kaup.',
+      en: 'Light-touch engagements where I share an honest take on your AI plans — what looks promising, what to be careful of, where to start. Calls, half-days, or short reviews. Not implementation.',
+      is: 'Léttar lotur þar sem ég gef heiðarlega sýn á þín gervigreindarverkefni — hvað er álitlegt, við hverju á að gæta og hvar gott er að byrja. Símtöl, hálfir dagar eða stuttar yfirferðir. Ekki innleiðing.',
     },
     bullets: {
       en: [
-        'Stack, process, and data review',
-        'Prioritized opportunities ranked by ROI and risk',
-        'Build-or-buy recommendation per opportunity',
-        'Concrete roadmap with effort estimates',
+        'Honest second opinions, not pitches',
+        'Helping you separate hype from substance',
+        'Guidance on build-vs-buy and what to start with',
       ],
       is: [
-        'Yfirferð á tæknistafla, ferlum og gögnum',
-        'Forgangsröðuð tækifæri eftir ávöxtun og áhættu',
-        'Tillaga um eigin þróun eða kaup á hverju verkefni',
-        'Áþreifanlegt vegakort með áætluðum vinnuframlögum',
+        'Heiðarlegt mat, ekki sölufundur',
+        'Hjálpa þér að greina raunverulegt gildi frá tísku',
+        'Leiðbeiningar um eigin þróun eða kaup og góðan upphafspunkt',
       ],
     },
     format: {
-      en: 'One week. Remote or on-site in Iceland.',
-      is: 'Ein vika. Fjarvinna eða á staðnum á Íslandi.',
+      en: 'Calls, half-day sessions, or short written reviews.',
+      is: 'Símtöl, hálfsdags lotur eða stuttar skriflegar yfirferðir.',
     },
     emailSubject: {
-      en: 'Consulting inquiry — AI Audit & Strategy',
-      is: 'Ráðgjafarfyrirspurn — AI-úttekt og stefnumótun',
-    },
-  },
-  {
-    slug: 'implementation',
-    title: {
-      en: 'AI Implementation',
-      is: 'AI-innleiðing',
-    },
-    tagline: {
-      en: 'Production-grade AI systems, designed and shipped.',
-      is: 'Framleiðsluhæf gervigreindarkerfi, hönnuð og afhent.',
-    },
-    description: {
-      en: 'Project-based engagement to design and build production AI systems end-to-end — chatbots, MCP servers, agentic workflows, and ML pipelines. I\'ve shipped all of these at scale at Icelandia ehf. Sweet spot: solo-engineer builds where speed and clarity matter.',
-      is: 'Verkefnamiðuð vinna þar sem ég hanna og smíða gervigreindarkerfi frá hugmynd að framleiðslu — spjallmenni, MCP-þjóna, sjálfvirka vinnuferla og vélnámskeðjur. Hef afhent öll þessi við Icelandia ehf. Best þegar hraði og skýr stefna skipta máli.',
-    },
-    bullets: {
-      en: [
-        'Customer-facing chatbots with RAG, tool use, and human handoff',
-        'MCP servers with proper auth (Entra OAuth + refresh tokens)',
-        'ML pipelines with retraining, evaluation, and monitoring',
-        'Email- and document-processing automation',
-      ],
-      is: [
-        'Spjallmenni fyrir viðskiptavini með RAG, tólanotkun og afhendingu til mannlegra',
-        'MCP-þjónar með réttri auðkenningu (Entra OAuth + endurnýjunarmerkjum)',
-        'Vélnámskeðjur með endurþjálfun, mati og eftirliti',
-        'Sjálfvirkni fyrir tölvupóst og skjalavinnslu',
-      ],
-    },
-    format: {
-      en: 'Project-based. Fixed scope or rolling engagement.',
-      is: 'Verkefnamiðað. Fast umfang eða viðvarandi samstarf.',
-    },
-    emailSubject: {
-      en: 'Consulting inquiry — AI Implementation',
-      is: 'Ráðgjafarfyrirspurn — AI-innleiðing',
+      en: 'Advisory inquiry',
+      is: 'Fyrirspurn um ráðgjöf',
     },
   },
   {
@@ -86,20 +47,18 @@ export const services: Service[] = [
       is: 'Verklegar AI-vinnustofur fyrir tæknifólk og aðra.',
     },
     description: {
-      en: 'Half-day to multi-day workshops, tailored to the audience. For executives and ops: practical Claude/ChatGPT use, prompt engineering, and how to evaluate AI products. For engineers: RAG systems, MCP integration, agentic patterns, and production deployment.',
-      is: 'Hálfsdags- til fleiri daga vinnustofur, sniðnar að áheyrendum. Fyrir stjórnendur og rekstrarfólk: hagnýt notkun Claude/ChatGPT, beiðnaverkfræði og hvernig á að meta AI-vörur. Fyrir tæknifólk: RAG-kerfi, MCP-tenging, umboðsmiðuð munstur og uppsetning í framleiðslu.',
+      en: 'Workshops tailored to the audience. For non-technical teams: practical Claude/ChatGPT use, prompt habits, and how to read AI output critically. For technical teams: RAG, agents, MCP, and what holds up in production.',
+      is: 'Vinnustofur sniðnar að áheyrendum. Fyrir ekki-tæknifólk: hagnýt notkun Claude/ChatGPT, beiðnavenjur og gagnrýnin lesning á úttak. Fyrir tæknifólk: RAG, umboðsmenni, MCP og hvað virkar í framleiðslu.',
     },
     bullets: {
       en: [
-        'For executives: AI literacy and decision-making',
-        'For ops/marketing/HR teams: hands-on Claude and ChatGPT',
-        'For engineers: RAG, MCP, agentic systems',
+        'For executives & ops: practical AI literacy',
+        'For engineers: RAG, agents, MCP in production',
         'In Icelandic or English',
       ],
       is: [
-        'Fyrir stjórnendur: AI-læsi og ákvarðanataka',
-        'Fyrir rekstrar-, markaðs- og mannauðsteymi: hagnýt notkun Claude og ChatGPT',
-        'Fyrir tæknifólk: RAG, MCP, umboðsmenni',
+        'Fyrir stjórnendur og rekstrarfólk: hagnýt AI-læsi',
+        'Fyrir tæknifólk: RAG, umboðsmenni og MCP í framleiðslu',
         'Á íslensku eða ensku',
       ],
     },
@@ -108,8 +67,8 @@ export const services: Service[] = [
       is: 'Hálfur dagur til nokkrir dagar. Á staðnum á Íslandi eða í fjarvinnu.',
     },
     emailSubject: {
-      en: 'Consulting inquiry — Training & Workshops',
-      is: 'Ráðgjafarfyrirspurn — Þjálfun og vinnustofur',
+      en: 'Training inquiry',
+      is: 'Fyrirspurn um þjálfun',
     },
   },
 ];

@@ -1,7 +1,7 @@
 {
   "siteTitle": "Guðjón Kristjánsson",
-  "siteTagline": "AI-verkfræðingur og ráðgjafi",
-  "metaDescription": "AI/ML-verkfræðingur hjá Icelandia ehf. Smíða gervigreindarkerfi í framleiðslu — spjallmenni, MCP-þjóna, vélnámskeðjur og sjálfvirkni. Tek að mér ráðgjöf, þjálfun og innleiðingu.",
+  "siteTagline": "AI-sérfræðingur og ráðgjafi",
+  "metaDescription": "AI-sérfræðingur hjá Icelandia. Bakgrunnur í gervigreindarkerfum í framleiðslu — spjallmenni, MCP-þjónar, vélnámskeðjur og sjálfvirkni. Tek að mér ráðgjöf og þjálfun.",
 
   "nav": {
     "home": "Heim",
@@ -20,11 +20,11 @@
   },
 
   "hero": {
-    "eyebrow": "AI-verkfræðingur og ráðgjafi",
+    "eyebrow": "AI-sérfræðingur og ráðgjafi",
     "headline": "Ég smíða gervigreindarkerfi sem virka í alvöru.",
-    "subline": "AI/ML-verkfræðingur hjá Icelandia ehf. Smíða spjallmenni, MCP-þjóna, vélnámskeðjur og sjálfvirkni sem keyrir á alvöru gögnum — ekki bara í slæmum. Tek að mér ráðgjöf, þjálfun og innleiðingu.",
+    "subline": "AI-sérfræðingur hjá Icelandia. Bakgrunnur í spjallmennum, MCP-þjónum, vélnámskeðjum og sjálfvirkni — kerfi sem keyra á alvöru gögnum, ekki bara í slæmum. Tek að mér ráðgjöf og þjálfun.",
     "ctaPrimary": "Skoða verkefni",
-    "ctaSecondary": "Fá ráðgjöf",
+    "ctaSecondary": "Hafa samband",
     "stats": {
       "production": "kerfi í framleiðslu",
       "mcp": "MCP-þjónar í framleiðslu",
@@ -45,7 +45,7 @@
 
   "projects": {
     "title": "Verkefni",
-    "subtitle": "Gervigreindarkerfi í framleiðslu, rannsóknir og hliðarverkefni. Það sem er merkt Innra var byggt fyrir Icelandia ehf og er lýst á háu stigi.",
+    "subtitle": "Gervigreindarkerfi í framleiðslu, rannsóknir og hliðarverkefni. Það sem er merkt Innra var byggt fyrir Icelandia og er lýst á háu stigi.",
     "filter": {
       "all": "Allt",
       "chatbot": "Spjallmenni",
@@ -59,7 +59,7 @@
     },
     "status": {
       "public": "Opinbert",
-      "internal": "Innra — fyrir Icelandia ehf",
+      "internal": "Innra — fyrir Icelandia",
       "research": "Rannsóknir",
       "side": "Hliðarverkefni"
     },
@@ -80,18 +80,18 @@
 
   "services": {
     "title": "Þjónusta",
-    "subtitle": "Ég hjálpa fyrirtækjum að nýta gervigreind á þann hátt sem skilar sér — með úttektum, smíði og þjálfun.",
+    "subtitle": "Léttar leiðir til samstarfs — ráðgjöf og þjálfun. Ég tek ekki að mér innleiðingu.",
     "format": "Form",
-    "ctaLabel": "Senda fyrirspurn",
+    "ctaLabel": "Hafa samband",
     "footnote": "Staðsettur á Íslandi. Vinn jafnt á íslensku og ensku."
   },
 
   "about": {
     "title": "Um mig",
-    "subtitle": "AI/ML-verkfræðingur hjá Icelandia ehf á Íslandi. Bakgrunnur í hugrænum vísindum og sálfræði.",
+    "subtitle": "AI-sérfræðingur hjá Icelandia. Bakgrunnur í hugrænum vísindum og sálfræði.",
     "now": {
       "title": "Núna",
-      "body": "AI-sérfræðingur hjá Icelandia ehf (áður Reykjavik Excursions). Byggi gervigreindarkerfi fyrir ferðarekstur, þjónustu við viðskiptavini og spár."
+      "body": "AI-sérfræðingur hjá Icelandia (áður Reykjavik Excursions). Byggi gervigreindarkerfi fyrir ferðarekstur, þjónustu við viðskiptavini og spár."
     },
     "background": {
       "title": "Bakgrunnur",
@@ -118,8 +118,8 @@
       "title": "Valin reynsla",
       "items": {
         "icelandia": {
-          "title": "Icelandia ehf · AI-sérfræðingur · 2024–í dag",
-          "body": "Byggi gervigreindarstaflann: spjallmenni, MCP-þjóna, vélnám fyrir eftirspurnarspár, sjálfvirkni fyrir tölvupóstbókanir og mælaborð."
+          "title": "Icelandia · AI-sérfræðingur · 2024–í dag",
+          "body": "Byggi gervigreindarstaflann: spjallmenni, MCP-þjóna, vélnám fyrir spár, sjálfvirkni og mælaborð."
         },
         "cyberpilot": {
           "title": "CyberPilot · Forritun og gögn · 2022–2024",

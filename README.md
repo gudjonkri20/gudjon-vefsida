@@ -70,7 +70,7 @@ public/
 
 ## Confidentiality
 
-Most of Guðjón's strongest production work was built **for Icelandia ehf** (formerly Reykjavik Excursions) and lives in private `ReykjavikExcursions` repos. Internal projects on the public site (and inside the chat widget's system prompt) are described at a high level only — no source links, no internal URLs, no business metrics, no client identifiers. The same rules apply when adding new entries in `src/data/projects.ts`.
+Most of Guðjón's strongest production work was built **for Icelandia** (formerly Reykjavik Excursions) and lives in private `ReykjavikExcursions` repos. Internal projects on the public site (and inside the chat widget's system prompt) are described at a high level only — no source links, no internal URLs, no business metrics, no client identifiers. The same rules apply when adding new entries in `src/data/projects.ts`.
 
 ## Routes
 

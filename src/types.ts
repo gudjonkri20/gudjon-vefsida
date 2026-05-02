@@ -29,7 +29,7 @@ export interface Project {
   year?: number;
 }
 
-export type ServiceSlug = 'audit' | 'implementation' | 'training';
+export type ServiceSlug = 'advisory' | 'training';
 
 export interface Service {
   slug: ServiceSlug;
