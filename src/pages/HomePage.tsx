@@ -1,80 +1,92 @@
-import React, { useState, useEffect } from 'react';
-import { ArrowRight, Github, Linkedin, Mail } from 'lucide-react';
+import React from 'react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import { ArrowRight } from 'lucide-react';
+import SEO from '../components/SEO';
+import Hero from '../components/Hero';
+import Section from '../components/Section';
+import ProjectCard from '../components/ProjectCard';
+import { getFeaturedProjects } from '../lib/projects';
+import { services } from '../data/services';
+import { useCurrentLocale, localizedHref } from '../lib/i18n';
 
 const HomePage: React.FC = () => {
-  const [avatarUrl, setAvatarUrl] = useState<string>('');
-
-  useEffect(() => {
-    const fetchGithubAvatar = async () => {
-      try {
-        const response = await fetch('https://api.github.com/users/gudjonkri20');
-        if (response.ok) {
-          const data = await response.json();
-          setAvatarUrl(data.avatar_url);
-        }
-      } catch (error) {
-        console.error('Error fetching GitHub avatar:', error);
-      }
-    };
-
-    fetchGithubAvatar();
-  }, []);
+  const { t } = useTranslation();
+  const locale = useCurrentLocale();
+  const featured = getFeaturedProjects();
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 text-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-          <div>
-            <h1 className="text-4xl md:text-5xl font-bold mb-4">
-              Hi, I'm <span className="text-blue-400">Guðjón</span>
-            </h1>
-            <h2 className="text-2xl md:text-3xl font-semibold mb-6 text-gray-300">
-              AI and Data Science expert
+    <>
+      <SEO path={localizedHref('/', locale)} />
+      <Hero />
+
+      <Section tone="dark" className="border-t border-slate-900">
+        <div className="flex flex-wrap items-end justify-between gap-4">
+          <div className="max-w-2xl">
+            <h2 className="font-display text-3xl font-semibold text-white md:text-4xl">
+              {t('home.featuredTitle')}
             </h2>
-            <p className="text-lg text-gray-300 mb-8">
-              I have a strong passion for AI development, with hands-on experience in building, fine-tuning, and applying a variety of machine learning models. I am skilled in leveraging pre-existing models and frameworks, and I constantly stay updated on the latest trends and advancements in AI to ensure I am using the most effective techniques. My expertise spans across problem-solving, data processing, and model optimization, allowing me to create impactful AI solutions.
-            </p>
-            <div className="flex flex-wrap gap-4 mb-8">
-              <Link
-                to="/about"
-                className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 transition"
-              >
-                About Me <ArrowRight className="ml-2" size={18} />
-              </Link>
-              <Link
-                to="/projects"
-                className="inline-flex items-center px-6 py-3 border border-gray-300 text-base font-medium rounded-md text-white hover:bg-gray-700 transition"
-              >
-                View Projects
-              </Link>
-            </div>
-            <div className="flex space-x-6">
-              <a href="https://github.com/gudjonkri20" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-white">
-                <Github size={24} />
-              </a>
-              <a href="https://linkedin.com/in/gu%C3%B0j%C3%B3n-kristj%C3%A1nsson-7a3b083b/" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-white">
-                <Linkedin size={24} />
-              </a>
-              <a href="mailto:gudjonk6@gmail.com" className="text-gray-300 hover:text-white">
-                <Mail size={24} />
-              </a>
-            </div>
+            <p className="mt-3 text-slate-400">{t('home.featuredSubtitle')}</p>
           </div>
-          <div className="flex justify-center">
-            <div className="relative w-64 h-64 md:w-80 md:h-80">
-              <div className="absolute inset-0 rounded-full overflow-hidden shadow-[0_0_50px_15px_rgba(59,130,246,0.5)]">
-                <img
-                  src={avatarUrl || 'https://github.com/gudjonkri20.png'}
-                  alt="Guðjón Kristjánsson"
-                  className="w-full h-full object-cover"
+          <Link
+            to={localizedHref('/projects', locale)}
+            className="inline-flex items-center gap-1 text-sm font-medium text-brand-300 transition hover:text-brand-200"
+          >
+            {t('home.viewAll')}
+            <ArrowRight size={14} />
+          </Link>
+        </div>
+
+        <div className="mt-10 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+          {featured.map((project) => (
+            <ProjectCard key={project.slug} project={project} compact />
+          ))}
+        </div>
+      </Section>
+
+      <Section tone="dark" className="border-t border-slate-900">
+        <div className="grid gap-12 lg:grid-cols-12">
+          <div className="lg:col-span-5">
+            <h2 className="font-display text-3xl font-semibold text-white md:text-4xl">
+              {t('home.servicesTitle')}
+            </h2>
+            <p className="mt-3 text-slate-400">{t('home.servicesSubtitle')}</p>
+            <Link
+              to={localizedHref('/services', locale)}
+              className="mt-6 inline-flex items-center gap-1 text-sm font-medium text-brand-300 transition hover:text-brand-200"
+            >
+              {t('home.servicesCta')}
+              <ArrowRight size={14} />
+            </Link>
+          </div>
+          <div className="space-y-3 lg:col-span-7">
+            {services.map((service, i) => (
+              <Link
+                key={service.slug}
+                to={localizedHref('/services', locale)}
+                className="group flex items-start justify-between gap-6 rounded-xl border border-slate-800 bg-slate-900/40 p-5 transition hover:border-brand-400/40 hover:bg-slate-900/70"
+              >
+                <div>
+                  <div className="font-mono text-xs text-slate-500">
+                    0{i + 1}
+                  </div>
+                  <div className="mt-1 font-display text-lg font-semibold text-white">
+                    {service.title[locale]}
+                  </div>
+                  <div className="mt-1 text-sm text-slate-400">
+                    {service.tagline[locale]}
+                  </div>
+                </div>
+                <ArrowRight
+                  size={18}
+                  className="mt-2 flex-none text-slate-500 transition group-hover:translate-x-0.5 group-hover:text-brand-300"
                 />
-              </div>
-            </div>
+              </Link>
+            ))}
           </div>
         </div>
-      </div>
-    </div>
+      </Section>
+    </>
   );
 };
 

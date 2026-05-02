@@ -1,0 +1,205 @@
+{
+  "siteTitle": "Guðjón Kristjánsson",
+  "siteTagline": "AI-verkfræðingur og ráðgjafi",
+  "metaDescription": "AI/ML-verkfræðingur hjá Icelandia ehf. Smíða gervigreindarkerfi í framleiðslu — spjallmenni, MCP-þjóna, vélnámskeðjur og sjálfvirkni. Tek að mér ráðgjöf, þjálfun og innleiðingu.",
+
+  "nav": {
+    "home": "Heim",
+    "about": "Um mig",
+    "services": "Þjónusta",
+    "projects": "Verkefni",
+    "contact": "Hafa samband",
+    "menu": "Opna valmynd"
+  },
+
+  "language": {
+    "label": "Tungumál",
+    "en": "EN",
+    "is": "IS",
+    "switchTo": "Skipta yfir á {{lang}}"
+  },
+
+  "hero": {
+    "eyebrow": "AI-verkfræðingur og ráðgjafi",
+    "headline": "Ég smíða gervigreindarkerfi sem virka í alvöru.",
+    "subline": "AI/ML-verkfræðingur hjá Icelandia ehf. Smíða spjallmenni, MCP-þjóna, vélnámskeðjur og sjálfvirkni sem keyrir á alvöru gögnum — ekki bara í slæmum. Tek að mér ráðgjöf, þjálfun og innleiðingu.",
+    "ctaPrimary": "Skoða verkefni",
+    "ctaSecondary": "Fá ráðgjöf",
+    "stats": {
+      "production": "kerfi í framleiðslu",
+      "mcp": "MCP-þjónar í framleiðslu",
+      "chatbots": "spjallmenni fyrir viðskiptavini"
+    }
+  },
+
+  "home": {
+    "featuredTitle": "Valin verkefni",
+    "featuredSubtitle": "Nýleg framleiðslukerfi. Innra-verkefni eru lýst á því stigi sem vinnuveitandi er sáttur við.",
+    "viewAll": "Sjá öll verkefni",
+    "servicesTitle": "Hvernig get ég hjálpað",
+    "servicesSubtitle": "Þrjár leiðir til samstarfs.",
+    "servicesCta": "Sjá alla þjónustu",
+    "currentlyTitle": "Á borðinu núna",
+    "currentlyLead": "Það sem ég er að vinna í þessa stundina."
+  },
+
+  "projects": {
+    "title": "Verkefni",
+    "subtitle": "Gervigreindarkerfi í framleiðslu, rannsóknir og hliðarverkefni. Það sem er merkt Innra var byggt fyrir Icelandia ehf og er lýst á háu stigi.",
+    "filter": {
+      "all": "Allt",
+      "chatbot": "Spjallmenni",
+      "mcp": "MCP og verkfæri",
+      "ml": "Vélnám og gögn",
+      "automation": "Sjálfvirkni",
+      "dashboards": "Mælaborð",
+      "dataEng": "Gagnaverkfræði",
+      "research": "Rannsóknir",
+      "side": "Hliðarverkefni"
+    },
+    "status": {
+      "public": "Opinbert",
+      "internal": "Innra — fyrir Icelandia ehf",
+      "research": "Rannsóknir",
+      "side": "Hliðarverkefni"
+    },
+    "tech": "Tæknistafli",
+    "availableOnRequest": "Aðgengilegt að beiðni",
+    "viewProject": "Lesa meira",
+    "openLink": "Opna",
+    "year": "{{year}}"
+  },
+
+  "projectDetail": {
+    "back": "Til baka í verkefni",
+    "stack": "Tæknistafli",
+    "status": "Staða",
+    "year": "Ár",
+    "comingSoon": "Ítarleg lýsing kemur fljótlega."
+  },
+
+  "services": {
+    "title": "Þjónusta",
+    "subtitle": "Ég hjálpa fyrirtækjum að nýta gervigreind á þann hátt sem skilar sér — með úttektum, smíði og þjálfun.",
+    "format": "Form",
+    "ctaLabel": "Senda fyrirspurn",
+    "footnote": "Staðsettur á Íslandi. Vinn jafnt á íslensku og ensku."
+  },
+
+  "about": {
+    "title": "Um mig",
+    "subtitle": "AI/ML-verkfræðingur hjá Icelandia ehf á Íslandi. Bakgrunnur í hugrænum vísindum og sálfræði.",
+    "now": {
+      "title": "Núna",
+      "body": "AI-sérfræðingur hjá Icelandia ehf (áður Reykjavik Excursions). Byggi gervigreindarkerfi fyrir ferðarekstur, þjónustu við viðskiptavini og spár."
+    },
+    "background": {
+      "title": "Bakgrunnur",
+      "body": "Ég vinn þvert á gervigreindarstafla — gögn, líkön, umboðsmenni, uppsetningu í framleiðslu og allt þar á milli. Markmiðið er alltaf það sama: afhenda kerfi sem virkar í alvöru og borgar sig."
+    },
+    "education": {
+      "title": "Menntun",
+      "items": {
+        "aarhus": {
+          "title": "Háskólinn í Árósum · 2022–2024",
+          "body": "MSc í upplýsingatækni — Cognitive Science. Ritgerð: Age and Gender Bias within Icelandic ASR Systems."
+        },
+        "ru": {
+          "title": "Háskólinn í Reykjavík · 2021–2022",
+          "body": "Fyrsta árið í tveggja ára námi í tölvunarfræði áður en ég komst inn í meistaranámið í Árósum."
+        },
+        "hi": {
+          "title": "Háskóli Íslands · 2014–2019",
+          "body": "BSc í sálfræði. Ritgerð: Pólitísk skautun í íslensku samfélagi."
+        }
+      }
+    },
+    "experience": {
+      "title": "Valin reynsla",
+      "items": {
+        "icelandia": {
+          "title": "Icelandia ehf · AI-sérfræðingur · 2024–í dag",
+          "body": "Byggi gervigreindarstaflann: spjallmenni, MCP-þjóna, vélnám fyrir eftirspurnarspár, sjálfvirkni fyrir tölvupóstbókanir og mælaborð."
+        },
+        "cyberpilot": {
+          "title": "CyberPilot · Forritun og gögn · 2022–2024",
+          "body": "Hlutastarf samhliða meistaranámi. Forritun og gagnavinnsla hjá dönsku netöryggisfyrirtæki."
+        },
+        "reykjavikurborg": {
+          "title": "Reykjavíkurborg · 2014–2022",
+          "body": "Stjórnandi, teymisstjóri og almenn störf á vistheimilum."
+        }
+      }
+    },
+    "skills": {
+      "title": "Færni",
+      "ai": "Gervigreind / vélnám — RAG, mállíkön, umboðsmenni, MCP, fínþjálfun, mat, beiðnaverkfræði",
+      "languages": "Forritunarmál — Python, TypeScript, R, SQL",
+      "stack": "Tæknistafli — Azure (App Service, Functions, SQL, OpenAI), Pinecone, Anthropic, Cohere, Sanity, Netlify",
+      "ml": "Vélnámsbókasöfn — PyTorch, Transformers, scikit-learn, CatBoost, XGBoost, Pandas"
+    },
+    "languages": {
+      "title": "Tungumál",
+      "items": {
+        "is": "Íslenska — Móðurmál",
+        "en": "Enska — Næstum móðurmál",
+        "da": "Danska — Þokkaleg",
+        "de": "Þýska — Grunnur"
+      }
+    },
+    "contactCta": {
+      "title": "Hafa samband",
+      "body": "Tölvupóstur eða sími virka best. Ég les hvort tveggja."
+    }
+  },
+
+  "contact": {
+    "title": "Hafa samband",
+    "subtitle": "Ef þú ert að íhuga AI-smíði, úttekt eða vinnustofu — sendu mér línu.",
+    "email": "Tölvupóstur",
+    "phone": "Sími",
+    "linkedin": "LinkedIn",
+    "github": "GitHub",
+    "location": "Ísland"
+  },
+
+  "footer": {
+    "copyright": "© {{year}} Guðjón Kristjánsson",
+    "tagline": "Smíðað og afhent á Íslandi.",
+    "lastUpdated": "Síðast uppfært {{date}}"
+  },
+
+  "chat": {
+    "buttonLabel": "Spyrja Guðjón AI",
+    "title": "Spyrja Guðjón AI",
+    "subtitle": "AI-aðstoðarmaður þjálfaður á feril og verkefnum Guðjóns. Spurðu hvers sem er.",
+    "placeholder": "Spyrðu spurningar…",
+    "send": "Senda",
+    "thinking": "Hugsa…",
+    "newChat": "Nýtt spjall",
+    "offline": "AI er ekki tengt núna. Sendu tölvupóst á gudjonk6@gmail.com og ég svara fljótlega.",
+    "errorMessage": "Eitthvað fór úrskeiðis. Reyndu aftur eða sendu mér tölvupóst beint.",
+    "rateLimited": "Þú hefur náð notkunarmörkum þessarar klukkustundar. Komdu aftur síðar eða sendu mér tölvupóst.",
+    "disclaimer": "AI-aðstoðarmaður — ekki Guðjón sjálfur.",
+    "suggestions": [
+      "Hvað gerir Guðjón?",
+      "Segðu mér frá MCP-vinnunni hans",
+      "Er hann laus í ráðgjöf?",
+      "Hvert er sterkasta verkefnið hans?"
+    ]
+  },
+
+  "notFound": {
+    "title": "404",
+    "subtitle": "Þessi síða er ekki til (eða ekki ennþá).",
+    "backHome": "Til baka heim"
+  },
+
+  "common": {
+    "external": "Ytri tengill",
+    "expand": "Stækka",
+    "collapse": "Minnka",
+    "close": "Loka",
+    "loading": "Hleð…"
+  }
+}

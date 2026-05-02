@@ -1,109 +1,163 @@
-import React, { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Link, NavLink, useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Menu, X, Github, Linkedin, Mail } from 'lucide-react';
+import clsx from 'clsx';
+import LanguageSwitcher from './LanguageSwitcher';
+import { useCurrentLocale, localizedHref, pathWithoutLocale } from '../lib/i18n';
+
+const NAV_KEYS = [
+  { key: 'about', path: '/about' },
+  { key: 'services', path: '/services' },
+  { key: 'projects', path: '/projects' },
+  { key: 'contact', path: '/contact' },
+] as const;
 
 const Navbar: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const { t } = useTranslation();
   const location = useLocation();
+  const locale = useCurrentLocale();
 
-  const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
-  };
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 8);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
 
-  const navLinks = [
-    { name: 'Home', path: '/' },
-    { name: 'About', path: '/about' },
-    { name: 'Projects', path: '/projects' },
-  ];
+  useEffect(() => {
+    setIsMenuOpen(false);
+  }, [location.pathname]);
 
-  const isActive = (path: string) => {
-    return location.pathname === path;
-  };
+  const isActive = (path: string) => pathWithoutLocale(location.pathname) === path;
 
   return (
-    <nav className="bg-gray-900 text-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
-          <div className="flex items-center">
-            <Link to="/" className="flex-shrink-0 font-bold text-xl">
-              Guðjón Kristjánsson
-            </Link>
-          </div>
-          
-          {/* Desktop menu */}
-          <div className="hidden md:block">
-            <div className="ml-10 flex items-baseline space-x-4">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.name}
-                  to={link.path}
-                  className={`px-3 py-2 rounded-md text-sm font-medium ${
-                    isActive(link.path)
-                      ? 'bg-gray-800 text-white'
-                      : 'text-gray-300 hover:bg-gray-700 hover:text-white'
-                  }`}
-                >
-                  {link.name}
-                </Link>
-              ))}
-            </div>
-          </div>
-          
-          <div className="hidden md:flex items-center space-x-4">
-            <a href="https://github.com/gudjonkri20" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-white">
-              <Github size={20} />
-            </a>
-            <a href="https://linkedin.com/in/gu%C3%B0j%C3%B3n-kristj%C3%A1nsson-7a3b083b/" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-white">
-              <Linkedin size={20} />
-            </a>
-            <a href="mailto:gudjonk6@gmail.com" className="text-gray-300 hover:text-white">
-              <Mail size={20} />
-            </a>
-          </div>
-          
-          {/* Mobile menu button */}
-          <div className="md:hidden">
-            <button
-              onClick={toggleMenu}
-              className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
+    <nav
+      className={clsx(
+        'sticky top-0 z-40 w-full border-b transition-colors duration-200',
+        scrolled
+          ? 'border-slate-800/80 bg-slate-950/85 backdrop-blur'
+          : 'border-transparent bg-transparent',
+      )}
+    >
+      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+        <Link
+          to={localizedHref('/', locale)}
+          className="font-display text-base font-semibold tracking-tight text-white transition hover:text-brand-300"
+        >
+          Guðjón Kristjánsson
+        </Link>
+
+        {/* Desktop nav */}
+        <div className="hidden items-center gap-1 md:flex">
+          {NAV_KEYS.map(({ key, path }) => (
+            <NavLink
+              key={key}
+              to={localizedHref(path, locale)}
+              className={clsx(
+                'rounded-full px-3 py-1.5 text-sm transition',
+                isActive(path)
+                  ? 'bg-slate-800 text-white'
+                  : 'text-slate-300 hover:bg-slate-900 hover:text-white',
+              )}
             >
-              <span className="sr-only">Open main menu</span>
-              {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
-            </button>
+              {t(`nav.${key}`)}
+            </NavLink>
+          ))}
+        </div>
+
+        <div className="hidden items-center gap-3 md:flex">
+          <LanguageSwitcher />
+          <div className="ml-2 flex items-center gap-3 border-l border-slate-800 pl-4 text-slate-400">
+            <a
+              href="https://github.com/gudjonkri20"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="GitHub"
+              className="transition hover:text-white"
+            >
+              <Github size={18} />
+            </a>
+            <a
+              href="https://linkedin.com/in/gu%C3%B0j%C3%B3n-kristj%C3%A1nsson-7a3b083b/"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="LinkedIn"
+              className="transition hover:text-white"
+            >
+              <Linkedin size={18} />
+            </a>
+            <a
+              href="mailto:gudjonk6@gmail.com"
+              aria-label="Email"
+              className="transition hover:text-white"
+            >
+              <Mail size={18} />
+            </a>
           </div>
         </div>
+
+        {/* Mobile menu button */}
+        <button
+          type="button"
+          className="rounded-md p-2 text-slate-300 transition hover:bg-slate-900 hover:text-white md:hidden"
+          onClick={() => setIsMenuOpen((v) => !v)}
+          aria-label={t('nav.menu')}
+          aria-expanded={isMenuOpen}
+        >
+          {isMenuOpen ? <X size={22} /> : <Menu size={22} />}
+        </button>
       </div>
 
       {/* Mobile menu */}
       {isMenuOpen && (
-        <div className="md:hidden">
-          <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-            {navLinks.map((link) => (
-              <Link
-                key={link.name}
-                to={link.path}
-                className={`block px-3 py-2 rounded-md text-base font-medium ${
-                  isActive(link.path)
-                    ? 'bg-gray-800 text-white'
-                    : 'text-gray-300 hover:bg-gray-700 hover:text-white'
-                }`}
-                onClick={() => setIsMenuOpen(false)}
+        <div className="border-t border-slate-900 bg-slate-950/95 backdrop-blur md:hidden">
+          <div className="space-y-1 px-4 py-3">
+            {NAV_KEYS.map(({ key, path }) => (
+              <NavLink
+                key={key}
+                to={localizedHref(path, locale)}
+                className={clsx(
+                  'block rounded-md px-3 py-2 text-base',
+                  isActive(path)
+                    ? 'bg-slate-800 text-white'
+                    : 'text-slate-300 hover:bg-slate-900 hover:text-white',
+                )}
               >
-                {link.name}
-              </Link>
+                {t(`nav.${key}`)}
+              </NavLink>
             ))}
-          </div>
-          <div className="pt-4 pb-3 border-t border-gray-700">
-            <div className="flex items-center justify-center space-x-6 px-5">
-              <a href="https://github.com/gudjonkri20" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-white">
-                <Github size={20} />
-              </a>
-              <a href="https://linkedin.com/in/gu%C3%B0j%C3%B3n-kristj%C3%A1nsson-7a3b083b/" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-white">
-                <Linkedin size={20} />
-              </a>
-              <a href="mailto:gudjonk6@gmail.com" className="text-gray-300 hover:text-white">
-                <Mail size={20} />
-              </a>
+            <div className="flex items-center justify-between border-t border-slate-800 pt-4">
+              <LanguageSwitcher />
+              <div className="flex items-center gap-3 text-slate-400">
+                <a
+                  href="https://github.com/gudjonkri20"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="GitHub"
+                  className="transition hover:text-white"
+                >
+                  <Github size={18} />
+                </a>
+                <a
+                  href="https://linkedin.com/in/gu%C3%B0j%C3%B3n-kristj%C3%A1nsson-7a3b083b/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="LinkedIn"
+                  className="transition hover:text-white"
+                >
+                  <Linkedin size={18} />
+                </a>
+                <a
+                  href="mailto:gudjonk6@gmail.com"
+                  aria-label="Email"
+                  className="transition hover:text-white"
+                >
+                  <Mail size={18} />
+                </a>
+              </div>
             </div>
           </div>
         </div>

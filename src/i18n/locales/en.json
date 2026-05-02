@@ -1,0 +1,205 @@
+{
+  "siteTitle": "Guðjón Kristjánsson",
+  "siteTagline": "AI engineer & advisor",
+  "metaDescription": "AI/ML engineer at Icelandia ehf. Building production AI systems — chatbots, MCP servers, ML pipelines, and automation. Available for advisory, training, and implementation work.",
+
+  "nav": {
+    "home": "Home",
+    "about": "About",
+    "services": "Services",
+    "projects": "Projects",
+    "contact": "Contact",
+    "menu": "Open main menu"
+  },
+
+  "language": {
+    "label": "Language",
+    "en": "EN",
+    "is": "IS",
+    "switchTo": "Switch to {{lang}}"
+  },
+
+  "hero": {
+    "eyebrow": "AI engineer & advisor",
+    "headline": "I build production AI systems.",
+    "subline": "AI/ML engineer at Icelandia ehf. I ship chatbots, MCP servers, ML pipelines, and automation that runs in real life — not slides. Available for advisory, training, and implementation work.",
+    "ctaPrimary": "See my work",
+    "ctaSecondary": "Hire me for advisory",
+    "stats": {
+      "production": "production systems shipped",
+      "mcp": "MCP servers live",
+      "chatbots": "customer chatbots in production"
+    }
+  },
+
+  "home": {
+    "featuredTitle": "Selected work",
+    "featuredSubtitle": "Recent production systems. Internal builds described at a level my employer is comfortable with.",
+    "viewAll": "View all projects",
+    "servicesTitle": "How I can help",
+    "servicesSubtitle": "Three ways to work with me.",
+    "servicesCta": "See all services",
+    "currentlyTitle": "Currently shipping",
+    "currentlyLead": "What I'm working on right now."
+  },
+
+  "projects": {
+    "title": "Projects",
+    "subtitle": "Production AI systems, research, and side projects. Anything marked Internal was built for Icelandia ehf and is described at a high level only.",
+    "filter": {
+      "all": "All",
+      "chatbot": "Chatbots",
+      "mcp": "MCP & Tooling",
+      "ml": "ML & Data",
+      "automation": "Automation",
+      "dashboards": "Dashboards",
+      "dataEng": "Data Engineering",
+      "research": "Research",
+      "side": "Side projects"
+    },
+    "status": {
+      "public": "Public",
+      "internal": "Internal — for Icelandia ehf",
+      "research": "Research",
+      "side": "Side project"
+    },
+    "tech": "Stack",
+    "availableOnRequest": "Available on request",
+    "viewProject": "Read more",
+    "openLink": "Open",
+    "year": "{{year}}"
+  },
+
+  "projectDetail": {
+    "back": "Back to projects",
+    "stack": "Stack",
+    "status": "Status",
+    "year": "Year",
+    "comingSoon": "Detailed write-up coming soon."
+  },
+
+  "services": {
+    "title": "Services",
+    "subtitle": "I help companies use AI in ways that pay off — through audits, hands-on builds, and training.",
+    "format": "Format",
+    "ctaLabel": "Email me about this",
+    "footnote": "Iceland-based. Comfortable working in Icelandic or English."
+  },
+
+  "about": {
+    "title": "About",
+    "subtitle": "AI/ML engineer at Icelandia ehf in Iceland. Background in cognitive science and psychology.",
+    "now": {
+      "title": "Now",
+      "body": "AI Specialist at Icelandia ehf (formerly Reykjavik Excursions). Building production AI for tour operations, customer support, and revenue forecasting."
+    },
+    "background": {
+      "title": "Background",
+      "body": "I work across the AI stack — data, modeling, agents, deployment, and everything in between. My goal on every build is the same: ship something that runs in production and earns its keep."
+    },
+    "education": {
+      "title": "Education",
+      "items": {
+        "aarhus": {
+          "title": "Aarhus University · 2022–2024",
+          "body": "MSc IT — Cognitive Science. Thesis: Age and Gender Bias within Icelandic ASR Systems."
+        },
+        "ru": {
+          "title": "Reykjavík University · 2021–2022",
+          "body": "First year of a two-year Computer Science programme before being accepted into the Aarhus master's."
+        },
+        "hi": {
+          "title": "University of Iceland · 2014–2019",
+          "body": "BSc Psychology. Thesis: Political Polarization in Icelandic Society."
+        }
+      }
+    },
+    "experience": {
+      "title": "Selected experience",
+      "items": {
+        "icelandia": {
+          "title": "Icelandia ehf · AI Specialist · 2024–present",
+          "body": "Building the AI stack: chatbots, MCP servers, ML demand forecasting, email-to-booking automation, and analytics dashboards."
+        },
+        "cyberpilot": {
+          "title": "CyberPilot · Programming & Data · 2022–2024",
+          "body": "Part-time during my MSc. Programming and data processing at a Danish cybersecurity company."
+        },
+        "reykjavikurborg": {
+          "title": "Reykjavíkurborg · 2014–2022",
+          "body": "Manager, team leader, and frontline roles at residential units."
+        }
+      }
+    },
+    "skills": {
+      "title": "Skills",
+      "ai": "AI / ML — RAG, LLMs, agents, MCP, fine-tuning, evaluation, prompt engineering",
+      "languages": "Languages — Python, TypeScript, R, SQL",
+      "stack": "Stack — Azure (App Service, Functions, SQL, OpenAI), Pinecone, Anthropic, Cohere, Sanity, Netlify",
+      "ml": "ML libraries — PyTorch, Transformers, scikit-learn, CatBoost, XGBoost, Pandas"
+    },
+    "languages": {
+      "title": "Languages",
+      "items": {
+        "is": "Icelandic — Native",
+        "en": "English — Near-native",
+        "da": "Danish — Working proficiency",
+        "de": "German — Basic"
+      }
+    },
+    "contactCta": {
+      "title": "Get in touch",
+      "body": "Best on email or phone. I read both."
+    }
+  },
+
+  "contact": {
+    "title": "Contact",
+    "subtitle": "If you're thinking about an AI build, audit, or workshop — drop a line.",
+    "email": "Email",
+    "phone": "Phone",
+    "linkedin": "LinkedIn",
+    "github": "GitHub",
+    "location": "Iceland"
+  },
+
+  "footer": {
+    "copyright": "© {{year}} Guðjón Kristjánsson",
+    "tagline": "Built and shipped from Iceland.",
+    "lastUpdated": "Last updated {{date}}"
+  },
+
+  "chat": {
+    "buttonLabel": "Ask Guðjón AI",
+    "title": "Ask Guðjón AI",
+    "subtitle": "An AI assistant trained on Guðjón's CV and projects. Ask anything.",
+    "placeholder": "Ask a question…",
+    "send": "Send",
+    "thinking": "Thinking…",
+    "newChat": "New chat",
+    "offline": "AI is offline right now. Email gudjonk6@gmail.com directly and I'll get back to you.",
+    "errorMessage": "Something went wrong. Try again or email me directly.",
+    "rateLimited": "You've hit the rate limit for this hour. Please come back later or email me directly.",
+    "disclaimer": "AI assistant — not Guðjón himself.",
+    "suggestions": [
+      "What does Guðjón do?",
+      "Tell me about his MCP work",
+      "Is he available for advisory?",
+      "What's his strongest project?"
+    ]
+  },
+
+  "notFound": {
+    "title": "404",
+    "subtitle": "This page doesn't exist (or doesn't exist yet).",
+    "backHome": "Back to home"
+  },
+
+  "common": {
+    "external": "External link",
+    "expand": "Expand",
+    "collapse": "Collapse",
+    "close": "Close",
+    "loading": "Loading…"
+  }
+}
