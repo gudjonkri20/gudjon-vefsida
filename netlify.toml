@@ -30,4 +30,11 @@
 [build.environment]
   NODE_VERSION = "18"
   NPM_VERSION = "9"
-  # OPENAI_API_KEY should be set in Netlify UI
+
+# Runtime env vars for /api/chat (Ask Guðjón AI):
+#   ANTHROPIC_API_KEY  — Guðjón's PERSONAL Anthropic key. Set in
+#                        Netlify UI → Site settings → Environment variables,
+#                        or with: netlify env:set ANTHROPIC_API_KEY <key>
+#                        When unset, the chat widget falls back to an
+#                        "AI is offline" response and the rest of the site
+#                        keeps working.

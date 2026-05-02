@@ -1,74 +1,86 @@
-# Guðjón Kristjánsson - Personal Website
+# gudjonkristjansson.com
 
-A personal website with an AI-powered chatbot that can answer questions about Guðjón based on his resume and background information.
+Source for [gudjonkristjansson.com](https://gudjonkristjansson.com) — Guðjón Kristjánsson's personal portfolio and consulting site.
 
-## Features
+## Stack
 
-- Modern, responsive design with Tailwind CSS
-- About page with Markdown content
-- Projects showcase
-- AI-powered chatbot that answers questions about Guðjón
-- Serverless functions for OpenAI API integration
+- React 18 + TypeScript + Vite 5
+- Tailwind CSS 3 with Geist (`@fontsource/geist`)
+- React Router DOM 6 (with bilingual `/is/*` mirror)
+- `react-i18next` for EN/IS internationalization
+- `react-helmet-async` for per-page SEO
+- `framer-motion` for tasteful, reduced-motion-aware animation
+- Hosted on Netlify (SPA + Functions)
+- "Ask Guðjón AI" chat widget powered by Netlify Functions + the Anthropic API (Claude Haiku 4.5)
 
-## Tech Stack
-
-- React
-- TypeScript
-- Tailwind CSS
-- Vite
-- Netlify Functions
-- OpenAI API
-
-## Development
+## Local development
 
 ```bash
-# Install dependencies
 npm install
-
-# Start the development server
-npm run dev
-
-# Start the Netlify development server (with serverless functions)
-npm run netlify:dev
+npm run dev          # Vite at http://localhost:5173
+npm run netlify:dev  # Netlify Dev (functions + redirects) at http://localhost:8888
 ```
 
-## Deployment
-
-This project is set up to be deployed directly to Netlify using the Netlify CLI.
+## Production build
 
 ```bash
-# Deploy to Netlify
-npm run deploy
+npm run lint
+npm run build
+npm run preview      # Preview the built bundle locally
 ```
 
-### Environment Variables
+## Deploying
 
-You need to set the following environment variable in your Netlify dashboard:
+The site auto-deploys on push to `main` via Netlify. Manual deploys:
 
-- `OPENAI_API_KEY`: Your OpenAI API key
+```bash
+npm run deploy       # netlify deploy --prod
+```
 
-## Netlify Integration
+## Environment variables
 
-To set up your site on Netlify:
+Set in **Netlify UI → Site settings → Environment variables**, or with the CLI:
 
-1. Install the Netlify CLI globally (if not already installed):
-   ```bash
-   npm install -g netlify-cli
-   ```
+```bash
+netlify env:set ANTHROPIC_API_KEY <key>
+```
 
-2. Login to Netlify:
-   ```bash
-   netlify login
-   ```
+| Name | Required | Notes |
+|------|----------|-------|
+| `ANTHROPIC_API_KEY` | for the chat widget only | **Personal** Anthropic key from `console.anthropic.com`. Never a company key. The chat function falls back to an "AI is offline" response when this is unset, so the rest of the site works without it. |
 
-3. Initialize Netlify site:
-   ```bash
-   netlify init
-   ```
+`.env.example` documents the same.
 
-4. Deploy your site:
-   ```bash
-   npm run deploy
-   ```
+## Project layout
 
-5. Set up environment variables in the Netlify dashboard
+```
+src/
+  components/      Reusable UI (Hero, ProjectCard, ChatWidget, …)
+  pages/           Route components (Home, About, Services, Projects, Contact, ProjectDetail, NotFound)
+  data/            Typed content data (projects.ts, services.ts)
+  lib/             Pure helpers (i18n locale routing, project filters)
+  i18n/            i18n init + locale JSON (en, is)
+  types.ts         Shared types
+netlify/functions/
+  chat.ts          Anthropic proxy for "Ask Guðjón AI" — POST /api/chat
+  _chatContext.ts  Sanitized system-prompt builder
+public/
+  favicon.svg, robots.txt, profile.jpg
+```
+
+## Confidentiality
+
+Most of Guðjón's strongest production work was built **for Icelandia ehf** (formerly Reykjavik Excursions) and lives in private `ReykjavikExcursions` repos. Internal projects on the public site (and inside the chat widget's system prompt) are described at a high level only — no source links, no internal URLs, no business metrics, no client identifiers. The same rules apply when adding new entries in `src/data/projects.ts`.
+
+## Routes
+
+| Route | Page |
+|-------|------|
+| `/` | Home |
+| `/services` | Services |
+| `/projects` | Filterable project grid |
+| `/projects/:slug` | Project detail |
+| `/about` | About |
+| `/contact` | Contact |
+| `/is/*` | Icelandic mirror of all of the above |
+| `*` | 404 |
