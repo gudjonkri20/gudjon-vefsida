@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import SEO from '../components/SEO';
+import PageHeader from '../components/PageHeader';
 import Section from '../components/Section';
 import ProjectCard from '../components/ProjectCard';
 import ProjectFilter from '../components/ProjectFilter';
@@ -40,18 +41,17 @@ const ProjectsPage: React.FC = () => {
   }, [filter, all]);
 
   return (
-    <div className="min-h-screen bg-slate-950 text-white">
+    <>
       <SEO title={t('projects.title')} path={localizedHref('/projects', locale)} />
 
-      <Section tone="dark">
-        <div className="max-w-3xl pt-12">
-          <h1 className="font-display text-4xl font-semibold tracking-tight md:text-5xl">
-            {t('projects.title')}
-          </h1>
-          <p className="mt-5 text-lg text-slate-400">{t('projects.subtitle')}</p>
-        </div>
+      <PageHeader
+        eyebrow={t('siteTagline')}
+        title={t('projects.title')}
+        lede={t('projects.subtitle')}
+      />
 
-        <div className="mt-10">
+      <Section tone="paper">
+        <div className="border-b border-navy-100 pb-3">
           <ProjectFilter
             active={filter}
             onChange={setFilter}
@@ -59,13 +59,17 @@ const ProjectsPage: React.FC = () => {
           />
         </div>
 
-        <div className="mt-10 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+        <p className="mt-4 font-mono text-xs text-muted/70">
+          {filtered.length} / {all.length}
+        </p>
+
+        <div className="mt-8 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
           {filtered.map((project) => (
             <ProjectCard key={project.slug} project={project} />
           ))}
         </div>
       </Section>
-    </div>
+    </>
   );
 };
 

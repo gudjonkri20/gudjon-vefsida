@@ -31,11 +31,7 @@ const ProjectFilter: React.FC<ProjectFilterProps> = ({
   const { t } = useTranslation();
 
   return (
-    <div
-      role="tablist"
-      aria-label="Filter projects"
-      className="flex flex-wrap gap-2"
-    >
+    <div role="tablist" aria-label="Filter projects" className="flex flex-wrap gap-x-6 gap-y-2">
       {available.map((key) => (
         <button
           key={key}
@@ -44,10 +40,12 @@ const ProjectFilter: React.FC<ProjectFilterProps> = ({
           aria-selected={active === key}
           onClick={() => onChange(key)}
           className={clsx(
-            'rounded-full border px-3.5 py-1.5 text-sm transition',
+            // Filters read as a line of labels, not a row of pills. The active
+            // one is marked with the same brass rule as the nav.
+            'relative py-1 font-mono text-xs uppercase tracking-[0.1em] transition-colors',
             active === key
-              ? 'border-brand-400/50 bg-brand-400/15 text-brand-200'
-              : 'border-slate-800 bg-slate-900/40 text-slate-400 hover:border-slate-700 hover:text-white',
+              ? 'text-navy-900 after:absolute after:-bottom-px after:left-0 after:h-[2px] after:w-full after:bg-brass-500'
+              : 'text-muted hover:text-navy-900',
           )}
         >
           {t(LABEL_KEYS[key])}

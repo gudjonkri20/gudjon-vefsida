@@ -9,17 +9,20 @@ const NotFoundPage: React.FC = () => {
   const locale = useCurrentLocale();
 
   return (
-    <div className="grid min-h-[calc(100vh-8rem)] place-items-center bg-slate-950 px-6 py-20 text-center text-white">
+    <div className="grid min-h-[calc(100vh-8rem)] place-items-center bg-navy-900 px-6 py-20 text-center text-white">
       <SEO title="404" path="/404" />
       <div>
-        <p className="font-mono text-sm uppercase tracking-widest text-brand-400">
-          {t('notFound.title')}
-        </p>
-        <h1 className="mt-4 font-display text-5xl font-semibold tracking-tight md:text-6xl">
+        <p className="eyebrow-on-navy">{t('notFound.title')}</p>
+        <h1 className="mt-4 font-display text-[clamp(2rem,5vw,3.5rem)] font-semibold tracking-[-0.025em] text-white">
           {t('notFound.subtitle')}
         </h1>
         <div className="mt-10">
-          <CallToAction to={localizedHref('/', locale)} variant="primary" withArrow>
+          <CallToAction
+            to={localizedHref('/', locale)}
+            variant="primary"
+            onNavy
+            withArrow
+          >
             {t('notFound.backHome')}
           </CallToAction>
         </div>

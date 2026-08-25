@@ -1,7 +1,8 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Mail, Phone, Linkedin, Github, GraduationCap, Briefcase, Languages, Sparkles } from 'lucide-react';
+import { Mail, Phone, Linkedin, Github } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import PageHeader from './PageHeader';
 import Section from './Section';
 import { useCurrentLocale, localizedHref } from '../lib/i18n';
 
@@ -10,180 +11,159 @@ const EXPERIENCE_KEYS = ['icelandia', 'cyberpilot', 'reykjavikurborg'] as const;
 const LANG_KEYS = ['is', 'en', 'da', 'de'] as const;
 const SKILL_KEYS = ['ai', 'languages', 'stack', 'ml'] as const;
 
+/** Label-left, content-right. One row per topic, separated by a hairline. */
+const Row: React.FC<{ label: string; children: React.ReactNode }> = ({
+  label,
+  children,
+}) => (
+  <div className="grid gap-4 border-t border-navy-100 py-10 lg:grid-cols-12 lg:gap-12">
+    <h2 className="eyebrow lg:col-span-3 lg:pt-1">{label}</h2>
+    <div className="lg:col-span-9">{children}</div>
+  </div>
+);
+
+/** A dated entry — job or degree. */
+const Entry: React.FC<{ title: string; body: string }> = ({ title, body }) => (
+  <div className="border-l-2 border-brass-500/40 pl-5">
+    <div className="font-display text-lg font-semibold text-navy-900">{title}</div>
+    <div className="mt-1 font-serif leading-relaxed text-muted">{body}</div>
+  </div>
+);
+
 const AboutSection: React.FC = () => {
   const { t } = useTranslation();
   const locale = useCurrentLocale();
 
   return (
-    <div className="bg-slate-950 text-slate-100">
-      <Section tone="dark">
-        <div className="max-w-3xl pt-12">
-          <h1 className="font-display text-4xl font-semibold tracking-tight md:text-5xl">
-            {t('about.title')}
-          </h1>
-          <p className="mt-5 text-lg text-slate-400">{t('about.subtitle')}</p>
-        </div>
-      </Section>
+    <>
+      <PageHeader title={t('about.title')} lede={t('about.subtitle')} />
 
-      <Section tone="dark" className="border-t border-slate-900">
-        <div className="grid gap-12 lg:grid-cols-12">
-          <div className="lg:col-span-4">
-            <div className="flex items-center gap-2 text-sm uppercase tracking-widest text-brand-400">
-              <Sparkles size={14} />
-              {t('about.now.title')}
-            </div>
+      <Section tone="paper">
+        {/* Portrait sits with the "currently" statement rather than in the
+            hero — a photograph, squared off, no glow ring. */}
+        <div className="grid gap-10 pb-10 lg:grid-cols-12 lg:gap-12">
+          <div className="lg:col-span-3">
+            <img
+              src="/profile.jpg"
+              alt="Guðjón Kristjánsson"
+              width={460}
+              height={460}
+              loading="eager"
+              className="w-40 rounded-lg border border-navy-100 shadow-card sm:w-48 lg:w-full"
+            />
           </div>
-          <div className="lg:col-span-8">
-            <p className="font-display text-2xl text-white md:text-3xl">
+          <div className="lg:col-span-9">
+            <p className="eyebrow">{t('about.now.title')}</p>
+            <p className="mt-4 max-w-prose font-display text-2xl font-medium leading-snug tracking-[-0.015em] text-navy-900 md:text-3xl">
               {t('about.now.body')}
             </p>
           </div>
         </div>
-      </Section>
 
-      <Section tone="dark" className="border-t border-slate-900">
-        <div className="grid gap-12 lg:grid-cols-12">
-          <div className="lg:col-span-4">
-            <h2 className="text-sm uppercase tracking-widest text-slate-500">
-              {t('about.background.title')}
-            </h2>
-          </div>
-          <div className="lg:col-span-8">
-            <p className="text-lg text-slate-300">{t('about.background.body')}</p>
-          </div>
-        </div>
-      </Section>
+        <Row label={t('about.background.title')}>
+          <p className="max-w-prose font-serif text-[1.0625rem] leading-relaxed text-muted">
+            {t('about.background.body')}
+          </p>
+        </Row>
 
-      <Section tone="dark" className="border-t border-slate-900">
-        <div className="grid gap-12 lg:grid-cols-12">
-          <div className="lg:col-span-4">
-            <h2 className="flex items-center gap-2 text-sm uppercase tracking-widest text-slate-500">
-              <Briefcase size={14} />
-              {t('about.experience.title')}
-            </h2>
-          </div>
-          <div className="lg:col-span-8 space-y-6">
+        <Row label={t('about.experience.title')}>
+          <div className="space-y-7">
             {EXPERIENCE_KEYS.map((k) => (
-              <div key={k} className="border-l border-slate-800 pl-5">
-                <div className="font-display text-lg font-semibold text-white">
-                  {t(`about.experience.items.${k}.title`)}
-                </div>
-                <div className="mt-1 text-slate-400">
-                  {t(`about.experience.items.${k}.body`)}
-                </div>
-              </div>
+              <Entry
+                key={k}
+                title={t(`about.experience.items.${k}.title`)}
+                body={t(`about.experience.items.${k}.body`)}
+              />
             ))}
           </div>
-        </div>
-      </Section>
+        </Row>
 
-      <Section tone="dark" className="border-t border-slate-900">
-        <div className="grid gap-12 lg:grid-cols-12">
-          <div className="lg:col-span-4">
-            <h2 className="flex items-center gap-2 text-sm uppercase tracking-widest text-slate-500">
-              <GraduationCap size={14} />
-              {t('about.education.title')}
-            </h2>
-          </div>
-          <div className="lg:col-span-8 space-y-6">
+        <Row label={t('about.education.title')}>
+          <div className="space-y-7">
             {EDU_KEYS.map((k) => (
-              <div key={k} className="border-l border-slate-800 pl-5">
-                <div className="font-display text-lg font-semibold text-white">
-                  {t(`about.education.items.${k}.title`)}
-                </div>
-                <div className="mt-1 text-slate-400">
-                  {t(`about.education.items.${k}.body`)}
-                </div>
-              </div>
+              <Entry
+                key={k}
+                title={t(`about.education.items.${k}.title`)}
+                body={t(`about.education.items.${k}.body`)}
+              />
             ))}
           </div>
-        </div>
-      </Section>
+        </Row>
 
-      <Section tone="dark" className="border-t border-slate-900">
-        <div className="grid gap-12 lg:grid-cols-12">
-          <div className="lg:col-span-4">
-            <h2 className="text-sm uppercase tracking-widest text-slate-500">
-              {t('about.skills.title')}
-            </h2>
-          </div>
-          <div className="lg:col-span-8 space-y-3">
+        <Row label={t('about.skills.title')}>
+          <div className="space-y-3">
             {SKILL_KEYS.map((k) => (
-              <p key={k} className="text-slate-300">
+              <p
+                key={k}
+                className="max-w-prose font-serif leading-relaxed text-muted"
+              >
                 {t(`about.skills.${k}`)}
               </p>
             ))}
           </div>
-        </div>
-      </Section>
+        </Row>
 
-      <Section tone="dark" className="border-t border-slate-900">
-        <div className="grid gap-12 lg:grid-cols-12">
-          <div className="lg:col-span-4">
-            <h2 className="flex items-center gap-2 text-sm uppercase tracking-widest text-slate-500">
-              <Languages size={14} />
-              {t('about.languages.title')}
-            </h2>
-          </div>
-          <div className="lg:col-span-8 grid gap-2 sm:grid-cols-2">
+        <Row label={t('about.languages.title')}>
+          <div className="grid gap-2 sm:grid-cols-2">
             {LANG_KEYS.map((k) => (
-              <p key={k} className="text-slate-300">
+              <p key={k} className="font-serif leading-relaxed text-muted">
                 {t(`about.languages.items.${k}`)}
               </p>
             ))}
           </div>
-        </div>
+        </Row>
       </Section>
 
-      <Section tone="dark" className="border-t border-slate-900">
-        <div className="rounded-2xl border border-slate-800 bg-slate-900/40 p-8 md:p-12">
-          <h2 className="font-display text-2xl font-semibold text-white md:text-3xl">
-            {t('about.contactCta.title')}
-          </h2>
-          <p className="mt-3 text-slate-400">{t('about.contactCta.body')}</p>
-          <div className="mt-6 flex flex-wrap gap-3 text-sm">
-            <a
-              href="mailto:gudjonk6@gmail.com"
-              className="inline-flex items-center gap-2 rounded-full bg-brand-400 px-4 py-2 font-medium text-slate-950 transition hover:bg-brand-300"
-            >
-              <Mail size={14} />
-              gudjonk6@gmail.com
-            </a>
-            <a
-              href="tel:+3548654146"
-              className="inline-flex items-center gap-2 rounded-full border border-slate-700 px-4 py-2 text-white transition hover:border-brand-400/60 hover:text-brand-300"
-            >
-              <Phone size={14} />
-              +354 865 4146
-            </a>
-            <a
-              href="https://linkedin.com/in/gu%C3%B0j%C3%B3n-kristj%C3%A1nsson-7a3b083b/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 rounded-full border border-slate-700 px-4 py-2 text-white transition hover:border-brand-400/60 hover:text-brand-300"
-            >
-              <Linkedin size={14} />
-              LinkedIn
-            </a>
-            <a
-              href="https://github.com/gudjonkri20"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 rounded-full border border-slate-700 px-4 py-2 text-white transition hover:border-brand-400/60 hover:text-brand-300"
-            >
-              <Github size={14} />
-              GitHub
-            </a>
-            <Link
-              to={localizedHref('/contact', locale)}
-              className="inline-flex items-center gap-2 rounded-full border border-slate-700 px-4 py-2 text-slate-300 transition hover:border-brand-400/60 hover:text-brand-300"
-            >
-              {t('nav.contact')}
-            </Link>
-          </div>
+      <Section tone="navy">
+        <h2 className="max-w-2xl font-display text-3xl font-semibold tracking-[-0.02em] text-white md:text-4xl">
+          {t('about.contactCta.title')}
+        </h2>
+        <p className="mt-3 max-w-prose font-serif text-lg leading-relaxed text-navy-100">
+          {t('about.contactCta.body')}
+        </p>
+
+        <div className="mt-8 flex flex-wrap gap-x-8 gap-y-3 text-sm">
+          <a
+            href="mailto:gudjonk6@gmail.com"
+            className="inline-flex items-center gap-2 text-brass-400 transition-colors hover:text-white"
+          >
+            <Mail size={15} />
+            gudjonk6@gmail.com
+          </a>
+          <a
+            href="tel:+3548654146"
+            className="inline-flex items-center gap-2 text-white transition-colors hover:text-brass-400"
+          >
+            <Phone size={15} />
+            +354 865 4146
+          </a>
+          <a
+            href="https://linkedin.com/in/gu%C3%B0j%C3%B3n-kristj%C3%A1nsson-7a3b083b/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 text-white transition-colors hover:text-brass-400"
+          >
+            <Linkedin size={15} />
+            LinkedIn
+          </a>
+          <a
+            href="https://github.com/gudjonkri20"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 text-white transition-colors hover:text-brass-400"
+          >
+            <Github size={15} />
+            GitHub
+          </a>
+          <Link
+            to={localizedHref('/contact', locale)}
+            className="inline-flex items-center gap-2 text-navy-200 transition-colors hover:text-brass-400"
+          >
+            {t('nav.contact')}
+          </Link>
         </div>
       </Section>
-    </div>
+    </>
   );
 };
 

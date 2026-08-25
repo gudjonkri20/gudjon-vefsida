@@ -25,7 +25,7 @@ function App() {
   return (
     <HelmetProvider>
       <Router>
-        <div className="flex min-h-screen flex-col bg-slate-950 text-slate-100">
+        <div className="flex min-h-screen flex-col bg-paper text-muted">
           <Navbar />
           <main className="flex-grow">
             <Routes>

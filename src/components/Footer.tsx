@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Github, Linkedin, Mail } from 'lucide-react';
+import Waveform from './Waveform';
 import { useCurrentLocale, localizedHref } from '../lib/i18n';
 
 const FOOTER_LINKS = [
@@ -11,23 +12,45 @@ const FOOTER_LINKS = [
   { key: 'contact', path: '/contact' },
 ] as const;
 
+const SOCIALS = [
+  { href: 'https://github.com/gudjonkri20', label: 'GitHub', Icon: Github },
+  {
+    href: 'https://linkedin.com/in/gu%C3%B0j%C3%B3n-kristj%C3%A1nsson-7a3b083b/',
+    label: 'LinkedIn',
+    Icon: Linkedin,
+  },
+  { href: 'mailto:gudjonk6@gmail.com', label: 'Email', Icon: Mail },
+] as const;
+
 const Footer: React.FC = () => {
   const { t } = useTranslation();
   const locale = useCurrentLocale();
   const year = new Date().getFullYear();
 
+  const socialLinkProps = (href: string) =>
+    href.startsWith('http')
+      ? { target: '_blank', rel: 'noopener noreferrer' }
+      : {};
+
   return (
-    <footer className="border-t border-slate-900 bg-slate-950 text-slate-400">
-      <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-        <div className="grid gap-8 md:grid-cols-3">
+    <footer className="bg-navy-950 text-navy-200">
+      {/* The waveform closes the page as quietly as it opened it. */}
+      <div className="text-navy-800">
+        <Waveform />
+      </div>
+
+      <div className="mx-auto max-w-6xl px-5 pb-12 sm:px-8">
+        <div className="grid gap-10 md:grid-cols-3">
           <div>
             <Link
               to={localizedHref('/', locale)}
-              className="font-display text-lg font-semibold text-white transition hover:text-brand-300"
+              className="font-display text-base font-semibold text-white transition-colors hover:text-brass-400"
             >
               Guðjón Kristjánsson
             </Link>
-            <p className="mt-2 text-sm">{t('footer.tagline')}</p>
+            <p className="mt-2 max-w-xs font-serif text-sm leading-relaxed">
+              {t('footer.tagline')}
+            </p>
           </div>
 
           <nav aria-label="Footer">
@@ -36,7 +59,7 @@ const Footer: React.FC = () => {
                 <li key={key}>
                   <Link
                     to={localizedHref(path, locale)}
-                    className="transition hover:text-white"
+                    className="transition-colors hover:text-brass-400"
                   >
                     {t(`nav.${key}`)}
                   </Link>
@@ -45,38 +68,24 @@ const Footer: React.FC = () => {
             </ul>
           </nav>
 
-          <div className="flex items-start justify-start gap-4 md:justify-end">
-            <a
-              href="https://github.com/gudjonkri20"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="GitHub"
-              className="transition hover:text-white"
-            >
-              <Github size={18} />
-            </a>
-            <a
-              href="https://linkedin.com/in/gu%C3%B0j%C3%B3n-kristj%C3%A1nsson-7a3b083b/"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="LinkedIn"
-              className="transition hover:text-white"
-            >
-              <Linkedin size={18} />
-            </a>
-            <a
-              href="mailto:gudjonk6@gmail.com"
-              aria-label="Email"
-              className="transition hover:text-white"
-            >
-              <Mail size={18} />
-            </a>
+          <div className="flex items-start gap-4 md:justify-end">
+            {SOCIALS.map(({ href, label, Icon }) => (
+              <a
+                key={label}
+                href={href}
+                {...socialLinkProps(href)}
+                aria-label={label}
+                className="transition-colors hover:text-brass-400"
+              >
+                <Icon size={18} />
+              </a>
+            ))}
           </div>
         </div>
 
-        <div className="mt-10 flex flex-col items-start justify-between gap-2 border-t border-slate-900 pt-6 text-xs text-slate-500 sm:flex-row sm:items-center">
+        <div className="rule-on-navy mt-10 flex flex-col items-start justify-between gap-2 pt-6 font-mono text-xs text-navy-200/70 sm:flex-row sm:items-center">
           <span>{t('footer.copyright', { year })}</span>
-          <span className="font-mono">v0.2 · Reykjavík</span>
+          <span>Reykjavík</span>
         </div>
       </div>
     </footer>

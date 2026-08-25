@@ -8,23 +8,24 @@ interface BadgeProps {
   className?: string;
 }
 
+// Status is data, so it is set in mono. Only "public" earns the accent —
+// it is the only status a visitor can go and look at.
 const statusClasses: Record<ProjectStatus, string> = {
-  public: 'bg-brand-400/15 text-brand-300 border-brand-400/30',
-  internal: 'bg-accent-400/15 text-accent-400 border-accent-400/30',
-  research: 'bg-amber-400/15 text-amber-300 border-amber-400/30',
-  side: 'bg-slate-400/15 text-slate-300 border-slate-400/30',
+  public: 'text-brass-700 border-brass-500/40 bg-brass-500/10',
+  internal: 'text-navy-700 border-navy-200 bg-navy-50',
+  research: 'text-navy-700 border-navy-200 bg-navy-50',
+  side: 'text-muted border-navy-100 bg-paper-sunken',
 };
 
 const Badge: React.FC<BadgeProps> = ({ status, label, className }) => {
   return (
     <span
       className={clsx(
-        'inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-xs font-medium tracking-wide',
+        'inline-flex items-center gap-1.5 rounded border px-2 py-0.5 font-mono text-[0.6875rem] uppercase tracking-[0.08em]',
         statusClasses[status],
         className,
       )}
     >
-      <span className="h-1.5 w-1.5 rounded-full bg-current" aria-hidden />
       {label}
     </span>
   );

@@ -23,29 +23,29 @@ const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({ className }) => {
   };
 
   return (
+    // EN / IS as a mono pair with a hairline divider — a setting, not a toggle.
     <div
-      className={clsx(
-        'inline-flex items-center rounded-full border border-slate-700/60 bg-slate-900/60 p-0.5 text-xs font-medium',
-        className,
-      )}
+      className={clsx('inline-flex items-center font-mono text-xs', className)}
       role="group"
       aria-label="Language"
     >
-      {(['en', 'is'] as const).map((lang) => (
-        <button
-          key={lang}
-          type="button"
-          onClick={() => switchTo(lang)}
-          className={clsx(
-            'rounded-full px-2.5 py-1 transition',
-            current === lang
-              ? 'bg-slate-700 text-white'
-              : 'text-slate-400 hover:text-white',
-          )}
-          aria-pressed={current === lang}
-        >
-          {lang.toUpperCase()}
-        </button>
+      {(['en', 'is'] as const).map((lang, i) => (
+        <React.Fragment key={lang}>
+          {i > 0 && <span aria-hidden className="mx-1.5 text-navy-200">/</span>}
+          <button
+            type="button"
+            onClick={() => switchTo(lang)}
+            className={clsx(
+              'uppercase tracking-[0.08em] transition-colors',
+              current === lang
+                ? 'text-navy-900'
+                : 'text-muted hover:text-brass-700',
+            )}
+            aria-pressed={current === lang}
+          >
+            {lang}
+          </button>
+        </React.Fragment>
       ))}
     </div>
   );

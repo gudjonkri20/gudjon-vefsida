@@ -24,71 +24,82 @@ const ProjectDetailPage: React.FC = () => {
   const statusLabel = t(`projects.status.${project.status}`);
 
   return (
-    <div className="min-h-screen bg-slate-950 text-white">
+    <>
       <SEO
         title={project.title[locale]}
         description={project.tagline[locale]}
         path={localizedHref(`/projects/${project.slug}`, locale)}
       />
 
-      <Section tone="dark">
-        <Link
-          to={localizedHref('/projects', locale)}
-          className="inline-flex items-center gap-2 text-sm text-slate-400 transition hover:text-white"
-        >
-          <ArrowLeft size={16} />
-          {t('projectDetail.back')}
-        </Link>
+      <header className="bg-navy-900 text-white">
+        <div className="mx-auto max-w-6xl px-5 py-14 sm:px-8 md:py-16">
+          <Link
+            to={localizedHref('/projects', locale)}
+            className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.1em] text-navy-200 transition-colors hover:text-brass-400"
+          >
+            <ArrowLeft size={14} />
+            {t('projectDetail.back')}
+          </Link>
 
-        <div className="mt-8 max-w-3xl">
-          <Badge status={project.status} label={statusLabel} />
-          <h1 className="mt-5 font-display text-4xl font-semibold tracking-tight text-white md:text-5xl">
-            {project.title[locale]}
-          </h1>
-          <p className="mt-4 text-xl text-brand-300">{project.tagline[locale]}</p>
-          <p className="mt-6 text-lg text-slate-300">{project.description[locale]}</p>
+          <div className="mt-8 max-w-3xl">
+            <Badge
+              status={project.status}
+              label={statusLabel}
+              className="border-brass-400/40 bg-brass-400/10 text-brass-400"
+            />
+            <h1 className="mt-5 text-balance font-display text-[clamp(2rem,4.5vw,3.25rem)] font-semibold leading-[1.06] tracking-[-0.025em] text-white">
+              {project.title[locale]}
+            </h1>
+            <p className="mt-4 font-serif text-lg leading-relaxed text-navy-100 sm:text-xl">
+              {project.tagline[locale]}
+            </p>
+          </div>
+        </div>
+      </header>
+
+      <Section tone="paper">
+        <div className="max-w-prose">
+          <p className="font-serif text-[1.0625rem] leading-relaxed text-muted">
+            {project.description[locale]}
+          </p>
 
           {project.link && (
             <a
               href={project.link}
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-8 inline-flex items-center gap-2 rounded-full bg-brand-400 px-5 py-2.5 text-sm font-medium text-slate-950 shadow-glow transition hover:bg-brand-300"
+              className="mt-8 inline-flex items-center gap-2 rounded-md bg-navy-900 px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-navy-800"
             >
               {project.linkLabel?.[locale] ?? t('projects.openLink')}
-              <ExternalLink size={16} />
+              <ExternalLink size={15} />
             </a>
           )}
+        </div>
 
-          <div className="mt-12 grid grid-cols-1 gap-8 border-t border-slate-800 pt-8 sm:grid-cols-2">
+        <div className="mt-14 grid max-w-3xl grid-cols-1 gap-8 border-t border-navy-100 pt-8 sm:grid-cols-[1fr_auto]">
+          <div className="min-w-0">
+            <div className="eyebrow">{t('projectDetail.stack')}</div>
+            <div className="mt-3 flex flex-wrap gap-1.5">
+              {project.tech.map((tech) => (
+                <TechTag key={tech} label={tech} />
+              ))}
+            </div>
+          </div>
+          {project.year && (
             <div>
-              <div className="text-xs uppercase tracking-wider text-slate-500">
-                {t('projectDetail.stack')}
-              </div>
-              <div className="mt-3 flex flex-wrap gap-2">
-                {project.tech.map((tech) => (
-                  <TechTag key={tech} label={tech} />
-                ))}
+              <div className="eyebrow">{t('projectDetail.year')}</div>
+              <div className="mt-3 font-mono text-xl text-navy-900">
+                {project.year}
               </div>
             </div>
-            {project.year && (
-              <div>
-                <div className="text-xs uppercase tracking-wider text-slate-500">
-                  {t('projectDetail.year')}
-                </div>
-                <div className="mt-3 font-mono text-2xl text-white">
-                  {project.year}
-                </div>
-              </div>
-            )}
-          </div>
-
-          <div className="mt-12 rounded-xl border border-slate-800 bg-slate-900/40 p-6 text-sm text-slate-400">
-            {t('projectDetail.comingSoon')}
-          </div>
+          )}
         </div>
+
+        <p className="mt-12 max-w-prose border-l-2 border-brass-500 pl-4 font-serif text-sm italic text-muted">
+          {t('projectDetail.comingSoon')}
+        </p>
       </Section>
-    </div>
+    </>
   );
 };
 

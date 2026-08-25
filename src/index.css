@@ -1,7 +1,7 @@
-@import '@fontsource/geist/400.css';
-@import '@fontsource/geist/500.css';
-@import '@fontsource/geist/600.css';
-@import '@fontsource/geist/700.css';
+@import '@fontsource-variable/familjen-grotesk';
+@import '@fontsource-variable/source-serif-4';
+@import '@fontsource/jetbrains-mono/400.css';
+@import '@fontsource/jetbrains-mono/500.css';
 
 @tailwind base;
 @tailwind components;
@@ -11,15 +11,52 @@
   html {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    scroll-behavior: smooth;
   }
 
   body {
-    @apply bg-slate-950 text-slate-100 font-sans;
-    font-feature-settings: 'cv11', 'ss01';
+    @apply bg-paper text-muted font-sans;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply font-display text-navy-900;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
   }
 
   ::selection {
-    @apply bg-brand-400/30 text-brand-100;
+    @apply bg-brass-500/25 text-navy-900;
+  }
+
+  /* One visible focus style everywhere, on both grounds. */
+  :focus-visible {
+    outline: 2px solid theme('colors.brass.500');
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+}
+
+@layer components {
+  /* Eyebrow: mono, spaced, brass. Used for section labels and metadata —
+     anything that names a thing rather than saying it. */
+  .eyebrow {
+    @apply font-mono text-[0.6875rem] uppercase tracking-eyebrow text-brass-700;
+  }
+
+  .eyebrow-on-navy {
+    @apply font-mono text-[0.6875rem] uppercase tracking-eyebrow text-brass-400;
+  }
+
+  .lede {
+    @apply font-serif text-lg leading-relaxed text-muted sm:text-xl;
+  }
+
+  /* Links in running text: brass underline that fills to navy on hover. */
+  .link-inline {
+    @apply text-brass-700 underline decoration-1 underline-offset-[3px] transition-colors hover:text-navy-900;
   }
 }
 
@@ -32,7 +69,28 @@
     text-wrap: pretty;
   }
 
-  .glow-text {
-    text-shadow: 0 0 30px rgba(34, 211, 238, 0.4);
+  /* Hairline rules, navy-tinted so they belong to the palette. */
+  .rule {
+    @apply border-t border-navy-100;
+  }
+
+  .rule-on-navy {
+    @apply border-t border-white/10;
+  }
+}
+
+/* Respect the OS setting: no transforms, no traced waveform, no transitions. */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }

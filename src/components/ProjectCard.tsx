@@ -21,32 +21,24 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, compact = false }) =
   const detailHref = localizedHref(`/projects/${project.slug}`, locale);
 
   return (
-    <article className="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-slate-800 bg-slate-900/50 p-7 transition hover:border-brand-400/40 hover:bg-slate-900/80">
-      <div
-        aria-hidden
-        className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-brand-400/40 to-transparent opacity-0 transition group-hover:opacity-100"
-      />
-
+    <article className="group relative flex h-full flex-col rounded-lg border border-navy-100 bg-paper-raised p-6 shadow-card transition-shadow duration-200 hover:shadow-card-hover">
       <div className="flex items-center justify-between gap-3">
         <Badge status={project.status} label={statusLabel} />
         {project.year && (
-          <span className="font-mono text-xs text-slate-500">{project.year}</span>
+          <span className="font-mono text-xs text-muted/70">{project.year}</span>
         )}
       </div>
 
-      <h3 className="mt-5 font-display text-xl font-semibold text-white">
-        <Link
-          to={detailHref}
-          className="transition group-hover:text-brand-300"
-        >
+      <h3 className="mt-5 font-display text-lg font-semibold leading-snug tracking-[-0.01em]">
+        <Link to={detailHref} className="transition-colors hover:text-brass-700">
           {project.title[locale]}
         </Link>
       </h3>
 
-      <p className="mt-2 text-sm text-brand-300">{project.tagline[locale]}</p>
+      <p className="mt-1.5 text-sm text-navy-700">{project.tagline[locale]}</p>
 
       {!compact && (
-        <p className="mt-4 line-clamp-4 text-sm text-slate-400">
+        <p className="mt-4 line-clamp-4 font-serif text-[0.9375rem] leading-relaxed text-muted">
           {project.description[locale]}
         </p>
       )}
@@ -56,25 +48,25 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, compact = false }) =
           <TechTag key={tech} label={tech} />
         ))}
         {compact && project.tech.length > techShown.length && (
-          <span className="font-mono text-xs text-slate-500">
+          <span className="font-mono text-[0.6875rem] leading-6 text-muted/70">
             +{project.tech.length - techShown.length}
           </span>
         )}
       </div>
 
-      <div className="mt-auto flex items-center justify-between gap-3 pt-6">
+      <div className="mt-auto flex items-center justify-between gap-3 border-t border-navy-100 pt-4">
         {project.link ? (
           <a
             href={project.link}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 text-sm font-medium text-brand-300 transition hover:text-brand-200"
+            className="inline-flex items-center gap-1 text-sm font-medium text-brass-700 transition-colors hover:text-navy-900"
           >
             {project.linkLabel?.[locale] ?? t('projects.openLink')}
-            <ExternalLink size={14} />
+            <ExternalLink size={13} />
           </a>
         ) : (
-          <span className="text-xs text-slate-500">
+          <span className="font-mono text-[0.6875rem] uppercase tracking-[0.08em] text-muted/70">
             {t('projects.availableOnRequest')}
           </span>
         )}
@@ -82,7 +74,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, compact = false }) =
         {project.hasDetailPage && (
           <Link
             to={detailHref}
-            className="inline-flex items-center gap-1 text-sm text-slate-400 transition hover:text-white"
+            className="inline-flex items-center gap-1 text-sm text-muted transition-colors hover:text-navy-900"
           >
             {t('projects.viewProject')}
             <ArrowUpRight size={14} />

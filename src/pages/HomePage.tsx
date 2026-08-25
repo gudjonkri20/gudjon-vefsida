@@ -20,20 +20,25 @@ const HomePage: React.FC = () => {
       <SEO path={localizedHref('/', locale)} />
       <Hero />
 
-      <Section tone="dark" className="border-t border-slate-900">
-        <div className="flex flex-wrap items-end justify-between gap-4">
+      <Section tone="paper">
+        <div className="flex flex-wrap items-end justify-between gap-4 border-b border-navy-100 pb-6">
           <div className="max-w-2xl">
-            <h2 className="font-display text-3xl font-semibold text-white md:text-4xl">
+            <h2 className="font-display text-3xl font-semibold tracking-[-0.02em] md:text-4xl">
               {t('home.featuredTitle')}
             </h2>
-            <p className="mt-3 text-slate-400">{t('home.featuredSubtitle')}</p>
+            <p className="mt-3 font-serif text-[1.0625rem] leading-relaxed text-muted">
+              {t('home.featuredSubtitle')}
+            </p>
           </div>
           <Link
             to={localizedHref('/projects', locale)}
-            className="inline-flex items-center gap-1 text-sm font-medium text-brand-300 transition hover:text-brand-200"
+            className="group inline-flex items-center gap-1.5 text-sm font-medium text-brass-700 transition-colors hover:text-navy-900"
           >
             {t('home.viewAll')}
-            <ArrowRight size={14} />
+            <ArrowRight
+              size={14}
+              className="transition-transform group-hover:translate-x-0.5"
+            />
           </Link>
         </div>
 
@@ -44,42 +49,47 @@ const HomePage: React.FC = () => {
         </div>
       </Section>
 
-      <Section tone="dark" className="border-t border-slate-900">
+      <Section tone="raised" className="border-t border-navy-100">
         <div className="grid gap-12 lg:grid-cols-12">
           <div className="lg:col-span-5">
-            <h2 className="font-display text-3xl font-semibold text-white md:text-4xl">
+            <h2 className="font-display text-3xl font-semibold tracking-[-0.02em] md:text-4xl">
               {t('home.servicesTitle')}
             </h2>
-            <p className="mt-3 text-slate-400">{t('home.servicesSubtitle')}</p>
+            <p className="mt-3 font-serif text-[1.0625rem] leading-relaxed text-muted">
+              {t('home.servicesSubtitle')}
+            </p>
             <Link
               to={localizedHref('/services', locale)}
-              className="mt-6 inline-flex items-center gap-1 text-sm font-medium text-brand-300 transition hover:text-brand-200"
+              className="group mt-6 inline-flex items-center gap-1.5 text-sm font-medium text-brass-700 transition-colors hover:text-navy-900"
             >
               {t('home.servicesCta')}
-              <ArrowRight size={14} />
+              <ArrowRight
+                size={14}
+                className="transition-transform group-hover:translate-x-0.5"
+              />
             </Link>
           </div>
+
+          {/* Two parallel offerings, not a sequence — so no 01 / 02 numbering. */}
           <div className="space-y-3 lg:col-span-7">
-            {services.map((service, i) => (
+            {services.map((service) => (
               <Link
                 key={service.slug}
                 to={localizedHref('/services', locale)}
-                className="group flex items-start justify-between gap-6 rounded-xl border border-slate-800 bg-slate-900/40 p-5 transition hover:border-brand-400/40 hover:bg-slate-900/70"
+                className="group flex items-start justify-between gap-6 rounded-lg border border-navy-100 bg-paper p-5 transition-colors hover:border-brass-500/50"
               >
-                <div>
-                  <div className="font-mono text-xs text-slate-500">
-                    0{i + 1}
-                  </div>
-                  <div className="mt-1 font-display text-lg font-semibold text-white">
+                <div className="min-w-0">
+                  <div className="font-display text-lg font-semibold text-navy-900">
                     {service.title[locale]}
                   </div>
-                  <div className="mt-1 text-sm text-slate-400">
+                  <div className="mt-1 font-serif text-[0.9375rem] leading-relaxed text-muted">
                     {service.tagline[locale]}
                   </div>
+                  <div className="eyebrow mt-3">{service.format[locale]}</div>
                 </div>
                 <ArrowRight
                   size={18}
-                  className="mt-2 flex-none text-slate-500 transition group-hover:translate-x-0.5 group-hover:text-brand-300"
+                  className="mt-1 flex-none text-navy-200 transition-all group-hover:translate-x-0.5 group-hover:text-brass-600"
                 />
               </Link>
             ))}

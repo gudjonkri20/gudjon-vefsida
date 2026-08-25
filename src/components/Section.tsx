@@ -5,13 +5,14 @@ interface SectionProps {
   id?: string;
   className?: string;
   bleed?: boolean;
-  tone?: 'dark' | 'light' | 'transparent';
+  tone?: 'navy' | 'paper' | 'raised' | 'transparent';
   children: React.ReactNode;
 }
 
 const toneClasses: Record<NonNullable<SectionProps['tone']>, string> = {
-  dark: 'bg-slate-950 text-slate-100',
-  light: 'bg-white text-slate-900',
+  navy: 'bg-navy-900 text-navy-100',
+  paper: 'bg-paper text-muted',
+  raised: 'bg-paper-raised text-muted',
   transparent: '',
 };
 
@@ -28,11 +29,11 @@ const Section: React.FC<SectionProps> = ({
       className={clsx(
         'w-full',
         toneClasses[tone],
-        !bleed && 'py-20 md:py-28',
+        !bleed && 'py-16 md:py-24',
         className,
       )}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">{children}</div>
+      <div className="mx-auto max-w-6xl px-5 sm:px-8">{children}</div>
     </section>
   );
 };

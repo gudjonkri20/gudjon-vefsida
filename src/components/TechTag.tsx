@@ -10,7 +10,7 @@ const TechTag: React.FC<TechTagProps> = ({ label, className }) => {
   return (
     <span
       className={clsx(
-        'inline-flex items-center rounded-md border border-slate-700/60 bg-slate-800/50 px-2 py-0.5 font-mono text-xs text-slate-300',
+        'inline-flex items-center rounded border border-navy-100 bg-paper px-1.5 py-0.5 font-mono text-[0.6875rem] text-muted',
         className,
       )}
     >
