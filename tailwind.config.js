@@ -16,11 +16,15 @@ export default {
   },
   plugins: [
     function({ addComponents }) {
+      // The site is dark throughout, so these render on a dark card.
       addComponents({
         '.prose': {
+          color: '#d1d5db',
+          '& strong': { color: '#f9fafb' },
           '& h1': {
             fontSize: '2.25rem',
             fontWeight: '700',
+            color: '#ffffff',
             marginBottom: '1rem',
             marginTop: '1.5rem',
           },
@@ -30,11 +34,13 @@ export default {
             marginBottom: '0.75rem',
             marginTop: '1.5rem',
             paddingBottom: '0.5rem',
-            borderBottom: '1px solid #e5e7eb',
+            color: '#ffffff',
+            borderBottom: '1px solid #374151',
           },
           '& h3': {
             fontSize: '1.5rem',
             fontWeight: '600',
+            color: '#ffffff',
             marginBottom: '0.75rem',
             marginTop: '1.25rem',
           },
@@ -56,26 +62,28 @@ export default {
             marginBottom: '0.5rem',
           },
           '& a': {
-            color: '#3b82f6',
+            color: '#60a5fa',
             textDecoration: 'underline',
           },
           '& a:hover': {
-            color: '#2563eb',
+            color: '#93c5fd',
           },
           '& blockquote': {
-            borderLeft: '4px solid #e5e7eb',
+            borderLeft: '4px solid #60a5fa',
             paddingLeft: '1rem',
             fontStyle: 'italic',
+            color: '#9ca3af',
             marginBottom: '1rem',
           },
           '& code': {
-            backgroundColor: '#f3f4f6',
+            backgroundColor: '#374151',
+            color: '#e5e7eb',
             padding: '0.2rem 0.4rem',
             borderRadius: '0.25rem',
             fontSize: '0.875rem',
           },
           '& pre': {
-            backgroundColor: '#1f2937',
+            backgroundColor: '#111827',
             color: '#f9fafb',
             padding: '1rem',
             borderRadius: '0.375rem',
@@ -90,7 +98,7 @@ export default {
           '& hr': {
             marginTop: '1.5rem',
             marginBottom: '1.5rem',
-            borderColor: '#e5e7eb',
+            borderColor: '#374151',
           },
         },
       });

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import Reveal from '../components/Reveal';
 
 const AboutPage: React.FC = () => {
   const [aboutContent, setAboutContent] = useState<string>('');
@@ -20,9 +21,9 @@ const AboutPage: React.FC = () => {
         }
         setAboutContent(text);
         setIsLoading(false);
-      } catch (error) {
-        console.error('Error loading about content:', error);
-        setError(`Failed to load content. Please try again later.`);
+      } catch (err) {
+        console.error('Error loading about content:', err);
+        setError('Failed to load content. Please try again later.');
         setIsLoading(false);
       }
     };
@@ -31,32 +32,60 @@ const AboutPage: React.FC = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {isLoading ? (
-          <div className="bg-white shadow-md rounded-lg p-8 text-center">
-            <div className="flex justify-center mb-4">
-              <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+    <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 text-white">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        {/* The portrait the hero gave up to the constellation. */}
+        <Reveal>
+          <div className="mb-12 flex flex-col items-center gap-6 sm:flex-row sm:items-end">
+            <div className="h-32 w-32 shrink-0 overflow-hidden rounded-full ring-2 ring-blue-400/40 shadow-[0_0_40px_-8px_rgba(96,165,250,0.6)]">
+              <img
+                src="https://github.com/gudjonkri20.png"
+                alt="Guðjón Kristjánsson"
+                className="h-full w-full object-cover"
+                loading="lazy"
+              />
             </div>
-            <p className="text-gray-700">Loading content...</p>
+            <div className="text-center sm:text-left">
+              <p className="text-sm font-mono uppercase tracking-[0.2em] text-blue-400 mb-2">
+                About
+              </p>
+              <h1 className="text-3xl md:text-4xl font-bold">
+                Guðjón Kristjánsson
+              </h1>
+            </div>
+          </div>
+        </Reveal>
+
+        {isLoading ? (
+          <div className="rounded-xl border border-gray-700/70 bg-gray-800/40 p-8 text-center">
+            <div className="mb-4 flex justify-center">
+              <div className="h-8 w-8 animate-spin rounded-full border-4 border-blue-400 border-t-transparent"></div>
+            </div>
+            <p className="text-gray-300">Loading content...</p>
           </div>
         ) : error ? (
-          <div className="bg-white shadow-md rounded-lg p-8">
-            <h1 className="text-2xl font-bold text-red-600 mb-4">Error Loading Content</h1>
-            <p className="text-gray-700 mb-4">{error}</p>
-            <button 
+          <div className="rounded-xl border border-gray-700/70 bg-gray-800/40 p-8">
+            <h2 className="mb-4 text-2xl font-bold text-red-400">
+              Error Loading Content
+            </h2>
+            <p className="mb-4 text-gray-300">{error}</p>
+            <button
               onClick={() => window.location.reload()}
-              className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+              className="rounded-md bg-blue-600 px-4 py-2 text-white transition hover:bg-blue-700"
             >
               Retry
             </button>
           </div>
         ) : (
-          <div className="bg-white shadow-md rounded-lg p-6 md:p-8">
-            <article className="prose prose-lg max-w-none">
-              <ReactMarkdown remarkPlugins={[remarkGfm]}>{aboutContent}</ReactMarkdown>
-            </article>
-          </div>
+          <Reveal>
+            <div className="rounded-xl border border-gray-700/70 bg-gray-800/40 p-6 md:p-8">
+              <article className="prose prose-lg max-w-none">
+                <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                  {aboutContent}
+                </ReactMarkdown>
+              </article>
+            </div>
+          </Reveal>
         )}
       </div>
     </div>

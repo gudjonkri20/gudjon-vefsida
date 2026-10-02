@@ -1,3 +1,26 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  /*
+   * The navbar is transparent over the hero, so the page backdrop has to be
+   * dark at the document level — otherwise the default white body shows
+   * through it, and through the overscroll area.
+   */
+  html {
+    background-color: #111827;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: #111827;
+    color-scheme: dark;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+  }
+}
