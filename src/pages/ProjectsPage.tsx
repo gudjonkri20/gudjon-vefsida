@@ -6,6 +6,7 @@ import Section from '../components/Section';
 import ProjectCard from '../components/ProjectCard';
 import ProjectFilter from '../components/ProjectFilter';
 import Reveal from '../components/Reveal';
+import ConstellationCanvas from '../components/ConstellationCanvas';
 import { getAllProjects } from '../lib/projects';
 import type { ProjectCategory } from '../types';
 import { useCurrentLocale, localizedHref } from '../lib/i18n';
@@ -49,6 +50,12 @@ const ProjectsPage: React.FC = () => {
         eyebrow={t('siteTagline')}
         title={t('projects.title')}
         lede={t('projects.subtitle')}
+        aside={
+          <ConstellationCanvas
+            ariaLabel="A constellation of points cycling between a brain, a neural network, and a speech waveform"
+            className="hidden h-[320px] w-[320px] cursor-crosshair lg:block xl:h-[380px] xl:w-[380px]"
+          />
+        }
       />
 
       <Section tone="paper">
