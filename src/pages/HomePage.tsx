@@ -7,6 +7,7 @@ import Hero from '../components/Hero';
 import Section from '../components/Section';
 import ProjectCard from '../components/ProjectCard';
 import Reveal from '../components/Reveal';
+import ConstellationWatermark from '../components/ConstellationWatermark';
 import { getFeaturedProjects } from '../lib/projects';
 import { services } from '../data/services';
 import { useCurrentLocale, localizedHref } from '../lib/i18n';
@@ -21,7 +22,8 @@ const HomePage: React.FC = () => {
       <SEO path={localizedHref('/', locale)} />
       <Hero />
 
-      <Section tone="paper">
+      <Section tone="paper" className="relative overflow-hidden">
+        <ConstellationWatermark startAt={0} side="right" />
         <Reveal className="flex flex-wrap items-end justify-between gap-4 border-b border-navy-100 pb-6">
           <div className="max-w-2xl">
             <h2 className="font-display text-3xl font-semibold tracking-[-0.02em] md:text-4xl">
@@ -52,7 +54,11 @@ const HomePage: React.FC = () => {
         </div>
       </Section>
 
-      <Section tone="raised" className="border-t border-navy-100">
+      <Section
+        tone="raised"
+        className="relative overflow-hidden border-t border-navy-100"
+      >
+        <ConstellationWatermark startAt={2} side="left" />
         <div className="grid gap-12 lg:grid-cols-12">
           <Reveal className="lg:col-span-5">
             <h2 className="font-display text-3xl font-semibold tracking-[-0.02em] md:text-4xl">

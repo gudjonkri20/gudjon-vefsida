@@ -7,6 +7,7 @@ import ProjectCard from '../components/ProjectCard';
 import ProjectFilter from '../components/ProjectFilter';
 import Reveal from '../components/Reveal';
 import ConstellationCanvas from '../components/ConstellationCanvas';
+import ConstellationWatermark from '../components/ConstellationWatermark';
 import { getAllProjects } from '../lib/projects';
 import type { ProjectCategory } from '../types';
 import { useCurrentLocale, localizedHref } from '../lib/i18n';
@@ -58,7 +59,8 @@ const ProjectsPage: React.FC = () => {
         }
       />
 
-      <Section tone="paper">
+      <Section tone="paper" className="relative overflow-hidden">
+        <ConstellationWatermark startAt={1} side="right" />
         <div className="border-b border-navy-100 pb-3">
           <ProjectFilter
             active={filter}
