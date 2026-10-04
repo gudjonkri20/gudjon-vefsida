@@ -2,7 +2,8 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion, useReducedMotion } from 'framer-motion';
 import CallToAction from './CallToAction';
-import Waveform from './Waveform';
+import ConstellationCanvas from './ConstellationCanvas';
+import { HERO_SHAPES } from '../lib/constellationShapes';
 import { useCurrentLocale, localizedHref } from '../lib/i18n';
 
 // Real counts, kept as one mono line rather than three oversized stat tiles.
@@ -50,14 +51,18 @@ const Hero: React.FC = () => {
             {t('hero.headline')}
           </motion.h1>
 
-          {/* The signature: five syllables of his name, drawn once. */}
-          <motion.div
-            variants={item}
-            className="mt-10 max-w-3xl text-brass-500"
-            role="img"
-            aria-label="Guðjón Kristjánsson"
-          >
-            <Waveform variant="mark" animate={!reduce} />
+          {/*
+            The signature, now as a point cloud: his initials, then Iceland,
+            then the speech waveform the mark has always been. One mark rather
+            than two competing in the same view — the waveform is not lost, it
+            is the resting state.
+          */}
+          <motion.div variants={item} className="mt-8 flex justify-start">
+            <ConstellationCanvas
+              shapes={HERO_SHAPES}
+              ariaLabel="Guðjón Kristjánsson — a constellation cycling between his initials, the coastline of Iceland, and a speech waveform"
+              className="h-[260px] w-full max-w-[520px] cursor-crosshair sm:h-[320px]"
+            />
           </motion.div>
 
           <motion.p

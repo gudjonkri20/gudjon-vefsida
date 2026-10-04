@@ -151,5 +151,65 @@ export const waveform: ShapePainter = (ctx, w, h) => {
   ctx.stroke();
 };
 
-/** Morph order on the projects page. */
+/** The initials, stroked so they sample as an outline rather than a blob. */
+export const initials: ShapePainter = (ctx, w, h) => {
+  const size = Math.min(w, h) * 0.64;
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  ctx.font = `800 ${size}px "Familjen Grotesk Variable", Familjen Grotesk, system-ui, sans-serif`;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  stroke(ctx, 3.2);
+  ctx.strokeText('GK', w / 2, h / 2);
+};
+
+/**
+ * Iceland.
+ *
+ * Twenty-two coastal reference points, normalised from real longitude and
+ * latitude rather than drawn by hand, so the Westfjords, Snæfellsnes and the
+ * eastern fjords land where they actually are:
+ *   x = (lon + 24.6) / 11.2 * 100      y = (66.6 - lat) / 3.3 * 100
+ */
+const ICELAND: Array<[number, number]> = [
+  [17.0, 84.8], // Reykjanes
+  [17.9, 78.8], // Keflavík
+  [5.4, 53.0], // Snæfellsnes tip
+  [23.2, 54.5], // Snæfellsnes base
+  [25.0, 39.4], // Breiðafjörður
+  [9.8, 33.3], // Westfjords, south shore
+  [0.9, 33.3], // Látrabjarg, westernmost point
+  [14.3, 15.2], // Westfjords, north-west
+  [19.6, 4.5], // Hornstrandir
+  [27.7, 27.3], // Westfjords, eastern base
+  [33.9, 30.3], // Húnaflói
+  [40.2, 15.2], // Skagi
+  [50.9, 12.1], // Tröllaskagi
+  [58.0, 24.2], // Eyjafjörður
+  [72.3, 3.0], // Melrakkaslétta
+  [85.7, 15.2], // north-east
+  [98.2, 42.4], // easternmost point
+  [97.3, 57.6], // eastern fjords
+  [90.2, 69.7], // south-east
+  [67.9, 86.4], // south coast
+  [50.0, 97.0], // Vík
+  [36.6, 90.9], // south-west coast
+];
+
+export const iceland: ShapePainter = (ctx, w, h) => {
+  fit(ctx, w, h);
+  stroke(ctx, 2.4);
+
+  ctx.beginPath();
+  ICELAND.forEach(([x, y], i) => {
+    if (i === 0) ctx.moveTo(x, y);
+    else ctx.lineTo(x, y);
+  });
+  ctx.closePath();
+  ctx.stroke();
+};
+
+/** Morph order on the interior page headers. */
 export const SHAPES: ShapePainter[] = [brain, network, waveform];
+
+/** Morph order in the hero: who, where, what he studies. */
+export const HERO_SHAPES: ShapePainter[] = [initials, iceland, waveform];
