@@ -30,6 +30,11 @@ interface Point {
 
 interface Props {
   shapes?: ShapePainter[];
+  /**
+   * Which shape the cycle opens on. The same mark appears on every interior
+   * page, so offsetting the start stops them all showing an identical frame.
+   */
+  startAt?: number;
   className?: string;
   ariaLabel?: string;
 }
@@ -101,6 +106,7 @@ function sampleShape(
  */
 const ConstellationCanvas: React.FC<Props> = ({
   shapes = SHAPES,
+  startAt = 0,
   className = '',
   ariaLabel,
 }) => {
@@ -178,10 +184,11 @@ const ConstellationCanvas: React.FC<Props> = ({
       if (!startedAt) startedAt = time;
       const elapsed = (time - startedAt) / 1000;
       const n = points[0]?.targets.length ?? 1;
-      const pos = reduceMotion ? 0 : cyclePosition(elapsed, n);
+      const pos = startAt + (reduceMotion ? 0 : cyclePosition(elapsed, n));
 
-      const i = Math.min(Math.floor(pos), n - 1);
-      const f = pos - i;
+      const floor = Math.floor(pos);
+      const i = ((floor % n) + n) % n;
+      const f = pos - floor;
       const next = (i + 1) % n;
 
       const c0 = hexToRgb(PALETTE[0]);
@@ -347,7 +354,7 @@ const ConstellationCanvas: React.FC<Props> = ({
       canvas.removeEventListener('pointerleave', onLeave);
       document.removeEventListener('visibilitychange', onVisibility);
     };
-  }, [shapes]);
+  }, [shapes, startAt]);
 
   return (
     <div ref={hostRef} className={className}>

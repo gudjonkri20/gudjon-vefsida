@@ -5,6 +5,7 @@ import PageHeader from '../components/PageHeader';
 import Section from '../components/Section';
 import ServiceCard from '../components/ServiceCard';
 import Reveal from '../components/Reveal';
+import ConstellationCanvas from '../components/ConstellationCanvas';
 import { services } from '../data/services';
 import { useCurrentLocale, localizedHref } from '../lib/i18n';
 
@@ -20,6 +21,13 @@ const ServicesPage: React.FC = () => {
         eyebrow={t('siteTagline')}
         title={t('services.title')}
         lede={t('services.subtitle')}
+        aside={
+          <ConstellationCanvas
+            startAt={1}
+            ariaLabel="A constellation of points cycling between a neural network, a speech waveform, and a brain"
+            className="hidden h-[300px] w-[300px] cursor-crosshair lg:block xl:h-[340px] xl:w-[340px]"
+          />
+        }
       />
 
       <Section tone="paper">

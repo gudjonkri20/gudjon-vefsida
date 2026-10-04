@@ -4,6 +4,7 @@ import { Mail, Phone, Linkedin, Github, MapPin } from 'lucide-react';
 import SEO from '../components/SEO';
 import PageHeader from '../components/PageHeader';
 import Section from '../components/Section';
+import ConstellationCanvas from '../components/ConstellationCanvas';
 import { useCurrentLocale, localizedHref } from '../lib/i18n';
 
 const ContactPage: React.FC = () => {
@@ -46,7 +47,17 @@ const ContactPage: React.FC = () => {
     <>
       <SEO title={t('contact.title')} path={localizedHref('/contact', locale)} />
 
-      <PageHeader title={t('contact.title')} lede={t('contact.subtitle')} />
+      <PageHeader
+        title={t('contact.title')}
+        lede={t('contact.subtitle')}
+        aside={
+          <ConstellationCanvas
+            startAt={2}
+            ariaLabel="A constellation of points cycling between a speech waveform, a brain, and a neural network"
+            className="hidden h-[300px] w-[300px] cursor-crosshair lg:block xl:h-[340px] xl:w-[340px]"
+          />
+        }
+      />
 
       <Section tone="paper">
         {/* A plain list of ways to reach him, on hairlines. No icon bubbles. */}

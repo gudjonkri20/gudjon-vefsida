@@ -4,6 +4,7 @@ import { Mail, Phone, Linkedin, Github } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import PageHeader from './PageHeader';
 import Section from './Section';
+import ConstellationCanvas from './ConstellationCanvas';
 import { useCurrentLocale, localizedHref } from '../lib/i18n';
 
 const EDU_KEYS = ['aarhus', 'ru', 'hi'] as const;
@@ -36,7 +37,17 @@ const AboutSection: React.FC = () => {
 
   return (
     <>
-      <PageHeader title={t('about.title')} lede={t('about.subtitle')} />
+      <PageHeader
+        title={t('about.title')}
+        lede={t('about.subtitle')}
+        aside={
+          <ConstellationCanvas
+            startAt={1}
+            ariaLabel="A constellation of points cycling between a neural network, a speech waveform, and a brain"
+            className="hidden h-[300px] w-[300px] cursor-crosshair lg:block xl:h-[340px] xl:w-[340px]"
+          />
+        }
+      />
 
       <Section tone="paper">
         {/* Portrait sits with the "currently" statement rather than in the
