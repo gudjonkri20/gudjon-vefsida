@@ -21,7 +21,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, compact = false }) =
   const detailHref = localizedHref(`/projects/${project.slug}`, locale);
 
   return (
-    <article className="group relative flex h-full flex-col rounded-lg border border-navy-100 bg-paper-raised p-6 shadow-card transition-shadow duration-200 hover:shadow-card-hover">
+    <article className="group relative flex h-full flex-col rounded-lg border border-navy-100 bg-paper-raised p-6 shadow-card transition-[box-shadow,transform,border-color] duration-200 ease-out hover:-translate-y-1 hover:border-brass-500/45 hover:shadow-card-hover motion-reduce:transform-none motion-reduce:transition-none">
       <div className="flex items-center justify-between gap-3">
         <Badge status={project.status} label={statusLabel} />
         {project.year && (
@@ -77,7 +77,10 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, compact = false }) =
             className="inline-flex items-center gap-1 text-sm text-muted transition-colors hover:text-navy-900"
           >
             {t('projects.viewProject')}
-            <ArrowUpRight size={14} />
+            <ArrowUpRight
+              size={14}
+              className="transition-transform duration-200 ease-out group-hover:-translate-y-px group-hover:translate-x-px motion-reduce:transform-none"
+            />
           </Link>
         )}
       </div>

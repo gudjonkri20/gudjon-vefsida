@@ -15,7 +15,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service }) => {
   const mailto = `mailto:gudjonk6@gmail.com?subject=${subject}`;
 
   return (
-    <article className="flex h-full flex-col rounded-lg border border-navy-100 bg-paper-raised p-8 shadow-card">
+    <article className="flex h-full flex-col rounded-lg border border-navy-100 bg-paper-raised p-8 shadow-card transition-[box-shadow,transform,border-color] duration-200 ease-out hover:-translate-y-1 hover:border-brass-500/45 hover:shadow-card-hover motion-reduce:transform-none motion-reduce:transition-none">
       <h3 className="font-display text-2xl font-semibold tracking-[-0.02em]">
         {service.title[locale]}
       </h3>

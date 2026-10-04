@@ -5,6 +5,7 @@ import PageHeader from '../components/PageHeader';
 import Section from '../components/Section';
 import ProjectCard from '../components/ProjectCard';
 import ProjectFilter from '../components/ProjectFilter';
+import Reveal from '../components/Reveal';
 import { getAllProjects } from '../lib/projects';
 import type { ProjectCategory } from '../types';
 import { useCurrentLocale, localizedHref } from '../lib/i18n';
@@ -63,9 +64,19 @@ const ProjectsPage: React.FC = () => {
           {filtered.length} / {all.length}
         </p>
 
+        {/*
+          Keying on filter as well as slug remounts the grid when the filter
+          changes, so the new set animates in rather than snapping.
+        */}
         <div className="mt-8 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-          {filtered.map((project) => (
-            <ProjectCard key={project.slug} project={project} />
+          {filtered.map((project, i) => (
+            <Reveal
+              key={`${filter}-${project.slug}`}
+              delay={i * 0.06}
+              className="h-full"
+            >
+              <ProjectCard project={project} />
+            </Reveal>
           ))}
         </div>
       </Section>
