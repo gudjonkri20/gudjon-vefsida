@@ -65,11 +65,18 @@ export default {
           '0%': { strokeDashoffset: '1' },
           '100%': { strokeDashoffset: '0' },
         },
+        // The chat waveform breathing while a reply is being written.
+        // Amplitude only: the mark keeps its shape, it just gets louder.
+        'speak': {
+          '0%, 100%': { transform: 'scaleY(0.3)' },
+          '50%': { transform: 'scaleY(1)' },
+        },
       },
       animation: {
         rise: 'rise 0.55s cubic-bezier(0.22, 1, 0.36, 1) both',
         fade: 'fade 0.6s ease-out both',
         trace: 'trace 1.6s cubic-bezier(0.4, 0, 0.2, 1) both',
+        speak: 'speak 0.9s ease-in-out infinite',
       },
       boxShadow: {
         // Navy-tinted, not black — a black shadow on paper reads as dirt.

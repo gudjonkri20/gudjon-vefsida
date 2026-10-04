@@ -4,6 +4,8 @@ import { useTranslation } from 'react-i18next';
 import { ArrowUpRight, ExternalLink } from 'lucide-react';
 import Badge from './Badge';
 import TechTag from './TechTag';
+import ConstellationCanvas from './ConstellationCanvas';
+import { CATEGORY_SHAPE } from '../lib/constellationShapes';
 import type { Project } from '../types';
 import { useCurrentLocale, localizedHref } from '../lib/i18n';
 
@@ -24,9 +26,24 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, compact = false }) =
     <article className="group relative flex h-full flex-col rounded-lg border border-navy-100 bg-paper-raised p-6 shadow-card transition-[box-shadow,transform,border-color] duration-200 ease-out hover:-translate-y-1 hover:border-brass-500/45 hover:shadow-card-hover motion-reduce:transform-none motion-reduce:transition-none">
       <div className="flex items-center justify-between gap-3">
         <Badge status={project.status} label={statusLabel} />
-        {project.year && (
-          <span className="font-mono text-xs text-muted/70">{project.year}</span>
-        )}
+        <div className="flex flex-none items-center gap-2.5">
+          {project.year && (
+            <span className="whitespace-nowrap font-mono text-xs text-muted/70">
+              {project.year}
+            </span>
+          )}
+          {/*
+            A small mark per category, in the same language as the hero.
+            Sized at 48px: bigger reads more clearly but squeezes the status
+            badge onto two lines in a three-column grid.
+          */}
+          <ConstellationCanvas
+            shapes={[CATEGORY_SHAPE[project.category] ?? CATEGORY_SHAPE.ml]}
+            pointCount={34}
+            linkDistance={13}
+            className="h-12 w-12 flex-none opacity-70 transition-opacity duration-300 group-hover:opacity-100"
+          />
+        </div>
       </div>
 
       <h3 className="mt-5 font-display text-lg font-semibold leading-snug tracking-[-0.01em]">

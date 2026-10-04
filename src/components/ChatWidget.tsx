@@ -177,8 +177,9 @@ const ChatWidget: React.FC = () => {
             {/* Header */}
             <div className="flex items-center justify-between gap-3 border-b border-navy-100 px-4 py-3">
               <div className="flex min-w-0 items-center gap-3">
+                {/* The mark pulses while a reply is being written. */}
                 <span className="w-8 flex-none text-brass-500" aria-hidden>
-                  <Waveform />
+                  <Waveform speaking={pending} />
                 </span>
                 <div className="min-w-0">
                   <div className="font-display text-sm font-semibold text-navy-900">

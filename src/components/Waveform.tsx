@@ -66,12 +66,18 @@ interface WaveformProps {
   variant?: 'mark' | 'rule';
   /** Draw the trace on mount. Only ever used once per page, in the hero. */
   animate?: boolean;
+  /**
+   * Pulse the amplitude continuously. Used while the assistant is composing
+   * a reply, so the mark reads as the site actually speaking.
+   */
+  speaking?: boolean;
   className?: string;
 }
 
 const Waveform: React.FC<WaveformProps> = ({
   variant = 'rule',
   animate = false,
+  speaking = false,
   className,
 }) => {
   const amplitude = variant === 'mark' ? 34 : 11;
@@ -100,8 +106,18 @@ const Waveform: React.FC<WaveformProps> = ({
         // the draw-on animation works whatever the real path length is. With a
         // hardcoded dash the tail of the wave renders as a permanent gap.
         pathLength={1}
-        className={clsx(animate && 'animate-trace')}
-        style={animate ? { strokeDasharray: 1 } : undefined}
+        className={clsx(
+          animate && 'animate-trace',
+          speaking && 'animate-speak motion-reduce:animate-none',
+        )}
+        style={{
+          ...(animate ? { strokeDasharray: 1 } : null),
+          // scaleY has to pivot on the baseline box, not the glyph bounds,
+          // or the wave walks up the svg as it pulses.
+          ...(speaking
+            ? { transformBox: 'view-box' as const, transformOrigin: 'center' }
+            : null),
+        }}
       />
     </svg>
   );

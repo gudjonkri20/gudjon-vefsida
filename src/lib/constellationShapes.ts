@@ -208,6 +208,98 @@ export const iceland: ShapePainter = (ctx, w, h) => {
   ctx.stroke();
 };
 
+/* ---------------------------------------------------------------------- *
+ * Small marks, one per project category. Drawn simply: on a card these are
+ * sampled down to a few dozen points, so detail would only turn to mush.
+ * ---------------------------------------------------------------------- */
+
+/** Speech bubble — conversational work. */
+export const bubble: ShapePainter = (ctx, w, h) => {
+  fit(ctx, w, h);
+  stroke(ctx, 3);
+  ctx.beginPath();
+  ctx.moveTo(18, 22);
+  ctx.lineTo(82, 22);
+  ctx.quadraticCurveTo(90, 22, 90, 32);
+  ctx.lineTo(90, 62);
+  ctx.quadraticCurveTo(90, 72, 82, 72);
+  ctx.lineTo(44, 72);
+  ctx.lineTo(28, 88);
+  ctx.lineTo(30, 72);
+  ctx.lineTo(18, 72);
+  ctx.quadraticCurveTo(10, 72, 10, 62);
+  ctx.lineTo(10, 32);
+  ctx.quadraticCurveTo(10, 22, 18, 22);
+  ctx.closePath();
+  ctx.stroke();
+};
+
+/** A cycle of arrows — automation. */
+export const gear: ShapePainter = (ctx, w, h) => {
+  fit(ctx, w, h);
+  stroke(ctx, 3);
+  ctx.beginPath();
+  ctx.arc(50, 50, 32, Math.PI * 0.15, Math.PI * 1.6);
+  ctx.stroke();
+  // Arrowhead closing the loop.
+  ctx.beginPath();
+  ctx.moveTo(74, 28);
+  ctx.lineTo(82, 36);
+  ctx.lineTo(70, 42);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.arc(50, 50, 12, 0, Math.PI * 2);
+  ctx.stroke();
+};
+
+/** Bar chart — dashboards. */
+export const bars: ShapePainter = (ctx, w, h) => {
+  fit(ctx, w, h);
+  stroke(ctx, 4);
+  const heights = [34, 58, 26, 70, 46];
+  heights.forEach((bh, i) => {
+    const x = 16 + i * 17;
+    ctx.beginPath();
+    ctx.moveTo(x, 84);
+    ctx.lineTo(x, 84 - bh);
+    ctx.stroke();
+  });
+  ctx.lineWidth = 2.4;
+  ctx.beginPath();
+  ctx.moveTo(8, 90);
+  ctx.lineTo(92, 90);
+  ctx.stroke();
+};
+
+/** Stacked cylinders — data engineering. */
+export const database: ShapePainter = (ctx, w, h) => {
+  fit(ctx, w, h);
+  stroke(ctx, 3);
+  for (const y of [26, 50, 74]) {
+    ctx.beginPath();
+    ctx.ellipse(50, y, 30, 10, 0, 0, Math.PI * 2);
+    ctx.stroke();
+  }
+  ctx.beginPath();
+  ctx.moveTo(20, 26);
+  ctx.lineTo(20, 74);
+  ctx.moveTo(80, 26);
+  ctx.lineTo(80, 74);
+  ctx.stroke();
+};
+
+/** Which mark a project card shows, by category. */
+export const CATEGORY_SHAPE: Record<string, ShapePainter> = {
+  chatbot: bubble,
+  mcp: network,
+  ml: brain,
+  automation: gear,
+  dashboards: bars,
+  'data-eng': database,
+  research: waveform,
+  side: initials,
+};
+
 /** Morph order on the interior page headers. */
 export const SHAPES: ShapePainter[] = [brain, network, waveform];
 

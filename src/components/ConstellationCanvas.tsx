@@ -35,6 +35,13 @@ interface Props {
    * page, so offsetting the start stops them all showing an identical frame.
    */
   startAt?: number;
+  /**
+   * Override the point budget. A card-sized mark needs far fewer than a
+   * header one, or it samples into a solid blob.
+   */
+  pointCount?: number;
+  /** Override the link radius, which has to shrink with the point count. */
+  linkDistance?: number;
   className?: string;
   ariaLabel?: string;
 }
@@ -107,6 +114,8 @@ function sampleShape(
 const ConstellationCanvas: React.FC<Props> = ({
   shapes = SHAPES,
   startAt = 0,
+  pointCount,
+  linkDistance,
   className = '',
   ariaLabel,
 }) => {
@@ -120,6 +129,11 @@ const ConstellationCanvas: React.FC<Props> = ({
 
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
+
+    const linkDist = linkDistance ?? LINK_DIST;
+    // A card mark is a fraction of a header one, so the repulsion radius has
+    // to shrink with it or a hover scatters the whole shape off the card.
+    const cursorRadius = linkDistance ? linkDistance * 2.3 : CURSOR_RADIUS;
 
     const reduceMotion = window.matchMedia(
       '(prefers-reduced-motion: reduce)',
@@ -145,7 +159,7 @@ const ConstellationCanvas: React.FC<Props> = ({
       canvas.style.height = `${h}px`;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-      const count = w < 640 ? 150 : 280;
+      const count = pointCount ?? (w < 640 ? 150 : 280);
       const clouds = shapes
         .map((s) => sampleShape(s, w, h, count))
         .filter((c) => c.length === count);
@@ -221,8 +235,8 @@ const ConstellationCanvas: React.FC<Props> = ({
           const dx = p.x - mouse.x;
           const dy = p.y - mouse.y;
           const d = Math.hypot(dx, dy);
-          if (d < CURSOR_RADIUS && d > 0.01) {
-            const k = 1 - d / CURSOR_RADIUS;
+          if (d < cursorRadius && d > 0.01) {
+            const k = 1 - d / cursorRadius;
             p.vx += (dx / d) * k * k * CURSOR_FORCE;
             p.vy += (dy / d) * k * k * CURSOR_FORCE;
           }
@@ -236,12 +250,12 @@ const ConstellationCanvas: React.FC<Props> = ({
 
       // Bucket into LINK_DIST cells so linking stays near-linear rather than
       // testing every pair.
-      const cols = Math.max(1, Math.ceil(w / LINK_DIST));
-      const rows = Math.max(1, Math.ceil(h / LINK_DIST));
+      const cols = Math.max(1, Math.ceil(w / linkDist));
+      const rows = Math.max(1, Math.ceil(h / linkDist));
       const grid: Point[][] = Array.from({ length: cols * rows }, () => []);
       for (const p of points) {
-        const gx = Math.min(cols - 1, Math.max(0, Math.floor(p.x / LINK_DIST)));
-        const gy = Math.min(rows - 1, Math.max(0, Math.floor(p.y / LINK_DIST)));
+        const gx = Math.min(cols - 1, Math.max(0, Math.floor(p.x / linkDist)));
+        const gy = Math.min(rows - 1, Math.max(0, Math.floor(p.y / linkDist)));
         grid[gy * cols + gx].push(p);
       }
 
@@ -256,8 +270,8 @@ const ConstellationCanvas: React.FC<Props> = ({
         const dx = a.x - b.x;
         const dy = a.y - b.y;
         const d2 = dx * dx + dy * dy;
-        if (d2 > LINK_DIST * LINK_DIST) return;
-        const alpha = (1 - Math.sqrt(d2) / LINK_DIST) * 0.55;
+        if (d2 > linkDist * linkDist) return;
+        const alpha = (1 - Math.sqrt(d2) / linkDist) * 0.55;
         ctx.strokeStyle = `rgba(${stroke},${alpha})`;
         ctx.beginPath();
         ctx.moveTo(a.x, a.y);
@@ -354,7 +368,7 @@ const ConstellationCanvas: React.FC<Props> = ({
       canvas.removeEventListener('pointerleave', onLeave);
       document.removeEventListener('visibilitychange', onVisibility);
     };
-  }, [shapes, startAt]);
+  }, [shapes, startAt, pointCount, linkDistance]);
 
   return (
     <div ref={hostRef} className={className}>
