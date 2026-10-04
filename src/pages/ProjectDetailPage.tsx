@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { ArrowLeft, ExternalLink } from 'lucide-react';
@@ -7,6 +7,8 @@ import Section from '../components/Section';
 import Badge from '../components/Badge';
 import TechTag from '../components/TechTag';
 import NotFoundPage from './NotFoundPage';
+import ConstellationCanvas from '../components/ConstellationCanvas';
+import { CATEGORY_SHAPE, SHAPES } from '../lib/constellationShapes';
 import { getProjectBySlug } from '../lib/projects';
 import { useCurrentLocale, localizedHref } from '../lib/i18n';
 
@@ -16,6 +18,12 @@ const ProjectDetailPage: React.FC = () => {
   const locale = useCurrentLocale();
 
   const project = slug ? getProjectBySlug(slug) : undefined;
+
+  // Declared before the early return below: hooks cannot run conditionally.
+  const detailShapes = useMemo(
+    () => [(project && CATEGORY_SHAPE[project.category]) || SHAPES[0]],
+    [project],
+  );
 
   if (!project) {
     return <NotFoundPage />;
@@ -31,8 +39,20 @@ const ProjectDetailPage: React.FC = () => {
         path={localizedHref(`/projects/${project.slug}`, locale)}
       />
 
-      <header className="bg-navy-900 text-white">
-        <div className="mx-auto max-w-6xl px-5 py-14 sm:px-8 md:py-16">
+      <header className="relative overflow-hidden bg-navy-900 text-white">
+        {/* The project's own category mark, same language as the grid. */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute -right-10 top-1/2 hidden -translate-y-1/2 opacity-60 lg:block"
+        >
+          <ConstellationCanvas
+            shapes={detailShapes}
+            pointCount={160}
+            linkDistance={34}
+            className="h-[260px] w-[260px]"
+          />
+        </div>
+        <div className="relative mx-auto max-w-6xl px-5 py-14 sm:px-8 md:py-16">
           <Link
             to={localizedHref('/projects', locale)}
             className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.1em] text-navy-200 transition-colors hover:text-brass-400"

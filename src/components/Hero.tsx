@@ -57,11 +57,16 @@ const Hero: React.FC = () => {
             than two competing in the same view — the waveform is not lost, it
             is the resting state.
           */}
-          <motion.div variants={item} className="mt-8 flex justify-start">
+          {/*
+            Kept short and wide. A tall square canvas left a hole of empty
+            navy between the headline and the subline and pushed the call to
+            action below the fold; the mark it replaced was a thin rule.
+          */}
+          <motion.div variants={item} className="mt-6 flex justify-start">
             <ConstellationCanvas
               shapes={HERO_SHAPES}
               ariaLabel="Guðjón Kristjánsson — a constellation cycling between his initials, the coastline of Iceland, and a speech waveform"
-              className="h-[260px] w-full max-w-[520px] cursor-crosshair sm:h-[320px]"
+              className="h-[180px] w-full max-w-[440px] cursor-crosshair sm:h-[200px]"
             />
           </motion.div>
 

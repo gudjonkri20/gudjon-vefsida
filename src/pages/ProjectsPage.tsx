@@ -8,6 +8,7 @@ import ProjectFilter from '../components/ProjectFilter';
 import Reveal from '../components/Reveal';
 import ConstellationCanvas from '../components/ConstellationCanvas';
 import ConstellationWatermark from '../components/ConstellationWatermark';
+import { SHAPES, CATEGORY_SHAPE } from '../lib/constellationShapes';
 import { getAllProjects } from '../lib/projects';
 import type { ProjectCategory } from '../types';
 import { useCurrentLocale, localizedHref } from '../lib/i18n';
@@ -43,6 +44,18 @@ const ProjectsPage: React.FC = () => {
     return all.filter((p) => p.category === filter);
   }, [filter, all]);
 
+  /**
+   * The header mark answers the filter: pick a category and the constellation
+   * settles into that category's shape instead of cycling through all three.
+   *
+   * Memoised deliberately — a fresh array literal would be a new `shapes`
+   * reference on every render and would restart the canvas each time.
+   */
+  const headerShapes = useMemo(
+    () => (filter === 'all' ? SHAPES : [CATEGORY_SHAPE[filter] ?? SHAPES[0]]),
+    [filter],
+  );
+
   return (
     <>
       <SEO title={t('projects.title')} path={localizedHref('/projects', locale)} />
@@ -53,7 +66,8 @@ const ProjectsPage: React.FC = () => {
         lede={t('projects.subtitle')}
         aside={
           <ConstellationCanvas
-            ariaLabel="A constellation of points cycling between a brain, a neural network, and a speech waveform"
+            shapes={headerShapes}
+            ariaLabel="A constellation of points showing the shape of the selected project category"
             className="hidden h-[320px] w-[320px] cursor-crosshair lg:block xl:h-[380px] xl:w-[380px]"
           />
         }
