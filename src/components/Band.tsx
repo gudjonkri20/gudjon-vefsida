@@ -63,7 +63,11 @@ const Band: React.FC<BandProps> = ({ as: Tag = 'section', className, children })
     const overlap = box.bottom - next.getBoundingClientRect().top;
     const span = box.bottom - MASTHEAD;
     const progress = span > 0 ? Math.min(1, Math.max(0, overlap / span)) : 0;
-    covered.set(progress);
+    if (progress !== covered.get()) {
+      covered.set(progress);
+      // A constellation inside the band loosens its shape by this much.
+      band.dispatchEvent(new CustomEvent<number>('bandprogress', { detail: progress }));
+    }
 
     // Fully covered: stop painting it, take its links out of the tab order,
     // and tell any canvas inside to stop drawing frames nobody can see. A
@@ -110,6 +114,7 @@ const Band: React.FC<BandProps> = ({ as: Tag = 'section', className, children })
     <Tag ref={ref} data-band className={clsx('band', className)}>
       <motion.div
         ref={contentRef}
+        className="relative"
         style={{ scale, opacity, y, transformOrigin: '50% 0%' }}
       >
         {children}

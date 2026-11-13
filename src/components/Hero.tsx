@@ -1,10 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { motion, useReducedMotion } from 'framer-motion';
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
+import { ArrowUp, ArrowUpRight, MessageCircle } from 'lucide-react';
 import Band from './Band';
 import CallToAction from './CallToAction';
 import ConstellationCanvas from './ConstellationCanvas';
 import { HERO_SHAPES } from '../lib/constellationShapes';
+import { getAllProjects } from '../lib/projects';
 import { useCurrentLocale, localizedHref } from '../lib/i18n';
 
 // Real counts, kept as one mono line rather than three oversized stat tiles.
@@ -13,6 +15,8 @@ const INDEX = [
   { value: 4, key: 'mcp' },
   { value: 3, key: 'chatbots' },
 ] as const;
+
+const EASE = [0.22, 1, 0.36, 1] as const;
 
 /** Matches Tailwind's `lg`, where the hero becomes two columns. */
 const WIDE_QUERY = '(min-width: 1024px)';
@@ -33,21 +37,167 @@ const useWideLayout = (): boolean => {
   return wide;
 };
 
+/**
+ * The things a visitor can go and use right now: public projects with a live
+ * address. Read from the project data, so it stays true as that changes.
+ */
+const LIVE = getAllProjects()
+  .filter((p) => p.status === 'public' && p.link)
+  .map((p) => ({
+    slug: p.slug,
+    href: p.link as string,
+    host: new URL(p.link as string).hostname.replace(/^www\./, ''),
+  }));
+
+/**
+ * Ask his AI, from the first screen.
+ *
+ * The site belongs to someone who builds assistants, and it has one running:
+ * until now behind a button in the corner. This puts it where the claim is
+ * made. The field shows a real question, and sending it empty asks exactly
+ * that question, so trying it costs one click and no thought.
+ *
+ * It hands the question to ChatWidget through a window event rather than
+ * shared state: the two sit in different parts of the tree and nothing else
+ * needs to know.
+ */
+const AskBar: React.FC = () => {
+  const { t } = useTranslation();
+  const reduce = useReducedMotion();
+  const [value, setValue] = useState('');
+  const [focused, setFocused] = useState(false);
+  const [index, setIndex] = useState(0);
+
+  const suggestions = t('chat.suggestions', { returnObjects: true }) as unknown as string[];
+  const example = suggestions[index % suggestions.length] ?? '';
+
+  // Rotate the example while the field is idle. It stops the moment someone
+  // focuses or types, so the text is never changing under a reader's cursor.
+  useEffect(() => {
+    if (reduce || focused || value) return;
+    const id = window.setInterval(() => setIndex((i) => i + 1), 3600);
+    return () => window.clearInterval(id);
+  }, [reduce, focused, value]);
+
+  // While this bar is on screen it is the way to ask, so the floating
+  // launcher steps aside: two "ask" controls on one screen is one too many.
+  // "On screen" needs both tests. The band pins, so the bar keeps
+  // intersecting the viewport after the page has slid over it; the band's
+  // own progress says when it has actually been covered.
+  const formRef = useRef<HTMLFormElement>(null);
+  useEffect(() => {
+    const form = formRef.current;
+    if (!form) return;
+
+    let inView = false;
+    let coveredBy = 0;
+    const publish = () =>
+      window.dispatchEvent(
+        new CustomEvent<boolean>('gk:askbar', { detail: inView && coveredBy < 0.3 }),
+      );
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        inView = entry.isIntersecting;
+        publish();
+      },
+      { threshold: 0.6 },
+    );
+    observer.observe(form);
+
+    const band = form.closest('[data-band]');
+    const onProgress = (e: Event) => {
+      coveredBy = (e as CustomEvent<number>).detail;
+      publish();
+    };
+    band?.addEventListener('bandprogress', onProgress);
+
+    return () => {
+      observer.disconnect();
+      band?.removeEventListener('bandprogress', onProgress);
+      window.dispatchEvent(new CustomEvent<boolean>('gk:askbar', { detail: false }));
+    };
+  }, []);
+
+  const submit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const question = value.trim() || example;
+    if (!question) return;
+    window.dispatchEvent(new CustomEvent<string>('gk:ask', { detail: question }));
+    setValue('');
+  };
+
+  return (
+    <form
+      ref={formRef}
+      onSubmit={submit}
+      role="search"
+      className="flex h-[3.25rem] max-w-xl items-center gap-3 rounded-md border border-white/15 bg-white/[0.04] pl-4 pr-1 transition-colors duration-150 focus-within:border-brass-400/70 focus-within:bg-white/[0.07]"
+    >
+      <MessageCircle size={17} className="flex-none text-brass-400" aria-hidden />
+      <div className="relative min-w-0 flex-1 self-stretch">
+        <input
+          type="text"
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
+          onFocus={() => setFocused(true)}
+          onBlur={() => setFocused(false)}
+          aria-label={t('chat.title')}
+          enterKeyHint="send"
+          autoComplete="off"
+          className="h-full w-full bg-transparent text-base text-white focus:outline-none md:text-[0.9375rem]"
+        />
+        {/* The example stands in for a placeholder so it can cross-fade. */}
+        {!value && (
+          <span
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0 flex items-center overflow-hidden"
+          >
+            <AnimatePresence mode="wait" initial={false}>
+              <motion.span
+                key={example}
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -6 }}
+                transition={{ duration: 0.2, ease: EASE }}
+                className="truncate text-base text-navy-200 md:text-[0.9375rem]"
+              >
+                {/* The label is dropped on a phone: at 390px it left room for
+                    only half of the question it introduces. */}
+                <span className="mr-2 hidden font-mono text-[0.6875rem] uppercase tracking-[0.12em] text-brass-400 sm:inline">
+                  {t('chat.title')}
+                </span>
+                {example}
+              </motion.span>
+            </AnimatePresence>
+          </span>
+        )}
+      </div>
+      <button
+        type="submit"
+        aria-label={t('chat.send')}
+        className="press grid h-11 w-11 flex-none place-items-center rounded bg-white/10 text-white hover:bg-brass-500 hover:text-navy-950 active:bg-brass-500 active:text-navy-950"
+      >
+        <ArrowUp size={17} />
+      </button>
+    </form>
+  );
+};
+
 const Hero: React.FC = () => {
   const { t } = useTranslation();
   const locale = useCurrentLocale();
   const reduce = useReducedMotion();
   const wide = useWideLayout();
+  const slotRef = useRef<HTMLDivElement>(null);
+
+  const headline = t('hero.headline');
 
   const item = reduce
     ? { hidden: { opacity: 1, y: 0 }, show: { opacity: 1, y: 0 } }
     : {
         hidden: { opacity: 0, y: 16 },
-        show: {
-          opacity: 1,
-          y: 0,
-          transition: { duration: 0.55, ease: [0.22, 1, 0.36, 1] as const },
-        },
+        show: { opacity: 1, y: 0, transition: { duration: 0.55, ease: EASE } },
       };
 
   const container = reduce
@@ -57,103 +207,170 @@ const Hero: React.FC = () => {
         show: { opacity: 1, transition: { staggerChildren: 0.09 } },
       };
 
+  // The headline is the lead, so it gets the one treatment nothing else has:
+  // each word rises out from behind its own baseline, 70ms apart. Everything
+  // after it is support and only fades up.
+  const words = reduce
+    ? { hidden: {}, show: {} }
+    : { hidden: {}, show: { transition: { staggerChildren: 0.07 } } };
+  const word = reduce
+    ? { hidden: { y: 0 }, show: { y: 0 } }
+    : {
+        hidden: { y: '115%' },
+        show: { y: 0, transition: { duration: 0.8, ease: EASE } },
+      };
+
   return (
     <Band as="section" className="bg-navy-900 text-white">
-      <div className="mx-auto max-w-6xl px-5 pb-20 pt-20 sm:px-8 md:pb-24 md:pt-24 lg:pt-28">
-        <motion.div initial="hidden" animate="show" variants={container}>
-          {/*
-            Two columns from `lg` up: the argument on the left, the mark on
-            the right.
+      {/*
+        A stage, not a strip: from `lg` up the band is the full height of the
+        window under the masthead, so the first screen is one composed thing
+        and the next section starts exactly at the fold.
 
-            The mark used to sit between the headline and the subline, in a
-            200px slot. That cost three things. The sentence the page exists
-            to say — what he builds, then what that means, then what to do
-            about it — was cut in half by a picture. The signature element
-            was the smallest thing in the band, while the right half of a
-            1440px hero stayed empty. And on a phone the two buttons landed
-            below the first screen.
+        data-constellation-scope: the field sits behind the text, so the
+        pointer is read here, anywhere in the hero, instead of on the canvas.
+      */}
+      <div
+        data-constellation-scope
+        className="relative lg:flex lg:min-h-[calc(100svh-65px)] lg:flex-col lg:justify-center"
+      >
+        {/*
+          The signature, as a field. The canvas covers the whole band; the
+          shape itself is drawn inside the slot in the right-hand column (see
+          below). On arrival the points are scattered across the band and
+          gather into his initials. As the page slides over the band they let
+          go and drift back out, and re-form if you scroll back up. A few
+          faint stars never join the shape and just keep the navy from being
+          empty.
+        */}
+        <ConstellationCanvas
+          shapes={HERO_SHAPES}
+          shapeSlot={slotRef}
+          ariaLabel="Guðjón Kristjánsson — a constellation that gathers into his initials, then the coastline of Iceland, then a speech waveform"
+          pointCount={wide ? 260 : undefined}
+          linkDistance={wide ? 34 : 24}
+          cursorRadius={wide ? 130 : 90}
+          className="pointer-events-none absolute inset-0"
+        />
 
-            Now the left column reads straight through to the buttons, the
-            mark has the same seat it has on every interior page (right of
-            the title) at more than twice the size, and on a phone it follows
-            the buttons instead of standing in front of them.
-          */}
-          <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_auto] lg:items-center lg:gap-x-12">
-            <div>
-              <motion.p variants={item} className="eyebrow-on-navy">
-                {t('hero.eyebrow')}
-              </motion.p>
+        <div className="relative mx-auto w-full max-w-6xl px-5 pb-16 pt-16 sm:px-8 md:pb-20 md:pt-20 lg:py-16">
+          <motion.div initial="hidden" animate="show" variants={container}>
+            <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_auto] lg:items-center lg:gap-x-12">
+              <div>
+                <motion.p variants={item} className="eyebrow-on-navy">
+                  {t('hero.eyebrow')}
+                </motion.p>
 
-              <motion.h1
-                variants={item}
-                className="mt-6 max-w-4xl text-balance font-display text-[clamp(2.5rem,7vw,4.75rem)] font-semibold leading-[1.02] tracking-[-0.03em] text-white"
-              >
-                {t('hero.headline')}
-              </motion.h1>
-
-              <motion.p
-                variants={item}
-                className="mt-7 max-w-prose font-serif text-lg leading-relaxed text-navy-100 sm:text-xl"
-              >
-                {t('hero.subline')}
-              </motion.p>
-
-              <motion.div variants={item} className="mt-9 flex flex-wrap gap-3">
-                <CallToAction
-                  to={localizedHref('/projects', locale)}
-                  variant="primary"
-                  onNavy
-                  withArrow
+                <motion.h1
+                  variants={words}
+                  aria-label={headline}
+                  className="mt-6 max-w-4xl text-balance font-display text-[clamp(2.5rem,7vw,4.75rem)] font-semibold leading-[1.02] tracking-[-0.03em] text-white"
                 >
-                  {t('hero.ctaPrimary')}
-                </CallToAction>
-                <CallToAction
-                  to={localizedHref('/contact', locale)}
-                  variant="secondary"
-                  onNavy
+                  {headline.split(' ').map((w, i) => (
+                    <React.Fragment key={`${w}-${i}`}>
+                      {/* The mask. The padding and matching negative margin
+                          keep descenders from being clipped without moving
+                          the baseline or the line height. */}
+                      <span
+                        aria-hidden="true"
+                        className="-mx-[0.04em] -mb-[0.14em] inline-block overflow-hidden px-[0.04em] pb-[0.14em] align-bottom"
+                      >
+                        <motion.span variants={word} className="inline-block">
+                          {w}
+                        </motion.span>
+                      </span>{' '}
+                    </React.Fragment>
+                  ))}
+                </motion.h1>
+
+                <motion.p
+                  variants={item}
+                  className="mt-7 max-w-prose font-serif text-lg leading-relaxed text-navy-100 sm:text-xl"
                 >
-                  {t('hero.ctaSecondary')}
-                </CallToAction>
-              </motion.div>
+                  {t('hero.subline')}
+                </motion.p>
+
+                <motion.div variants={item} className="mt-9 flex flex-wrap gap-3">
+                  <CallToAction
+                    to={localizedHref('/projects', locale)}
+                    variant="primary"
+                    onNavy
+                    withArrow
+                  >
+                    {t('hero.ctaPrimary')}
+                  </CallToAction>
+                  <CallToAction
+                    to={localizedHref('/contact', locale)}
+                    variant="secondary"
+                    onNavy
+                  >
+                    {t('hero.ctaSecondary')}
+                  </CallToAction>
+                </motion.div>
+
+                <motion.div variants={item} className="mt-6">
+                  <AskBar />
+                </motion.div>
+              </div>
+
+              {/*
+                The slot: an empty box that only says where the shape goes.
+                On a phone it is kept narrow and pulled left, because shapes
+                are fitted to the box height and centred in its width, and
+                the mark should sit on the same edge as the text above it.
+              */}
+              <div
+                ref={slotRef}
+                aria-hidden="true"
+                className="-ml-12 mt-10 h-[180px] w-[260px] sm:-ml-10 sm:h-[200px] lg:ml-0 lg:mt-0 lg:h-[340px] lg:w-[340px] xl:h-[440px] xl:w-[440px]"
+              />
             </div>
 
             {/*
-              The signature, as a point cloud: his initials, then Iceland,
-              then the speech waveform the mark has always been.
-
-              The link radius is set per size. Too long and every point
-              reaches most of the others, which filled the initials in to a
-              solid knot; short enough that only neighbours along the stroke
-              connect, and the letters, the coastline and the wave each hold
-              their outline.
-
-              On a phone the shapes are fitted to the canvas height and
-              centred in its width, so the box is kept narrow and pulled left
-              to put the mark on the same edge as the text above it.
+              The proof line. Counts on the left; on the right, the systems
+              a visitor can open in another tab and use this minute.
             */}
-            <motion.div variants={item} className="mt-12 flex justify-start lg:mt-0">
-              <ConstellationCanvas
-                shapes={HERO_SHAPES}
-                ariaLabel="Guðjón Kristjánsson — a constellation cycling between his initials, the coastline of Iceland, and a speech waveform"
-                pointCount={wide ? 260 : undefined}
-                linkDistance={wide ? 34 : 24}
-                className="-ml-12 h-[180px] w-[260px] cursor-crosshair sm:-ml-10 sm:h-[200px] lg:ml-0 lg:h-[340px] lg:w-[340px] xl:h-[440px] xl:w-[440px]"
-              />
-            </motion.div>
-          </div>
+            <motion.div
+              variants={item}
+              className="rule-on-navy mt-10 flex flex-col gap-x-10 gap-y-4 pt-6 font-mono text-xs text-navy-200 lg:mt-14 lg:flex-row lg:items-center lg:justify-between"
+            >
+              <ul className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:gap-x-7">
+                {INDEX.map(({ value, key }) => (
+                  <li key={key}>
+                    <span className="text-brass-400">{value}</span>{' '}
+                    {t(`hero.stats.${key}`)}
+                  </li>
+                ))}
+              </ul>
 
-          <motion.ul
-            variants={item}
-            className="rule-on-navy mt-12 flex flex-col gap-2 pt-6 font-mono text-xs text-navy-200 sm:flex-row sm:flex-wrap sm:gap-x-7 lg:mt-16"
-          >
-            {INDEX.map(({ value, key }) => (
-              <li key={key}>
-                <span className="text-brass-400">{value}</span>{' '}
-                {t(`hero.stats.${key}`)}
-              </li>
-            ))}
-          </motion.ul>
-        </motion.div>
+              {LIVE.length > 0 && (
+                <div className="flex flex-wrap items-center gap-x-6 gap-y-1">
+                  <span className="inline-flex basis-full items-center gap-2 uppercase tracking-[0.12em] text-brass-400 sm:basis-auto">
+                    {/* A steady dot, not a pulsing one: "live" is a fact
+                        about these systems, not an alert. */}
+                    <span className="h-1.5 w-1.5 rounded-full bg-brass-400" aria-hidden />
+                    {t('hero.live')}
+                  </span>
+                  {LIVE.map(({ slug, href, host }) => (
+                    <a
+                      key={slug}
+                      href={href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="group inline-flex min-h-11 items-center gap-1 text-white transition-colors hover:text-brass-400"
+                    >
+                      {host}
+                      <ArrowUpRight
+                        size={13}
+                        className="text-navy-200 transition-[color,transform] duration-200 group-hover:-translate-y-px group-hover:translate-x-px group-hover:text-brass-400"
+                      />
+                    </a>
+                  ))}
+                </div>
+              )}
+            </motion.div>
+          </motion.div>
+        </div>
       </div>
     </Band>
   );

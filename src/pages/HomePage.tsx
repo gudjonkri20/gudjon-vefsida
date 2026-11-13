@@ -48,13 +48,26 @@ const HomePage: React.FC = () => {
           </Link>
         </Reveal>
 
-        <div className="mt-10 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-          {featured.map((project, i) => (
-            // Stagger by column, not by index: a card in the second row
-            // should not wait on the whole first row before it appears.
-            <Reveal key={project.slug} delay={(i % 3) * 0.08} className="h-full">
+        {/*
+          One list, two layouts.
+
+          From md up it is a grid. On a phone it is a row you swipe: five
+          compact cards stacked ran to about 1,500px of scrolling past things
+          that all look alike, and a row puts each one a thumb-flick away with
+          the next always peeking in at the edge. It is the browser's own
+          scrolling with snap points, so the momentum, the rubber-band at the
+          ends and the 1:1 tracking are the phone's, not an imitation.
+
+          The whole list rises in once (Reveal wraps the container). Cards
+          further along the row must not wait to fade in as they are swiped
+          on screen, which is what a per-card reveal would do here.
+        */}
+        <Reveal>
+          <div className="-mx-5 mt-10 flex snap-x snap-mandatory scroll-pl-5 gap-4 overflow-x-auto overscroll-x-contain px-5 pb-4 [scrollbar-width:none] sm:-mx-8 sm:scroll-pl-8 sm:px-8 md:mx-0 md:grid md:grid-cols-2 md:gap-5 md:overflow-visible md:px-0 md:pb-0 xl:grid-cols-3 [&::-webkit-scrollbar]:hidden [&>*]:w-[84%] [&>*]:flex-none [&>*]:snap-start md:[&>*]:w-auto">
+          {featured.map((project) => (
+            <div key={project.slug} className="h-full">
               <ProjectCard project={project} compact />
-            </Reveal>
+            </div>
           ))}
 
           {/*
@@ -65,7 +78,7 @@ const HomePage: React.FC = () => {
             page counts ("5 / 14"), so it says how much more there is.
           */}
           {featured.length < total && (
-            <Reveal delay={(featured.length % 3) * 0.08} className="h-full">
+            <div className="h-full">
               <Link
                 to={localizedHref('/projects', locale)}
                 className="group flex h-full min-h-[11rem] flex-col justify-between rounded-lg border border-dashed border-navy-200 p-6 transition-colors duration-100 hover:border-brass-500/70 hover:bg-paper-raised active:border-brass-500/70 active:bg-paper-sunken"
@@ -81,9 +94,10 @@ const HomePage: React.FC = () => {
                   />
                 </span>
               </Link>
-            </Reveal>
+            </div>
           )}
-        </div>
+          </div>
+        </Reveal>
       </Section>
 
       <Section

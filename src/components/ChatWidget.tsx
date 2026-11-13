@@ -167,6 +167,34 @@ const ChatWidget: React.FC = () => {
     }
   };
 
+  // A question asked from elsewhere on the page (the hero's ask bar) opens
+  // the panel and sends it. The ref keeps the listener pointed at the current
+  // send(), which closes over the latest messages.
+  const sendRef = useRef(send);
+  useEffect(() => {
+    sendRef.current = send;
+  });
+  useEffect(() => {
+    const onAsk = (e: Event) => {
+      const question = (e as CustomEvent<string>).detail;
+      if (!question) return;
+      setOpen(true);
+      void sendRef.current(question);
+    };
+    window.addEventListener('gk:ask', onAsk);
+    return () => window.removeEventListener('gk:ask', onAsk);
+  }, []);
+
+  // The hero's ask bar says when it is on screen; while it is, and the panel
+  // is closed, the launcher is hidden.
+  const [askBarShown, setAskBarShown] = useState(false);
+  useEffect(() => {
+    const onAskBar = (e: Event) => setAskBarShown((e as CustomEvent<boolean>).detail);
+    window.addEventListener('gk:askbar', onAskBar);
+    return () => window.removeEventListener('gk:askbar', onAskBar);
+  }, []);
+  const launcherHidden = askBarShown && !open;
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     void send(input);
@@ -184,7 +212,7 @@ const ChatWidget: React.FC = () => {
   const suggestions = (t('chat.suggestions', { returnObjects: true }) as unknown) as string[];
 
   // The panel grows out of the launcher and shrinks back into it: the scale
-  // pivots on the bottom-left corner, where the button is, so it is obvious
+  // pivots on the bottom-right corner, where the button is, so it is obvious
   // where the panel came from and where it went. A spring with no bounce —
   // nothing was thrown, so nothing should overshoot — and because it is a
   // spring, closing mid-open reverses from wherever the panel has got to.
@@ -218,24 +246,34 @@ const ChatWidget: React.FC = () => {
         writes an inline transform, which would silently override the CSS
         :active scale if both lived on the same node.
 
-        Bottom-left, not the conventional bottom-right. On the live site
-        Netlify's free-tier "Powered by Netlify" badge is injected into the
-        bottom-right corner (197x64) and sat directly on top of this button,
-        so taps went to the badge. That corner is not ours to use; move this
-        back if the badge ever goes away.
+        Bottom-right, but raised 84px instead of sitting in the corner. On
+        the live site Netlify's free-tier "Powered by Netlify" badge is
+        injected into that corner (197x64) and sat directly on top of this
+        button, so taps went to the badge. Raised, the button and the panel
+        above it clear the badge, and the panel opens over the right-hand
+        side of the page (on the home page, the constellation) rather than
+        over the headline. Drop it back to bottom-5 / bottom-8 if the badge
+        ever goes away.
+
+        It steps aside while the hero's ask bar is on screen (see AskBar in
+        Hero.tsx) and comes back the moment the panel is open, since it is
+        also the panel's close button.
 
         The hairline ring gives the button an edge on the navy bands, where a
         navy button otherwise has none and reads as loose text.
       */}
       <motion.div
-        className="fixed bottom-5 left-5 z-50 md:bottom-8 md:left-8"
+        className="fixed bottom-[5.25rem] right-5 z-50 md:right-8"
+        style={{ pointerEvents: launcherHidden ? 'none' : 'auto' }}
         initial={reduce ? false : { scale: 0.9, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        transition={{ delay: 0.4, duration: 0.3, ease: 'easeOut' }}
+        animate={launcherHidden ? { scale: 0.9, opacity: 0 } : { scale: 1, opacity: 1 }}
+        transition={{ duration: 0.2, ease: 'easeOut' }}
       >
         <button
           ref={launcherRef}
           type="button"
+          tabIndex={launcherHidden ? -1 : 0}
+          aria-hidden={launcherHidden || undefined}
           onClick={() => (open ? close() : setOpen(true))}
           aria-label={t('chat.buttonLabel')}
           aria-haspopup="dialog"
@@ -258,10 +296,10 @@ const ChatWidget: React.FC = () => {
             // A floating card at every width — inset from the screen edges on
             // a phone rather than a square slab glued to them. dvh, not vh:
             // on a phone 100vh includes the area under the browser toolbar,
-            // which pushed the header out of reach. The 9.5rem leaves the
-            // launcher below and the 64px masthead above both uncovered.
-            className="fixed bottom-20 left-3 right-3 z-50 flex h-[min(640px,calc(100vh-9.5rem))] flex-col overflow-hidden rounded-lg border border-navy-100 bg-paper-raised shadow-card-hover focus:outline-none supports-[height:100dvh]:h-[min(640px,calc(100dvh-9.5rem))] sm:left-5 sm:right-auto sm:w-[420px] md:bottom-24 md:left-8"
-            style={{ transformOrigin: 'bottom left' }}
+            // which pushed the header out of reach. The 13.75rem leaves the
+            // raised launcher below and the 64px masthead above uncovered.
+            className="fixed bottom-[9.25rem] left-3 right-3 z-50 flex h-[min(640px,calc(100vh-13.75rem))] flex-col overflow-hidden rounded-lg border border-navy-100 bg-paper-raised shadow-card-hover focus:outline-none supports-[height:100dvh]:h-[min(640px,calc(100dvh-13.75rem))] sm:left-auto sm:right-5 sm:w-[420px] md:right-8"
+            style={{ transformOrigin: 'bottom right' }}
             role="dialog"
             aria-label={t('chat.title')}
           >
