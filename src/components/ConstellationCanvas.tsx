@@ -468,10 +468,18 @@ const ConstellationCanvas: React.FC<Props> = ({
       raf = 0;
     };
 
-    build();
-    if (reduceMotion) draw(0);
-    else start();
-    redrawRef.current = reduceMotion ? () => draw(0) : null;
+    // Built on first sight, not on mount. Sampling a shape means rasterising
+    // it and reading the pixels back; the projects page mounts fourteen card
+    // marks at once and most of them are far below the fold, so doing it
+    // eagerly blocked the main thread for 100-160ms on every visit.
+    let ready = false;
+    const ensureBuilt = () => {
+      if (ready) return;
+      ready = true;
+      build();
+      if (reduceMotion) draw(0);
+    };
+    redrawRef.current = reduceMotion ? () => ready && draw(0) : null;
 
     const onMove = (e: PointerEvent) => {
       if (reduceMotion) return;
@@ -486,6 +494,7 @@ const ConstellationCanvas: React.FC<Props> = ({
     };
 
     const rebuild = () => {
+      if (!ready) return;
       build();
       if (reduceMotion) draw(0);
     };
@@ -495,14 +504,17 @@ const ConstellationCanvas: React.FC<Props> = ({
     // web fonts reflowing the text beside it), so re-measure once they land.
     if (shapeSlot) void document.fonts?.ready.then(rebuild);
 
-    // Stop burning frames once it scrolls away or the tab is hidden.
+    // Build when it is about to come on screen (300px of warning, so it is
+    // ready by the time it arrives), and stop burning frames once it scrolls
+    // away or the tab is hidden.
     const io = new IntersectionObserver(
       ([entry]) => {
         visible = entry.isIntersecting;
+        if (visible) ensureBuilt();
         if (visible && !document.hidden) start();
         else stop();
       },
-      { threshold: 0 },
+      { threshold: 0, rootMargin: '300px 0px' },
     );
     io.observe(host);
 
