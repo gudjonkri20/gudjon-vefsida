@@ -144,6 +144,8 @@ const ConstellationCanvas: React.FC<Props> = ({
     let h = 0;
     let raf = 0;
     let visible = true;
+    /** True while a pinned Band has been fully covered by the page above it. */
+    let covered = false;
     let startedAt = 0;
     const mouse = { x: 0, y: 0, active: false };
 
@@ -310,7 +312,7 @@ const ConstellationCanvas: React.FC<Props> = ({
       raf = requestAnimationFrame(frame);
     };
     const start = () => {
-      if (raf || reduceMotion) return;
+      if (raf || reduceMotion || covered) return;
       raf = requestAnimationFrame(frame);
     };
     const stop = () => {
@@ -363,6 +365,16 @@ const ConstellationCanvas: React.FC<Props> = ({
     const pointerTarget: HTMLElement =
       host.closest<HTMLElement>('[data-constellation-scope]') ?? canvas;
 
+    // A band that has pinned and been covered still counts as on screen to
+    // the IntersectionObserver above, so the band says when it is hidden.
+    const band = host.closest<HTMLElement>('[data-band]');
+    const onBandCover = (e: Event) => {
+      covered = (e as CustomEvent<boolean>).detail;
+      if (covered) stop();
+      else if (visible && !document.hidden) start();
+    };
+    band?.addEventListener('bandcover', onBandCover);
+
     pointerTarget.addEventListener('pointermove', onMove);
     pointerTarget.addEventListener('pointerleave', onLeave);
     document.addEventListener('visibilitychange', onVisibility);
@@ -371,6 +383,7 @@ const ConstellationCanvas: React.FC<Props> = ({
       stop();
       ro.disconnect();
       io.disconnect();
+      band?.removeEventListener('bandcover', onBandCover);
       pointerTarget.removeEventListener('pointermove', onMove);
       pointerTarget.removeEventListener('pointerleave', onLeave);
       document.removeEventListener('visibilitychange', onVisibility);

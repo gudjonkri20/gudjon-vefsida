@@ -1,5 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { motion } from 'framer-motion';
 import clsx from 'clsx';
 import type { ProjectCategory } from '../types';
 
@@ -47,12 +48,20 @@ const ProjectFilter: React.FC<ProjectFilterProps> = ({
             // one is marked with the same brass rule as the nav. The label
             // stays 24px tall; the ::before box makes the target 44px.
             "relative py-1 font-mono text-xs uppercase tracking-[0.1em] transition-colors before:absolute before:-inset-x-3 before:-inset-y-2.5 before:content-['']",
-            active === key
-              ? 'text-navy-900 after:absolute after:-bottom-px after:left-0 after:h-[2px] after:w-full after:bg-brass-500'
-              : 'text-muted hover:text-navy-900',
+            active === key ? 'text-navy-900' : 'text-muted hover:text-navy-900',
           )}
         >
           {t(LABEL_KEYS[key])}
+          {/* The same travelling marker as the nav, a touch quicker because a
+              filter is clicked more often than a page is changed. */}
+          {active === key && (
+            <motion.span
+              layoutId="filter-marker"
+              aria-hidden="true"
+              className="absolute -bottom-px left-0 h-[2px] w-full bg-brass-500"
+              transition={{ type: 'spring', bounce: 0, duration: 0.25 }}
+            />
+          )}
         </button>
       ))}
     </div>

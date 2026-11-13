@@ -6,7 +6,7 @@ import {
   useLocation,
 } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
-import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
+import { AnimatePresence, MotionConfig, motion, useReducedMotion } from 'framer-motion';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import ChatWidget from './components/ChatWidget';
@@ -99,16 +99,21 @@ const AnimatedRoutes: React.FC = () => {
 function App() {
   return (
     <HelmetProvider>
-      <Router>
-        <div className="flex min-h-screen flex-col bg-paper text-muted">
-          <Navbar />
-          <main className="flex-grow">
-            <AnimatedRoutes />
-          </main>
-          <Footer />
-          <ChatWidget />
-        </div>
-      </Router>
+      {/* reducedMotion="user": anyone who has asked their system for less
+          motion gets every transform and layout animation on the site
+          switched off in one place, keeping only the opacity changes. */}
+      <MotionConfig reducedMotion="user">
+        <Router>
+          <div className="flex min-h-screen flex-col bg-paper text-muted">
+            <Navbar />
+            <main className="flex-grow">
+              <AnimatedRoutes />
+            </main>
+            <Footer />
+            <ChatWidget />
+          </div>
+        </Router>
+      </MotionConfig>
     </HelmetProvider>
   );
 }

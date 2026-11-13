@@ -10,6 +10,12 @@ const STORAGE_KEY = 'gk-chat-history-v1';
 const STORAGE_TTL_MS = 1000 * 60 * 60 * 24 * 7; // 7 days
 const PANEL_ID = 'chat-panel';
 
+// A new bubble confirms the message landed: a 6px rise over 200ms on the
+// site's own ease-out, so it arrives rather than appears.
+const BUBBLE_FROM = { opacity: 0, y: 6 };
+const BUBBLE_TO = { opacity: 1, y: 0 };
+const BUBBLE_TRANSITION = { duration: 0.2, ease: [0.22, 1, 0.36, 1] as const };
+
 interface StoredHistory {
   ts: number;
   messages: ChatMessage[];
@@ -61,6 +67,14 @@ const ChatWidget: React.FC = () => {
   // Persist on every change
   useEffect(() => {
     saveHistory(messages);
+  }, [messages]);
+
+  // How many messages have already been on screen. A bubble past this count
+  // is new and rises in; everything before it — restored history, or the
+  // whole thread when the panel is reopened — is simply there.
+  const seenCount = useRef(0);
+  useEffect(() => {
+    seenCount.current = messages.length;
   }, [messages]);
 
   // Auto-scroll to bottom on new messages
@@ -319,8 +333,11 @@ const ChatWidget: React.FC = () => {
               )}
 
               {messages.map((m, i) => (
-                <div
+                <motion.div
                   key={i}
+                  initial={i >= seenCount.current ? BUBBLE_FROM : false}
+                  animate={BUBBLE_TO}
+                  transition={BUBBLE_TRANSITION}
                   className={
                     m.role === 'user'
                       ? 'ml-auto max-w-[85%] rounded-lg rounded-br-sm bg-navy-900 px-3.5 py-2 text-sm text-white'
@@ -333,16 +350,21 @@ const ChatWidget: React.FC = () => {
                       {j < m.content.split('\n').length - 1 && <br />}
                     </React.Fragment>
                   ))}
-                </div>
+                </motion.div>
               ))}
 
               {pending && (
-                <div className="mr-auto inline-flex max-w-[90%] items-center gap-1.5 rounded-lg rounded-bl-sm border border-navy-100 bg-paper px-3.5 py-2 text-sm text-muted">
+                <motion.div
+                  initial={BUBBLE_FROM}
+                  animate={BUBBLE_TO}
+                  transition={BUBBLE_TRANSITION}
+                  className="mr-auto inline-flex max-w-[90%] items-center gap-1.5 rounded-lg rounded-bl-sm border border-navy-100 bg-paper px-3.5 py-2 text-sm text-muted"
+                >
                   <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-brass-500 [animation-delay:0ms]" />
                   <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-brass-500 [animation-delay:150ms]" />
                   <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-brass-500 [animation-delay:300ms]" />
                   <span className="ml-1">{t('chat.thinking')}</span>
-                </div>
+                </motion.div>
               )}
 
               {error && (

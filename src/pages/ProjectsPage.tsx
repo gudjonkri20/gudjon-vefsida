@@ -1,11 +1,11 @@
 import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { AnimatePresence, motion } from 'framer-motion';
 import SEO from '../components/SEO';
 import PageHeader from '../components/PageHeader';
 import Section from '../components/Section';
 import ProjectCard from '../components/ProjectCard';
 import ProjectFilter from '../components/ProjectFilter';
-import Reveal from '../components/Reveal';
 import ConstellationCanvas from '../components/ConstellationCanvas';
 import ConstellationWatermark from '../components/ConstellationWatermark';
 import { SHAPES, CATEGORY_SHAPE } from '../lib/constellationShapes';
@@ -88,23 +88,34 @@ const ProjectsPage: React.FC = () => {
         </p>
 
         {/*
-          Keying on filter as well as slug remounts the grid when the filter
-          changes, so the new set animates in rather than snapping.
-
-          The stagger runs across a row (i % 3), not down the list. Staggering
-          by index made the fourteenth card wait 0.8s after it scrolled into
-          view before it started to appear.
+          Filtering rearranges one grid; it does not swap it for another. Each
+          card is keyed by its project, so a card that survives the filter is
+          the same element before and after and slides to its new cell. Cards
+          that drop out are lifted out of the layout the moment they start to
+          fade (popLayout), so the survivors close the gap while the others
+          leave instead of waiting for them. No stagger: this is clicked
+          often, and a queue would be in the way by the third click.
         */}
-        <div className="mt-8 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-          {filtered.map((project, i) => (
-            <Reveal
-              key={`${filter}-${project.slug}`}
-              delay={(i % 3) * 0.06}
-              className="h-full"
-            >
-              <ProjectCard project={project} />
-            </Reveal>
-          ))}
+        <div className="relative mt-8 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+          <AnimatePresence mode="popLayout" initial={false}>
+            {filtered.map((project) => (
+              <motion.div
+                key={project.slug}
+                layout="position"
+                initial={{ opacity: 0, scale: 0.97 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{
+                  opacity: 0,
+                  scale: 0.97,
+                  transition: { duration: 0.15, ease: 'easeOut' },
+                }}
+                transition={{ type: 'spring', bounce: 0, duration: 0.3 }}
+                className="h-full"
+              >
+                <ProjectCard project={project} />
+              </motion.div>
+            ))}
+          </AnimatePresence>
         </div>
       </Section>
     </>

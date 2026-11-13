@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion, useReducedMotion } from 'framer-motion';
+import Band from './Band';
 import CallToAction from './CallToAction';
 import ConstellationCanvas from './ConstellationCanvas';
 import { HERO_SHAPES } from '../lib/constellationShapes';
@@ -57,7 +58,7 @@ const Hero: React.FC = () => {
       };
 
   return (
-    <section className="relative bg-navy-900 text-white">
+    <Band as="section" className="bg-navy-900 text-white">
       <div className="mx-auto max-w-6xl px-5 pb-20 pt-20 sm:px-8 md:pb-24 md:pt-24 lg:pt-28">
         <motion.div initial="hidden" animate="show" variants={container}>
           {/*
@@ -154,7 +155,7 @@ const Hero: React.FC = () => {
           </motion.ul>
         </motion.div>
       </div>
-    </section>
+    </Band>
   );
 };
 

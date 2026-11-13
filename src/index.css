@@ -125,6 +125,34 @@
   }
 }
 
+/* Navy bands pin under the masthead while the page that follows slides up
+   over them (see components/Band.tsx for the motion and the reasoning).
+
+   top: a band shorter than the screen pins just under the masthead. A band
+   taller than the screen gets a negative offset instead, so it scrolls to its
+   last line first and only then pins — nothing in it is covered unseen.
+   svh, not vh: the small viewport does not change when a phone's toolbar
+   slides away, so the pin point does not jump mid-scroll.
+
+   Everything after a band is lifted above it; without this a sticky element
+   paints over the unpositioned sections that follow it in the page. */
+@supports (height: 100svh) {
+  .band {
+    position: sticky;
+    top: min(calc(4rem + 1px), calc(100svh - var(--band-h, 0px)));
+  }
+
+  .band ~ * {
+    position: relative;
+    z-index: 1;
+  }
+
+  /* The edge of the layer that slides over the band. */
+  .band + * {
+    box-shadow: 0 -24px 48px -24px rgb(8 23 41 / 0.6);
+  }
+}
+
 /* People who ask for less transparency or more contrast get a solid bar. */
 @media (prefers-reduced-transparency: reduce) {
   .material-bar {

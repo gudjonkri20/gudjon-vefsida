@@ -3,6 +3,7 @@ import { Link, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { ArrowLeft, ExternalLink } from 'lucide-react';
 import SEO from '../components/SEO';
+import Band from '../components/Band';
 import Section from '../components/Section';
 import Badge from '../components/Badge';
 import TechTag from '../components/TechTag';
@@ -39,7 +40,7 @@ const ProjectDetailPage: React.FC = () => {
         path={localizedHref(`/projects/${project.slug}`, locale)}
       />
 
-      <header className="bg-navy-900 text-white">
+      <Band as="header" className="bg-navy-900 text-white">
         <div className="mx-auto max-w-6xl px-5 py-14 sm:px-8 md:py-16">
           <Link
             to={localizedHref('/projects', locale)}
@@ -79,7 +80,7 @@ const ProjectDetailPage: React.FC = () => {
             </div>
           </div>
         </div>
-      </header>
+      </Band>
 
       <Section tone="paper">
         <div className="max-w-prose">

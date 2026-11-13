@@ -83,7 +83,10 @@ const Navbar: React.FC = () => {
           Guðjón Kristjánsson
         </Link>
 
-        <div className="hidden items-center gap-7 md:flex">
+        {/* layoutRoot: the bar is sticky, so its children's positions must be
+            measured against the bar, not the page. Without it the marker
+            would factor in the jump back to the top on every navigation. */}
+        <motion.div layoutRoot className="hidden items-center gap-7 md:flex">
           {NAV_KEYS.map(({ key, path }) => (
             <NavLink
               key={key}
@@ -92,15 +95,28 @@ const Navbar: React.FC = () => {
                 // Active state is a brass rule under the word — an editorial
                 // marker rather than a pill.
                 'relative py-1 text-sm transition-colors',
-                isActive(path)
-                  ? 'text-navy-900 after:absolute after:-bottom-px after:left-0 after:h-[2px] after:w-full after:bg-brass-500'
-                  : 'text-muted hover:text-navy-900',
+                isActive(path) ? 'text-navy-900' : 'text-muted hover:text-navy-900',
               )}
             >
               {t(`nav.${key}`)}
+              {/*
+                One marker that travels, not four that switch on and off. The
+                shared layoutId makes it glide from the page you left to the
+                page you opened, which says "you moved along this row" rather
+                than "something changed". A spring with no bounce, so a second
+                click mid-glide just redirects it.
+              */}
+              {isActive(path) && (
+                <motion.span
+                  layoutId="nav-marker"
+                  aria-hidden="true"
+                  className="absolute -bottom-px left-0 h-[2px] w-full bg-brass-500"
+                  transition={{ type: 'spring', bounce: 0, duration: 0.3 }}
+                />
+              )}
             </NavLink>
           ))}
-        </div>
+        </motion.div>
 
         <div className="hidden items-center gap-2 md:flex">
           <LanguageSwitcher />

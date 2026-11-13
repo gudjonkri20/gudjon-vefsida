@@ -1,4 +1,5 @@
 import React from 'react';
+import Band from './Band';
 
 interface PageHeaderProps {
   eyebrow?: string;
@@ -40,7 +41,7 @@ const PageHeader: React.FC<PageHeaderProps> = ({
   );
 
   return (
-    <header className="bg-navy-900 text-white">
+    <Band as="header" className="bg-navy-900 text-white">
       <div className="mx-auto max-w-6xl px-5 py-16 sm:px-8 md:py-20">
         {aside ? (
           <div className="grid items-center gap-10 lg:grid-cols-[minmax(0,1fr)_auto]">
@@ -51,7 +52,7 @@ const PageHeader: React.FC<PageHeaderProps> = ({
           text
         )}
       </div>
-    </header>
+    </Band>
   );
 };
 
