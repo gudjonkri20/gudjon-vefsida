@@ -8,6 +8,9 @@ import Section from '../components/Section';
 import ProjectCard from '../components/ProjectCard';
 import Reveal from '../components/Reveal';
 import ConstellationWatermark from '../components/ConstellationWatermark';
+import WorkShowcase from '../components/WorkShowcase';
+import ContactBand from '../components/ContactBand';
+import { useMediaQuery, WIDE } from '../lib/useMediaQuery';
 import { getAllProjects, getFeaturedProjects } from '../lib/projects';
 import { services } from '../data/services';
 import { useCurrentLocale, localizedHref } from '../lib/i18n';
@@ -17,14 +20,18 @@ const HomePage: React.FC = () => {
   const locale = useCurrentLocale();
   const featured = getFeaturedProjects();
   const total = getAllProjects().length;
+  const wide = useMediaQuery(WIDE);
 
   return (
     <>
       <SEO path={localizedHref('/', locale)} />
       <Hero />
 
-      <Section tone="paper" className="relative overflow-hidden">
-        <ConstellationWatermark startAt={0} side="right" />
+      {/* overflow-x-clip, not overflow-hidden: `hidden` would make this
+          section a scroll container and the showcase's pinned panel would
+          have nothing to stick against. `clip` cuts the same overflow
+          without that side effect. */}
+      <Section tone="paper" className="relative overflow-x-clip">
         <Reveal className="flex flex-wrap items-end justify-between gap-4 border-b border-navy-100 pb-6">
           <div className="max-w-2xl">
             <h2 className="font-display text-3xl font-semibold tracking-[-0.02em] md:text-4xl">
@@ -36,9 +43,9 @@ const HomePage: React.FC = () => {
           </div>
           <Link
             to={localizedHref('/projects', locale)}
-            // From md up only. On a phone the tile that closes the grid below
+            // From sm up only. On a phone the tile that closes the row below
             // is the way on, in the place a reader actually ends up.
-            className="hit group hidden items-center gap-1.5 text-sm font-medium text-brass-700 transition-colors hover:text-navy-900 md:inline-flex"
+            className="hit group hidden items-center gap-1.5 text-sm font-medium text-brass-700 transition-colors hover:text-navy-900 sm:inline-flex"
           >
             {t('home.viewAll')}
             <ArrowRight
@@ -49,21 +56,27 @@ const HomePage: React.FC = () => {
         </Reveal>
 
         {/*
-          One list, two layouts.
+          One list, two presentations.
 
-          From md up it is a grid. On a phone it is a row you swipe: five
-          compact cards stacked ran to about 1,500px of scrolling past things
-          that all look alike, and a row puts each one a thumb-flick away with
-          the next always peeking in at the edge. It is the browser's own
-          scrolling with snap points, so the momentum, the rubber-band at the
-          ends and the 1:1 tracking are the phone's, not an imitation.
+          With room for two columns it is a sequence: one project in focus at
+          a time beside a pinned panel (see WorkShowcase).
 
-          The whole list rises in once (Reveal wraps the container). Cards
-          further along the row must not wait to fade in as they are swiped
-          on screen, which is what a per-card reveal would do here.
+          Without, it is a row you swipe. Five compact cards stacked ran to
+          about 1,500px of scrolling past things that all look alike; a row
+          puts each one a thumb-flick away with the next always peeking in at
+          the edge. It is the browser's own scrolling with snap points, so the
+          momentum, the rubber-band at the ends and the 1:1 tracking are the
+          device's, not an imitation.
+
+          The row rises in once (Reveal wraps the container). Cards further
+          along must not wait to fade in as they are swiped on screen, which
+          is what a per-card reveal would do here.
         */}
+        {wide ? (
+          <WorkShowcase projects={featured} total={total} />
+        ) : (
         <Reveal>
-          <div className="-mx-5 mt-10 flex snap-x snap-mandatory scroll-pl-5 gap-4 overflow-x-auto overscroll-x-contain px-5 pb-4 [scrollbar-width:none] sm:-mx-8 sm:scroll-pl-8 sm:px-8 md:mx-0 md:grid md:grid-cols-2 md:gap-5 md:overflow-visible md:px-0 md:pb-0 xl:grid-cols-3 [&::-webkit-scrollbar]:hidden [&>*]:w-[84%] [&>*]:flex-none [&>*]:snap-start md:[&>*]:w-auto">
+          <div className="-mx-5 mt-10 flex snap-x snap-mandatory scroll-pl-5 gap-4 overflow-x-auto overscroll-x-contain px-5 pb-4 [scrollbar-width:none] sm:-mx-8 sm:scroll-pl-8 sm:px-8 [&::-webkit-scrollbar]:hidden [&>*]:w-[84%] [&>*]:flex-none [&>*]:snap-start sm:[&>*]:w-[46%]">
           {featured.map((project) => (
             <div key={project.slug} className="h-full">
               <ProjectCard project={project} compact />
@@ -71,11 +84,10 @@ const HomePage: React.FC = () => {
           ))}
 
           {/*
-            The last cell. Five featured projects in a three-column grid left
-            a hole in the bottom-right corner; this fills it with the thing
-            the reader wants next. Dashed, so it reads as "the rest" rather
-            than as a sixth project, and counted the same way the projects
-            page counts ("5 / 14"), so it says how much more there is.
+            The last stop in the row: the way on, where a reader ends up.
+            Dashed, so it reads as "the rest" rather than as a sixth project,
+            and counted the same way the projects page counts ("5 / 14"), so
+            it says how much more there is.
           */}
           {featured.length < total && (
             <div className="h-full">
@@ -98,6 +110,7 @@ const HomePage: React.FC = () => {
           )}
           </div>
         </Reveal>
+        )}
       </Section>
 
       <Section
@@ -154,6 +167,10 @@ const HomePage: React.FC = () => {
           </div>
         </div>
       </Section>
+
+      {/* The page used to stop at the footer. It now ends on the signature
+          and the ways to reach him — the thing the whole page is for. */}
+      <ContactBand />
     </>
   );
 };

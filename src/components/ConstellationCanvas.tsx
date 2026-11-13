@@ -60,6 +60,12 @@ interface Props {
    * released, and where a handful of ambient stars stay.
    */
   shapeSlot?: React.RefObject<HTMLElement | null>;
+  /**
+   * Controlled mode. Instead of cycling on a timer, hold the shape at this
+   * index, and move to another when the number changes. Used where something
+   * else decides what the mark should be — the project in focus, say.
+   */
+  active?: number;
   className?: string;
   ariaLabel?: string;
 }
@@ -140,11 +146,24 @@ const ConstellationCanvas: React.FC<Props> = ({
   linkDistance,
   cursorRadius: cursorRadiusProp,
   shapeSlot,
+  active,
   className = '',
   ariaLabel,
 }) => {
   const hostRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  // The index is read from a ref inside the frame loop, so changing it does
+  // not tear the canvas down and rebuild it — the points just get a new
+  // place to go. With reduced motion there is no frame loop, so the change
+  // asks for one redraw instead.
+  const controlled = active !== undefined;
+  const activeRef = useRef(active ?? 0);
+  const redrawRef = useRef<(() => void) | null>(null);
+  useEffect(() => {
+    activeRef.current = active ?? 0;
+    redrawRef.current?.();
+  }, [active]);
 
   useEffect(() => {
     const host = hostRef.current;
@@ -302,7 +321,11 @@ const ConstellationCanvas: React.FC<Props> = ({
       if (!startedAt) startedAt = time;
       const elapsed = (time - startedAt) / 1000;
       const n = points[0]?.targets.length ?? 1;
-      const pos = startAt + (reduceMotion ? 0 : cyclePosition(elapsed, n));
+      // Controlled: sit on the named shape. The springs below carry the
+      // points across when it changes, so there is no separate morph to run.
+      const pos = controlled
+        ? activeRef.current
+        : startAt + (reduceMotion ? 0 : cyclePosition(elapsed, n));
 
       const floor = Math.floor(pos);
       const i = ((floor % n) + n) % n;
@@ -448,6 +471,7 @@ const ConstellationCanvas: React.FC<Props> = ({
     build();
     if (reduceMotion) draw(0);
     else start();
+    redrawRef.current = reduceMotion ? () => draw(0) : null;
 
     const onMove = (e: PointerEvent) => {
       if (reduceMotion) return;
@@ -520,6 +544,7 @@ const ConstellationCanvas: React.FC<Props> = ({
 
     return () => {
       stop();
+      redrawRef.current = null;
       ro.disconnect();
       io.disconnect();
       band?.removeEventListener('bandcover', onBandCover);
@@ -528,7 +553,7 @@ const ConstellationCanvas: React.FC<Props> = ({
       pointerTarget.removeEventListener('pointerleave', onLeave);
       document.removeEventListener('visibilitychange', onVisibility);
     };
-  }, [shapes, startAt, pointCount, linkDistance, cursorRadiusProp, shapeSlot]);
+  }, [shapes, startAt, pointCount, linkDistance, cursorRadiusProp, shapeSlot, controlled]);
 
   return (
     <div ref={hostRef} className={className}>

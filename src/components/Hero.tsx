@@ -8,6 +8,7 @@ import ConstellationCanvas from './ConstellationCanvas';
 import { HERO_SHAPES } from '../lib/constellationShapes';
 import { getAllProjects } from '../lib/projects';
 import { useCurrentLocale, localizedHref } from '../lib/i18n';
+import { useMediaQuery, WIDE } from '../lib/useMediaQuery';
 
 // Real counts, kept as one mono line rather than three oversized stat tiles.
 const INDEX = [
@@ -17,25 +18,6 @@ const INDEX = [
 ] as const;
 
 const EASE = [0.22, 1, 0.36, 1] as const;
-
-/** Matches Tailwind's `lg`, where the hero becomes two columns. */
-const WIDE_QUERY = '(min-width: 1024px)';
-
-const useWideLayout = (): boolean => {
-  const [wide, setWide] = useState(
-    () => typeof window !== 'undefined' && window.matchMedia(WIDE_QUERY).matches,
-  );
-
-  useEffect(() => {
-    const query = window.matchMedia(WIDE_QUERY);
-    const update = () => setWide(query.matches);
-    update();
-    query.addEventListener('change', update);
-    return () => query.removeEventListener('change', update);
-  }, []);
-
-  return wide;
-};
 
 /**
  * The things a visitor can go and use right now: public projects with a live
@@ -188,7 +170,7 @@ const Hero: React.FC = () => {
   const { t } = useTranslation();
   const locale = useCurrentLocale();
   const reduce = useReducedMotion();
-  const wide = useWideLayout();
+  const wide = useMediaQuery(WIDE);
   const slotRef = useRef<HTMLDivElement>(null);
 
   const headline = t('hero.headline');

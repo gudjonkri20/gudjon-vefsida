@@ -1,11 +1,9 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Mail, Phone, Linkedin, Github } from 'lucide-react';
-import { Link } from 'react-router-dom';
 import PageHeader from './PageHeader';
 import Section from './Section';
 import ConstellationCanvas from './ConstellationCanvas';
-import { useCurrentLocale, localizedHref } from '../lib/i18n';
+import ContactBand from './ContactBand';
 
 const EDU_KEYS = ['aarhus', 'ru', 'hi'] as const;
 const EXPERIENCE_KEYS = ['icelandia', 'cyberpilot', 'reykjavikurborg'] as const;
@@ -35,7 +33,6 @@ const Entry: React.FC<{ title: string; body: string }> = ({ title, body }) => (
 
 const AboutSection: React.FC = () => {
   const { t } = useTranslation();
-  const locale = useCurrentLocale();
 
   return (
     <>
@@ -127,56 +124,7 @@ const AboutSection: React.FC = () => {
         </Row>
       </Section>
 
-      <Section tone="navy">
-        <h2 className="max-w-2xl font-display text-3xl font-semibold tracking-[-0.02em] text-white md:text-4xl">
-          {t('about.contactCta.title')}
-        </h2>
-        <p className="mt-3 max-w-prose font-serif text-lg leading-relaxed text-navy-100">
-          {t('about.contactCta.body')}
-        </p>
-
-        {/* Each link is a 44px row so it can be hit with a thumb. */}
-        <div className="mt-5 flex flex-wrap gap-x-8 text-sm [&>a]:min-h-11">
-          <a
-            href="mailto:gudjonk6@gmail.com"
-            className="inline-flex items-center gap-2 text-brass-400 transition-colors hover:text-white"
-          >
-            <Mail size={15} />
-            gudjonk6@gmail.com
-          </a>
-          <a
-            href="tel:+3548654146"
-            className="inline-flex items-center gap-2 text-white transition-colors hover:text-brass-400"
-          >
-            <Phone size={15} />
-            +354 865 4146
-          </a>
-          <a
-            href="https://linkedin.com/in/gu%C3%B0j%C3%B3n-kristj%C3%A1nsson-7a3b083b/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 text-white transition-colors hover:text-brass-400"
-          >
-            <Linkedin size={15} />
-            LinkedIn
-          </a>
-          <a
-            href="https://github.com/gudjonkri20"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 text-white transition-colors hover:text-brass-400"
-          >
-            <Github size={15} />
-            GitHub
-          </a>
-          <Link
-            to={localizedHref('/contact', locale)}
-            className="inline-flex items-center gap-2 text-navy-200 transition-colors hover:text-brass-400"
-          >
-            {t('nav.contact')}
-          </Link>
-        </div>
-      </Section>
+      <ContactBand />
     </>
   );
 };
