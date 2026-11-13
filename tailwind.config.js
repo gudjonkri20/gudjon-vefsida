@@ -3,6 +3,20 @@
 // Palette: North Atlantic navy, cool paper, warm brass.
 // Navy carries authority, paper carries the reading, brass marks the one
 // thing worth looking at. Nothing else gets a colour.
+//
+// Light and dark. The site follows the visitor's system setting; there is no
+// switch. Colours are split by the job they do, because `navy-900` does two:
+// it is the ink on paper and it is the navy bands. In the dark the ink has to
+// turn light while the bands stay navy, so:
+//
+//   - paper, ink, muted, rules, tints and brass-as-text are CSS variables
+//     (defined in index.css) that flip under prefers-color-scheme: dark;
+//   - the overrides are scoped per utility — `text-navy-900` is ink and
+//     flips, `bg-navy-900` is a band and does not;
+//   - everything that sits on a navy band (white, navy-100/200, brass-400)
+//     is a fixed colour and is the same in both.
+const v = (name) => `rgb(var(--${name}) / <alpha-value>)`;
+
 export default {
   content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
   // Hover styles only where there is a real pointer. On a phone a tapped card
@@ -24,9 +38,9 @@ export default {
           50: '#EFF4F9',
         },
         paper: {
-          DEFAULT: '#F4F6F9',
-          raised: '#FFFFFF',
-          sunken: '#E8EDF4',
+          DEFAULT: v('paper'), // light #F4F6F9
+          raised: v('paper-raised'), // light #FFFFFF
+          sunken: v('paper-sunken'), // light #E8EDF4
         },
         brass: {
           DEFAULT: '#B98A3C',
@@ -37,7 +51,22 @@ export default {
         },
         // Body copy on paper. Navy-tinted rather than neutral grey so the
         // whole page sits in one temperature.
-        muted: '#4C6076',
+        muted: v('muted'), // light #4C6076
+      },
+      // Ink: navy as a text colour, on paper. Flips to light in the dark.
+      textColor: {
+        navy: { 900: v('ink'), 700: v('ink-soft'), 600: v('ink-faint') },
+        // Brass as text or as an icon on paper. The darker brasses are only
+        // dark enough on light paper; in the dark these become brass-400.
+        brass: { 700: v('accent-text'), 600: v('accent-icon') },
+      },
+      // Tints: the faint navy fills behind badges and disabled controls.
+      backgroundColor: {
+        navy: { 50: v('tint'), 100: v('tint-strong') },
+      },
+      // Rules: hairlines and control borders on paper.
+      borderColor: {
+        navy: { 100: v('rule'), 200: v('rule-strong'), 600: v('ink-faint') },
       },
       fontFamily: {
         // Display + UI chrome: a Nordic grotesque with actual character.
@@ -92,7 +121,7 @@ export default {
     function ({ addComponents, theme }) {
       addComponents({
         '.prose': {
-          color: theme('colors.muted'),
+          color: 'rgb(var(--muted))',
           fontFamily: theme('fontFamily.serif'),
           fontSize: '1.0625rem',
           lineHeight: '1.75',
@@ -149,15 +178,15 @@ export default {
           },
           '& code': {
             fontFamily: theme('fontFamily.mono'),
-            backgroundColor: theme('colors.paper.sunken'),
-            color: theme('colors.navy.900'),
+            backgroundColor: 'rgb(var(--paper-sunken))',
+            color: 'rgb(var(--ink))',
             padding: '0.15rem 0.35rem',
             borderRadius: '0.25rem',
             fontSize: '0.85em',
           },
           '& pre': {
             backgroundColor: theme('colors.navy.900'),
-            color: theme('colors.paper.DEFAULT'),
+            color: '#F4F6F9',
             padding: '1rem',
             borderRadius: '0.5rem',
             overflow: 'auto',

@@ -31,7 +31,7 @@ const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({ className }) => {
     >
       {(['en', 'is'] as const).map((lang, i) => (
         <React.Fragment key={lang}>
-          {i > 0 && <span aria-hidden className="text-navy-200">/</span>}
+          {i > 0 && <span aria-hidden className="text-navy-200 dark:text-white/25">/</span>}
           <button
             type="button"
             onClick={() => switchTo(lang)}

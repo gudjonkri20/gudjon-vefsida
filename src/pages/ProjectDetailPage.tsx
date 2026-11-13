@@ -61,7 +61,7 @@ const ProjectDetailPage: React.FC = () => {
               <Badge
                 status={project.status}
                 label={statusLabel}
-                className="border-brass-400/40 bg-brass-400/10 text-brass-400"
+                onNavy
               />
               <h1 className="mt-5 text-balance font-display text-[clamp(2rem,4.5vw,3.25rem)] font-semibold leading-[1.06] tracking-[-0.025em] text-white">
                 {project.title[locale]}
@@ -93,7 +93,7 @@ const ProjectDetailPage: React.FC = () => {
               href={project.link}
               target="_blank"
               rel="noopener noreferrer"
-              className="press mt-8 inline-flex min-h-11 items-center gap-2 rounded-md bg-navy-900 px-5 py-2.5 text-sm font-medium text-white hover:bg-navy-800"
+              className="press mt-8 inline-flex min-h-11 items-center gap-2 rounded-md bg-navy-900 px-5 py-2.5 text-sm font-medium text-white hover:bg-navy-800 dark:bg-brass-500 dark:text-navy-950 dark:hover:bg-brass-400"
             >
               {project.linkLabel?.[locale] ?? t('projects.openLink')}
               <ExternalLink size={15} />

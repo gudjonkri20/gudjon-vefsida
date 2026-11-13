@@ -91,7 +91,7 @@ const WorkShowcase: React.FC<WorkShowcaseProps> = ({ projects, total }) => {
       <div className="sticky top-24 self-start" aria-hidden="true">
         <div
           data-constellation-scope
-          className="rounded-lg bg-navy-900 p-7 text-white shadow-card-hover xl:p-9"
+          className="rounded-lg bg-navy-900 p-7 text-white shadow-card-hover xl:p-9 dark:ring-1 dark:ring-white/10"
         >
           <div className="flex items-baseline justify-between gap-4 font-mono text-xs">
             <span className="uppercase tracking-[0.12em] text-brass-400">

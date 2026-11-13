@@ -18,11 +18,15 @@ interface CallToActionProps {
 }
 
 // Squared, not pill-shaped: this is a working site, not a signup funnel.
+//
+// In the dark a navy button would vanish into a navy page, so the solid
+// button becomes brass there — the same button it already is on a navy band.
 const variants: Record<string, string> = {
-  primary: 'bg-navy-900 text-white hover:bg-navy-800',
+  primary:
+    'bg-navy-900 text-white hover:bg-navy-800 dark:bg-brass-500 dark:text-navy-950 dark:hover:bg-brass-400',
   'primary-navy': 'bg-brass-500 text-navy-950 hover:bg-brass-400',
   secondary:
-    'border border-navy-200 bg-white text-navy-900 hover:border-navy-600 hover:bg-navy-50',
+    'border border-navy-200 bg-paper-raised text-navy-900 hover:border-navy-600 hover:bg-navy-50',
   'secondary-navy':
     'border border-white/25 bg-transparent text-white hover:border-brass-400 hover:text-brass-400',
   ghost: 'text-brass-700 hover:text-navy-900',

@@ -378,7 +378,7 @@ const ChatWidget: React.FC = () => {
                   transition={BUBBLE_TRANSITION}
                   className={
                     m.role === 'user'
-                      ? 'ml-auto max-w-[85%] rounded-lg rounded-br-sm bg-navy-900 px-3.5 py-2 text-sm text-white'
+                      ? 'ml-auto max-w-[85%] rounded-lg rounded-br-sm bg-navy-900 px-3.5 py-2 text-sm text-white dark:bg-navy-700'
                       : 'mr-auto max-w-[90%] rounded-lg rounded-bl-sm border border-navy-100 bg-paper px-3.5 py-2 text-sm text-navy-900'
                   }
                 >
@@ -445,7 +445,7 @@ const ChatWidget: React.FC = () => {
                   type="submit"
                   disabled={pending || !input.trim()}
                   aria-label={t('chat.send')}
-                  className="press grid h-11 w-11 flex-none place-items-center rounded bg-navy-900 text-white hover:bg-navy-800 disabled:cursor-not-allowed disabled:bg-navy-100 disabled:text-navy-600 disabled:active:scale-100"
+                  className="press grid h-11 w-11 flex-none place-items-center rounded bg-navy-900 text-white hover:bg-navy-800 disabled:cursor-not-allowed disabled:bg-navy-100 disabled:text-navy-600 disabled:active:scale-100 dark:bg-brass-500 dark:text-navy-950 dark:hover:bg-brass-400 dark:disabled:bg-navy-100 dark:disabled:text-navy-600"
                 >
                   <Send size={15} />
                 </button>

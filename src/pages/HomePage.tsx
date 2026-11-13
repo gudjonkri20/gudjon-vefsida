@@ -159,7 +159,7 @@ const HomePage: React.FC = () => {
                   </div>
                   <ArrowRight
                     size={18}
-                    className="mt-1 flex-none text-navy-200 transition-all group-hover:translate-x-0.5 group-hover:text-brass-600"
+                    className="mt-1 flex-none text-navy-200 transition-all group-hover:translate-x-0.5 group-hover:text-brass-600 dark:text-white/25"
                   />
                 </Link>
               </Reveal>

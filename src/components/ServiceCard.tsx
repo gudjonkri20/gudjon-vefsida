@@ -52,7 +52,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service }) => {
 
         <a
           href={mailto}
-          className="press mt-6 inline-flex min-h-11 w-fit items-center gap-2 rounded-md bg-navy-900 px-4 py-2.5 text-sm font-medium text-white hover:bg-navy-800"
+          className="press mt-6 inline-flex min-h-11 w-fit items-center gap-2 rounded-md bg-navy-900 px-4 py-2.5 text-sm font-medium text-white hover:bg-navy-800 dark:bg-brass-500 dark:text-navy-950 dark:hover:bg-brass-400"
         >
           <Mail size={15} />
           {t('services.ctaLabel')}
