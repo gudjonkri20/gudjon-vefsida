@@ -23,12 +23,19 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, compact = false }) =
   const detailHref = localizedHref(`/projects/${project.slug}`, locale);
 
   return (
-    <article className="group relative flex h-full flex-col rounded-lg border border-navy-100 bg-paper-raised p-6 shadow-card transition-[box-shadow,transform,border-color] duration-200 ease-out hover:-translate-y-1 hover:border-brass-500/45 hover:shadow-card-hover motion-reduce:transform-none motion-reduce:transition-none">
+    // The whole card is the link (the title's ::after is stretched over it),
+    // so the hover lift is an honest affordance and a thumb has ~350px to aim
+    // at instead of a 20px "Read more". It answers a press by settling back
+    // down, and shows the focus ring around the card rather than the title.
+    <article
+      data-constellation-scope
+      className="group relative flex h-full flex-col rounded-lg border border-navy-100 bg-paper-raised p-6 shadow-card transition-[box-shadow,transform,border-color] duration-200 ease-out hover:-translate-y-1 hover:border-brass-500/45 hover:shadow-card-hover active:translate-y-0 active:scale-[0.99] active:border-brass-500/45 active:shadow-card active:duration-100 motion-reduce:transform-none motion-reduce:transition-none [&:has(h3>a:focus-visible)]:outline [&:has(h3>a:focus-visible)]:outline-2 [&:has(h3>a:focus-visible)]:outline-offset-[3px] [&:has(h3>a:focus-visible)]:outline-brass-600"
+    >
       <div className="flex items-center justify-between gap-3">
         <Badge status={project.status} label={statusLabel} />
         <div className="flex flex-none items-center gap-2.5">
           {project.year && (
-            <span className="whitespace-nowrap font-mono text-xs text-muted/70">
+            <span className="whitespace-nowrap font-mono text-xs text-muted">
               {project.year}
             </span>
           )}
@@ -47,7 +54,10 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, compact = false }) =
       </div>
 
       <h3 className="mt-5 font-display text-lg font-semibold leading-snug tracking-[-0.01em]">
-        <Link to={detailHref} className="transition-colors hover:text-brass-700">
+        <Link
+          to={detailHref}
+          className="transition-colors after:absolute after:inset-0 after:rounded-lg after:content-[''] focus-visible:outline-none group-hover:text-brass-700"
+        >
           {project.title[locale]}
         </Link>
       </h3>
@@ -65,7 +75,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, compact = false }) =
           <TechTag key={tech} label={tech} />
         ))}
         {compact && project.tech.length > techShown.length && (
-          <span className="font-mono text-[0.6875rem] leading-6 text-muted/70">
+          <span className="font-mono text-[0.6875rem] leading-6 text-muted">
             +{project.tech.length - techShown.length}
           </span>
         )}
@@ -77,28 +87,31 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, compact = false }) =
             href={project.link}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 text-sm font-medium text-brass-700 transition-colors hover:text-navy-900"
+            // Sits above the stretched card link so it stays its own target.
+            className="hit z-10 inline-flex items-center gap-1 text-sm font-medium text-brass-700 transition-colors hover:text-navy-900"
           >
             {project.linkLabel?.[locale] ?? t('projects.openLink')}
             <ExternalLink size={13} />
           </a>
         ) : (
-          <span className="font-mono text-[0.6875rem] uppercase tracking-[0.08em] text-muted/70">
+          <span className="font-mono text-[0.6875rem] uppercase tracking-[0.08em] text-muted">
             {t('projects.availableOnRequest')}
           </span>
         )}
 
         {project.hasDetailPage && (
-          <Link
-            to={detailHref}
-            className="inline-flex items-center gap-1 text-sm text-muted transition-colors hover:text-navy-900"
+          // A visual cue only: the card itself is the link to the same page,
+          // so a second link here would just be read out twice.
+          <span
+            aria-hidden="true"
+            className="inline-flex items-center gap-1 text-sm text-muted transition-colors group-hover:text-navy-900"
           >
             {t('projects.viewProject')}
             <ArrowUpRight
               size={14}
               className="transition-transform duration-200 ease-out group-hover:-translate-y-px group-hover:translate-x-px motion-reduce:transform-none"
             />
-          </Link>
+          </span>
         )}
       </div>
     </article>

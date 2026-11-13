@@ -83,19 +83,23 @@ const ProjectsPage: React.FC = () => {
           />
         </div>
 
-        <p className="mt-4 font-mono text-xs text-muted/70">
+        <p className="mt-4 font-mono text-xs text-muted" aria-live="polite">
           {filtered.length} / {all.length}
         </p>
 
         {/*
           Keying on filter as well as slug remounts the grid when the filter
           changes, so the new set animates in rather than snapping.
+
+          The stagger runs across a row (i % 3), not down the list. Staggering
+          by index made the fourteenth card wait 0.8s after it scrolled into
+          view before it started to appear.
         */}
         <div className="mt-8 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
           {filtered.map((project, i) => (
             <Reveal
               key={`${filter}-${project.slug}`}
-              delay={i * 0.06}
+              delay={(i % 3) * 0.06}
               className="h-full"
             >
               <ProjectCard project={project} />

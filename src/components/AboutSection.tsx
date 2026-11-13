@@ -133,7 +133,8 @@ const AboutSection: React.FC = () => {
           {t('about.contactCta.body')}
         </p>
 
-        <div className="mt-8 flex flex-wrap gap-x-8 gap-y-3 text-sm">
+        {/* Each link is a 44px row so it can be hit with a thumb. */}
+        <div className="mt-5 flex flex-wrap gap-x-8 text-sm [&>a]:min-h-11">
           <a
             href="mailto:gudjonk6@gmail.com"
             className="inline-flex items-center gap-2 text-brass-400 transition-colors hover:text-white"

@@ -62,11 +62,26 @@ const Hero: React.FC = () => {
             navy between the headline and the subline and pushed the call to
             action below the fold; the mark it replaced was a thin rule.
           */}
+          {/*
+            Two things make the mark read as what it is:
+
+            linkDistance 24. At the default 52 every point in a 200px-tall
+            canvas reaches most of the others, so the initials filled in to a
+            solid knot. At 24 only neighbours along the stroke connect and the
+            letters, the coastline and the wave each hold their outline.
+
+            A 260px box pulled left. The shapes are fitted to the canvas
+            height and centred in its width, so in the old 440px box the mark
+            floated ~130px to the right of the left edge that the eyebrow,
+            headline, subline and buttons all share. The narrower box and the
+            negative margin put its left edge on that same line.
+          */}
           <motion.div variants={item} className="mt-6 flex justify-start">
             <ConstellationCanvas
               shapes={HERO_SHAPES}
               ariaLabel="Guðjón Kristjánsson — a constellation cycling between his initials, the coastline of Iceland, and a speech waveform"
-              className="h-[180px] w-full max-w-[440px] cursor-crosshair sm:h-[200px]"
+              linkDistance={24}
+              className="-ml-12 h-[180px] w-[260px] cursor-crosshair sm:-ml-10 sm:h-[200px]"
             />
           </motion.div>
 

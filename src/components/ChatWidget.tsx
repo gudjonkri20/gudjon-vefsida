@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { MessageCircle, X, Send, RefreshCcw } from 'lucide-react';
@@ -8,6 +8,7 @@ import type { ChatMessage } from '../types';
 
 const STORAGE_KEY = 'gk-chat-history-v1';
 const STORAGE_TTL_MS = 1000 * 60 * 60 * 24 * 7; // 7 days
+const PANEL_ID = 'chat-panel';
 
 interface StoredHistory {
   ts: number;
@@ -50,6 +51,7 @@ const ChatWidget: React.FC = () => {
 
   const listRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
+  const launcherRef = useRef<HTMLButtonElement>(null);
 
   // Hydrate history once on mount
   useEffect(() => {
@@ -68,17 +70,43 @@ const ChatWidget: React.FC = () => {
     }
   }, [messages, open, pending]);
 
-  // Focus input on open
+  // Move focus into the panel on open. With a mouse and keyboard that means
+  // the input, so you can just start typing. On a touch screen focusing the
+  // input would throw the keyboard up over the suggested questions before
+  // anyone has read them, so there the panel itself takes focus instead.
   useEffect(() => {
-    if (open) {
-      requestAnimationFrame(() => inputRef.current?.focus());
-    }
+    if (!open) return;
+    const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+    // The panel is looked up by id rather than held in a ref: a ref on the
+    // direct child of AnimatePresence makes Framer read `props.ref`, which
+    // React 18 warns about on every open.
+    requestAnimationFrame(() =>
+      (finePointer ? inputRef.current : document.getElementById(PANEL_ID))?.focus(),
+    );
   }, [open]);
+
+  // Closing hands focus back to the button that opened the panel, so a
+  // keyboard or screen-reader user is not dropped at the top of the page.
+  const close = useCallback(() => {
+    setOpen(false);
+    launcherRef.current?.focus();
+  }, []);
+
+  // Escape closes, from anywhere on the page while the panel is open.
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') close();
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [open, close]);
 
   const reset = () => {
     setMessages([]);
     setError(null);
     setInput('');
+    inputRef.current?.focus();
   };
 
   const send = async (raw: string) => {
@@ -131,6 +159,8 @@ const ChatWidget: React.FC = () => {
   };
 
   const handleKey = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    // Enter while an IME is composing confirms the composition, not the message.
+    if (e.nativeEvent.isComposing) return;
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       void send(input);
@@ -139,43 +169,81 @@ const ChatWidget: React.FC = () => {
 
   const suggestions = (t('chat.suggestions', { returnObjects: true }) as unknown) as string[];
 
+  // The panel grows out of the launcher and shrinks back into it: the scale
+  // pivots on the bottom-right corner, where the button is, so it is obvious
+  // where the panel came from and where it went. A spring with no bounce —
+  // nothing was thrown, so nothing should overshoot — and because it is a
+  // spring, closing mid-open reverses from wherever the panel has got to.
   const panelMotion = reduce
-    ? { initial: false, animate: { opacity: 1 }, exit: { opacity: 1 }, transition: { duration: 0 } }
+    ? {
+        initial: { opacity: 0 },
+        animate: { opacity: 1, transition: { duration: 0.12 } },
+        exit: { opacity: 0, transition: { duration: 0.1 } },
+      }
     : {
-        initial: { opacity: 0, y: 16, scale: 0.98 },
-        animate: { opacity: 1, y: 0, scale: 1 },
-        exit: { opacity: 0, y: 16, scale: 0.98 },
-        transition: { duration: 0.18, ease: 'easeOut' as const },
+        initial: { opacity: 0, y: 10, scale: 0.96 },
+        animate: {
+          opacity: 1,
+          y: 0,
+          scale: 1,
+          transition: { type: 'spring' as const, bounce: 0, duration: 0.32 },
+        },
+        exit: {
+          opacity: 0,
+          y: 8,
+          scale: 0.97,
+          transition: { duration: 0.14, ease: 'easeOut' as const },
+        },
       };
 
   return (
     <>
-      {/* Launcher */}
-      <motion.button
-        type="button"
-        onClick={() => setOpen((v) => !v)}
-        aria-label={t('chat.buttonLabel')}
-        className="fixed bottom-5 right-5 z-50 inline-flex items-center gap-2 rounded-md bg-navy-900 px-4 py-3 text-sm font-medium text-white shadow-card-hover transition-colors hover:bg-navy-800 md:bottom-8 md:right-8"
+      {/*
+        Launcher. The wrapper carries the one-off entrance; the button inside
+        carries the press state. They are separate elements because Framer
+        writes an inline transform, which would silently override the CSS
+        :active scale if both lived on the same node.
+      */}
+      <motion.div
+        className="fixed bottom-5 right-5 z-50 md:bottom-8 md:right-8"
         initial={reduce ? false : { scale: 0.9, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ delay: 0.4, duration: 0.3, ease: 'easeOut' }}
       >
-        {open ? <X size={18} /> : <MessageCircle size={18} />}
-        <span className="hidden sm:inline">{t('chat.buttonLabel')}</span>
-      </motion.button>
+        <button
+          ref={launcherRef}
+          type="button"
+          onClick={() => (open ? close() : setOpen(true))}
+          aria-label={t('chat.buttonLabel')}
+          aria-haspopup="dialog"
+          aria-expanded={open}
+          aria-controls={PANEL_ID}
+          className="press inline-flex h-12 min-w-12 items-center justify-center gap-2 rounded-md bg-navy-900 px-4 text-sm font-medium text-white shadow-card-hover hover:bg-navy-800"
+        >
+          {open ? <X size={18} /> : <MessageCircle size={18} />}
+          <span className="hidden sm:inline">{t('chat.buttonLabel')}</span>
+        </button>
+      </motion.div>
 
       {/* Panel */}
       <AnimatePresence>
         {open && (
           <motion.div
             {...panelMotion}
-            className="fixed bottom-20 right-0 z-50 flex w-full max-w-[420px] flex-col overflow-hidden border border-navy-100 bg-paper-raised shadow-card-hover md:bottom-24 md:right-8 md:rounded-lg"
-            style={{ height: 'min(640px, calc(100vh - 6rem))' }}
+            id={PANEL_ID}
+            tabIndex={-1}
+            // A floating card at every width — inset from the screen edges on
+            // a phone rather than a square slab glued to them. dvh, not vh:
+            // on a phone 100vh includes the area under the browser toolbar,
+            // which pushed the header out of reach. The 9.5rem leaves the
+            // launcher below and the 64px masthead above both uncovered.
+            className="fixed bottom-20 left-3 right-3 z-50 flex h-[min(640px,calc(100vh-9.5rem))] flex-col overflow-hidden rounded-lg border border-navy-100 bg-paper-raised shadow-card-hover focus:outline-none supports-[height:100dvh]:h-[min(640px,calc(100dvh-9.5rem))] sm:left-auto sm:right-5 sm:w-[420px] md:bottom-24 md:right-8"
+            style={{ transformOrigin: 'bottom right' }}
             role="dialog"
             aria-label={t('chat.title')}
           >
             {/* Header */}
-            <div className="flex items-center justify-between gap-3 border-b border-navy-100 px-4 py-3">
+            <div className="flex items-center justify-between gap-3 border-b border-navy-100 py-2 pl-4 pr-2">
               <div className="flex min-w-0 items-center gap-3">
                 {/* The mark pulses while a reply is being written. */}
                 <span className="w-8 flex-none text-brass-500" aria-hidden>
@@ -185,36 +253,42 @@ const ChatWidget: React.FC = () => {
                   <div className="font-display text-sm font-semibold text-navy-900">
                     {t('chat.title')}
                   </div>
-                  <div className="truncate text-[11px] text-muted/80">
+                  <div className="truncate text-[0.6875rem] text-muted">
                     {t('chat.disclaimer')}
                   </div>
                 </div>
               </div>
-              <div className="flex flex-none items-center gap-1">
+              <div className="flex flex-none items-center">
                 {messages.length > 0 && (
                   <button
                     type="button"
                     onClick={reset}
                     aria-label={t('chat.newChat')}
                     title={t('chat.newChat')}
-                    className="rounded p-1.5 text-muted transition-colors hover:bg-paper-sunken hover:text-navy-900"
+                    className="press grid h-11 w-11 place-items-center rounded text-muted hover:bg-paper-sunken hover:text-navy-900 active:bg-paper-sunken"
                   >
-                    <RefreshCcw size={14} />
+                    <RefreshCcw size={15} />
                   </button>
                 )}
                 <button
                   type="button"
-                  onClick={() => setOpen(false)}
+                  onClick={close}
                   aria-label={t('common.close')}
-                  className="rounded p-1.5 text-muted transition-colors hover:bg-paper-sunken hover:text-navy-900"
+                  className="press grid h-11 w-11 place-items-center rounded text-muted hover:bg-paper-sunken hover:text-navy-900 active:bg-paper-sunken"
                 >
-                  <X size={16} />
+                  <X size={17} />
                 </button>
               </div>
             </div>
 
-            {/* Body */}
-            <div ref={listRef} className="flex-1 space-y-3 overflow-y-auto px-4 py-4">
+            {/* Body. role="log" so a screen reader announces each reply as it
+                arrives instead of leaving it silently on screen. */}
+            <div
+              ref={listRef}
+              role="log"
+              aria-live="polite"
+              className="flex-1 space-y-3 overflow-y-auto overscroll-contain px-4 py-4"
+            >
               {messages.length === 0 && (
                 <div className="space-y-4">
                   <p className="font-serif text-[0.9375rem] leading-relaxed text-muted">
@@ -226,7 +300,7 @@ const ChatWidget: React.FC = () => {
                         key={s}
                         type="button"
                         onClick={() => void send(s)}
-                        className="block w-full rounded-md border border-navy-100 bg-paper px-3 py-2 text-left text-sm text-navy-900 transition-colors hover:border-brass-500/50"
+                        className="press block min-h-11 w-full rounded-md border border-navy-100 bg-paper px-3 py-2 text-left text-sm text-navy-900 hover:border-brass-500/50 active:border-brass-500/50 active:bg-paper-sunken"
                       >
                         {s}
                       </button>
@@ -263,7 +337,10 @@ const ChatWidget: React.FC = () => {
               )}
 
               {error && (
-                <div className="rounded-md border-l-2 border-brass-500 bg-brass-500/10 px-3 py-2 text-sm text-navy-900">
+                <div
+                  role="alert"
+                  className="rounded-md border-l-2 border-brass-500 bg-brass-500/10 px-3 py-2 text-sm text-navy-900"
+                >
                   {error}
                 </div>
               )}
@@ -274,25 +351,34 @@ const ChatWidget: React.FC = () => {
               onSubmit={handleSubmit}
               className="border-t border-navy-100 bg-paper-raised p-3"
             >
-              <div className="flex items-end gap-2 rounded-md border border-navy-100 bg-paper px-3 py-2 focus-within:border-brass-500/60">
+              <div className="flex items-end gap-2 rounded-md border border-navy-100 bg-paper py-1 pl-3 pr-1 focus-within:border-brass-500/60">
+                {/*
+                  16px on a phone: iOS zooms the whole page when a focused
+                  field is any smaller, and does not zoom back out.
+
+                  Never disabled. Disabling it while a reply was pending threw
+                  focus out of the field, so the next question meant tapping
+                  back in first. send() already ignores a second message
+                  mid-reply; the field can stay live and be typed into.
+                */}
                 <textarea
                   ref={inputRef}
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   onKeyDown={handleKey}
                   placeholder={t('chat.placeholder')}
+                  aria-label={t('chat.placeholder')}
+                  enterKeyHint="send"
                   rows={1}
-                  className="flex-1 resize-none bg-transparent text-sm text-navy-900 placeholder:text-muted/70 focus:outline-none"
-                  style={{ maxHeight: 120 }}
-                  disabled={pending}
+                  className="max-h-[120px] flex-1 resize-none bg-transparent py-2.5 text-base leading-6 text-navy-900 [field-sizing:content] placeholder:text-muted focus:outline-none md:text-sm md:leading-6"
                 />
                 <button
                   type="submit"
                   disabled={pending || !input.trim()}
                   aria-label={t('chat.send')}
-                  className="grid h-8 w-8 flex-none place-items-center rounded bg-navy-900 text-white transition-colors hover:bg-navy-800 disabled:cursor-not-allowed disabled:bg-navy-200 disabled:text-white/70"
+                  className="press grid h-11 w-11 flex-none place-items-center rounded bg-navy-900 text-white hover:bg-navy-800 disabled:cursor-not-allowed disabled:bg-navy-100 disabled:text-navy-600 disabled:active:scale-100"
                 >
-                  <Send size={14} />
+                  <Send size={15} />
                 </button>
               </div>
             </form>

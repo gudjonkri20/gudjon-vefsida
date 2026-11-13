@@ -77,7 +77,7 @@ const ContactPage: React.FC = () => {
                     href={href}
                     target={href.startsWith('http') ? '_blank' : undefined}
                     rel={href.startsWith('http') ? 'noopener noreferrer' : undefined}
-                    className="underline decoration-brass-500/50 decoration-1 underline-offset-4 transition-colors hover:text-brass-700"
+                    className="hit underline decoration-brass-500/50 decoration-1 underline-offset-4 transition-colors hover:text-brass-700"
                   >
                     {value}
                   </a>

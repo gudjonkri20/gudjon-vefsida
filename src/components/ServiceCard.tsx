@@ -15,7 +15,10 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service }) => {
   const mailto = `mailto:gudjonk6@gmail.com?subject=${subject}`;
 
   return (
-    <article className="flex h-full flex-col rounded-lg border border-navy-100 bg-paper-raised p-8 shadow-card transition-[box-shadow,transform,border-color] duration-200 ease-out hover:-translate-y-1 hover:border-brass-500/45 hover:shadow-card-hover motion-reduce:transform-none motion-reduce:transition-none">
+    // No hover lift here. A project card lifts because the whole card is a
+    // link; this one is not — only the button below is — and a card that
+    // rises under the pointer promises a click it does not deliver.
+    <article className="flex h-full flex-col rounded-lg border border-navy-100 bg-paper-raised p-8 shadow-card">
       <h3 className="font-display text-2xl font-semibold tracking-[-0.02em]">
         {service.title[locale]}
       </h3>
@@ -49,7 +52,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service }) => {
 
         <a
           href={mailto}
-          className="mt-6 inline-flex w-fit items-center gap-2 rounded-md bg-navy-900 px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-navy-800"
+          className="press mt-6 inline-flex min-h-11 w-fit items-center gap-2 rounded-md bg-navy-900 px-4 py-2.5 text-sm font-medium text-white hover:bg-navy-800"
         >
           <Mail size={15} />
           {t('services.ctaLabel')}

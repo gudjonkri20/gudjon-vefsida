@@ -356,16 +356,23 @@ const ConstellationCanvas: React.FC<Props> = ({
       else if (visible) start();
     };
 
-    canvas.addEventListener('pointermove', onMove);
-    canvas.addEventListener('pointerleave', onLeave);
+    // Listen on the nearest scope rather than the canvas when there is one.
+    // A project card is covered by its stretched link, so the canvas itself
+    // never sees the pointer; the card does, and the coordinates are still
+    // measured against the canvas.
+    const pointerTarget: HTMLElement =
+      host.closest<HTMLElement>('[data-constellation-scope]') ?? canvas;
+
+    pointerTarget.addEventListener('pointermove', onMove);
+    pointerTarget.addEventListener('pointerleave', onLeave);
     document.addEventListener('visibilitychange', onVisibility);
 
     return () => {
       stop();
       ro.disconnect();
       io.disconnect();
-      canvas.removeEventListener('pointermove', onMove);
-      canvas.removeEventListener('pointerleave', onLeave);
+      pointerTarget.removeEventListener('pointermove', onMove);
+      pointerTarget.removeEventListener('pointerleave', onLeave);
       document.removeEventListener('visibilitychange', onVisibility);
     };
   }, [shapes, startAt, pointCount, linkDistance]);

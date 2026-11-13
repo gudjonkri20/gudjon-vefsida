@@ -35,7 +35,7 @@ const HomePage: React.FC = () => {
           </div>
           <Link
             to={localizedHref('/projects', locale)}
-            className="group inline-flex items-center gap-1.5 text-sm font-medium text-brass-700 transition-colors hover:text-navy-900"
+            className="hit group inline-flex items-center gap-1.5 text-sm font-medium text-brass-700 transition-colors hover:text-navy-900"
           >
             {t('home.viewAll')}
             <ArrowRight
@@ -47,7 +47,9 @@ const HomePage: React.FC = () => {
 
         <div className="mt-10 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
           {featured.map((project, i) => (
-            <Reveal key={project.slug} delay={i * 0.08} className="h-full">
+            // Stagger by column, not by index: a card in the second row
+            // should not wait on the whole first row before it appears.
+            <Reveal key={project.slug} delay={(i % 3) * 0.08} className="h-full">
               <ProjectCard project={project} compact />
             </Reveal>
           ))}
@@ -69,7 +71,7 @@ const HomePage: React.FC = () => {
             </p>
             <Link
               to={localizedHref('/services', locale)}
-              className="group mt-6 inline-flex items-center gap-1.5 text-sm font-medium text-brass-700 transition-colors hover:text-navy-900"
+              className="hit group mt-6 inline-flex items-center gap-1.5 text-sm font-medium text-brass-700 transition-colors hover:text-navy-900"
             >
               {t('home.servicesCta')}
               <ArrowRight
@@ -85,7 +87,9 @@ const HomePage: React.FC = () => {
               <Reveal key={service.slug} delay={i * 0.08}>
                 <Link
                   to={localizedHref('/services', locale)}
-                  className="group flex items-start justify-between gap-6 rounded-lg border border-navy-100 bg-paper p-5 transition-colors hover:border-brass-500/50"
+                  // A row this wide answers a press with colour, not scale:
+                  // 3% of 600px is too much travel for a tap.
+                  className="group flex items-start justify-between gap-6 rounded-lg border border-navy-100 bg-paper p-5 transition-colors duration-100 hover:border-brass-500/50 active:border-brass-500/50 active:bg-paper-sunken"
                 >
                   <div className="min-w-0">
                     <div className="font-display text-lg font-semibold text-navy-900">

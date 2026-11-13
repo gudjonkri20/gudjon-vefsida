@@ -5,6 +5,9 @@
 // thing worth looking at. Nothing else gets a colour.
 export default {
   content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
+  // Hover styles only where there is a real pointer. On a phone a tapped card
+  // otherwise stays "hovered" (lifted, brass-bordered) until the next tap.
+  future: { hoverOnlyWhenSupported: true },
   theme: {
     extend: {
       colors: {

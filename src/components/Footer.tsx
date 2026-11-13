@@ -44,7 +44,7 @@ const Footer: React.FC = () => {
           <div>
             <Link
               to={localizedHref('/', locale)}
-              className="font-display text-base font-semibold text-white transition-colors hover:text-brass-400"
+              className="hit font-display text-base font-semibold text-white transition-colors hover:text-brass-400"
             >
               Guðjón Kristjánsson
             </Link>
@@ -54,12 +54,12 @@ const Footer: React.FC = () => {
           </div>
 
           <nav aria-label="Footer">
-            <ul className="grid grid-cols-2 gap-y-2 text-sm">
+            <ul className="-my-3 grid grid-cols-2 text-sm">
               {FOOTER_LINKS.map(({ key, path }) => (
                 <li key={key}>
                   <Link
                     to={localizedHref(path, locale)}
-                    className="transition-colors hover:text-brass-400"
+                    className="inline-flex min-h-11 min-w-11 items-center transition-colors hover:text-brass-400"
                   >
                     {t(`nav.${key}`)}
                   </Link>
@@ -68,14 +68,16 @@ const Footer: React.FC = () => {
             </ul>
           </nav>
 
-          <div className="flex items-start gap-4 md:justify-end">
+          {/* 18px icons in 44px boxes; the negative margins keep the icons
+              optically where they were. */}
+          <div className="-ml-3 -mt-3 flex items-start md:-mr-3 md:ml-0 md:justify-end">
             {SOCIALS.map(({ href, label, Icon }) => (
               <a
                 key={label}
                 href={href}
                 {...socialLinkProps(href)}
                 aria-label={label}
-                className="transition-colors hover:text-brass-400"
+                className="grid h-11 w-11 place-items-center transition-colors hover:text-brass-400"
               >
                 <Icon size={18} />
               </a>

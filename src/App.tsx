@@ -17,6 +17,7 @@ import ProjectDetailPage from './pages/ProjectDetailPage';
 import ServicesPage from './pages/ServicesPage';
 import ContactPage from './pages/ContactPage';
 import NotFoundPage from './pages/NotFoundPage';
+import { pathWithoutLocale } from './lib/i18n';
 
 const PAGE_ROUTES = [
   { path: '', element: <HomePage /> },
@@ -50,27 +51,44 @@ const routeElements = (
  * that same location explicitly — otherwise the outgoing page re-renders as
  * the incoming one while it is still exiting.
  */
+// 'instant' matters: html sets scroll-behavior: smooth, which would otherwise
+// animate the jump to the top.
+const scrollToTop = () =>
+  window.scrollTo({ top: 0, left: 0, behavior: 'instant' as ScrollBehavior });
+
 const AnimatedRoutes: React.FC = () => {
   const location = useLocation();
   const reduce = useReducedMotion();
 
-  // The site had no scroll restoration, and arriving halfway down a new page
-  // is far more jarring once pages fade into each other. 'instant' matters:
-  // html sets scroll-behavior: smooth, which would otherwise animate this.
+  // The page, ignoring language. Switching EN / IS re-renders the same page in
+  // place: it should not fade out, and it should not throw the reader back to
+  // the top of what they were reading.
+  const page = pathWithoutLocale(location.pathname);
+
+  // With no transition there is nothing to wait for, so reset on navigation.
+  // With one, the reset happens in onExitComplete below instead: doing it here
+  // would yank the outgoing page to the top while it is still on screen.
   useEffect(() => {
-    window.scrollTo({ top: 0, left: 0, behavior: 'instant' as ScrollBehavior });
-  }, [location.pathname]);
+    if (reduce) scrollToTop();
+  }, [page, reduce]);
 
   if (reduce) return <Routes location={location}>{routeElements}</Routes>;
 
   return (
-    <AnimatePresence mode="wait" initial={false}>
+    <AnimatePresence mode="wait" initial={false} onExitComplete={scrollToTop}>
       <motion.div
-        key={location.pathname}
-        initial={{ opacity: 0, y: 8 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: -8 }}
-        transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+        key={page}
+        // Navigation is the most repeated interaction on the site, so the old
+        // page gets out of the way fast (a plain 110ms fade, no travel) and
+        // only the arriving page is given any motion. The previous 280ms out +
+        // 280ms in left over half a second with nothing to read.
+        initial={{ opacity: 0, y: 6 }}
+        animate={{
+          opacity: 1,
+          y: 0,
+          transition: { duration: 0.24, ease: [0.22, 1, 0.36, 1] },
+        }}
+        exit={{ opacity: 0, transition: { duration: 0.11, ease: 'easeOut' } }}
       >
         <Routes location={location}>{routeElements}</Routes>
       </motion.div>

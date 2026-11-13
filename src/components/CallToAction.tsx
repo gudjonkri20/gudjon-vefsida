@@ -43,8 +43,9 @@ const CallToAction: React.FC<CallToActionProps> = ({
   const isGhost = variant === 'ghost';
 
   const classes = clsx(
-    'group inline-flex items-center gap-2 rounded-md text-sm font-medium transition-colors',
-    !isGhost && 'px-5 py-2.5',
+    // `press` gives the pointer-down response; 44px is the touch minimum.
+    'group press inline-flex items-center gap-2 rounded-md text-sm font-medium',
+    isGhost ? 'hit' : 'min-h-11 px-5 py-2.5',
     variants[key],
     className,
   );

@@ -31,12 +31,14 @@ const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({ className }) => {
     >
       {(['en', 'is'] as const).map((lang, i) => (
         <React.Fragment key={lang}>
-          {i > 0 && <span aria-hidden className="mx-1.5 text-navy-200">/</span>}
+          {i > 0 && <span aria-hidden className="text-navy-200">/</span>}
           <button
             type="button"
             onClick={() => switchTo(lang)}
             className={clsx(
-              'uppercase tracking-[0.08em] transition-colors',
+              // The label is 16px square. The button around it is 44px in the
+              // mobile menu and 28x32 beside a pointer, so it can be hit.
+              'inline-flex min-h-11 min-w-11 items-center justify-center uppercase tracking-[0.08em] transition-colors md:min-h-8 md:min-w-7',
               current === lang
                 ? 'text-navy-900'
                 : 'text-muted hover:text-brass-700',

@@ -55,7 +55,7 @@ const ProjectDetailPage: React.FC = () => {
         <div className="relative mx-auto max-w-6xl px-5 py-14 sm:px-8 md:py-16">
           <Link
             to={localizedHref('/projects', locale)}
-            className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.1em] text-navy-200 transition-colors hover:text-brass-400"
+            className="hit inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.1em] text-navy-200 transition-colors hover:text-brass-400"
           >
             <ArrowLeft size={14} />
             {t('projectDetail.back')}
@@ -88,7 +88,7 @@ const ProjectDetailPage: React.FC = () => {
               href={project.link}
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-8 inline-flex items-center gap-2 rounded-md bg-navy-900 px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-navy-800"
+              className="press mt-8 inline-flex min-h-11 items-center gap-2 rounded-md bg-navy-900 px-5 py-2.5 text-sm font-medium text-white hover:bg-navy-800"
             >
               {project.linkLabel?.[locale] ?? t('projects.openLink')}
               <ExternalLink size={15} />

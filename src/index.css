@@ -31,9 +31,11 @@
     @apply bg-brass-500/25 text-navy-900;
   }
 
-  /* One visible focus style everywhere, on both grounds. */
+  /* One visible focus style everywhere, on both grounds. brass-600, not 500:
+     500 is 2.87:1 against paper, under the 3:1 a focus indicator needs.
+     600 clears 3:1 on paper, white and navy alike. */
   :focus-visible {
-    outline: 2px solid theme('colors.brass.500');
+    outline: 2px solid theme('colors.brass.600');
     outline-offset: 3px;
     border-radius: 2px;
   }
@@ -58,6 +60,50 @@
   .link-inline {
     @apply text-brass-700 underline decoration-1 underline-offset-[3px] transition-colors hover:text-navy-900;
   }
+
+  /* Press feedback for anything button-shaped. The response lands on
+     pointer-down, not on release: it goes down fast (80ms) and comes back a
+     little slower, so a quick tap still visibly registers. Replaces
+     `transition-colors` on the element — do not combine the two. */
+  .press {
+    transition-property: color, background-color, border-color, box-shadow, transform;
+    transition-duration: 160ms;
+    transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .press:active {
+    transform: scale(0.97);
+    transition-duration: 80ms;
+  }
+
+  /* Grows the tap target of a small text link or icon to 44px without moving
+     anything: the visible element keeps its size, an invisible box around it
+     takes the touch. Needs clear space around it — do not use on tightly
+     packed siblings, where the boxes would overlap. */
+  .hit {
+    position: relative;
+  }
+
+  .hit::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 100%;
+    height: 100%;
+    min-width: 2.75rem;
+    min-height: 2.75rem;
+    transform: translate(-50%, -50%);
+  }
+
+  /* The masthead material: translucent paper with the page blurring through.
+     Kept at 90% because the navy hero scrolls underneath it — any thinner and
+     the muted nav labels drop below 4.5:1 while navy is behind them. */
+  .material-bar {
+    background-color: rgb(255 255 255 / 0.9);
+    -webkit-backdrop-filter: blur(16px) saturate(160%);
+    backdrop-filter: blur(16px) saturate(160%);
+  }
 }
 
 @layer utilities {
@@ -76,6 +122,24 @@
 
   .rule-on-navy {
     @apply border-t border-white/10;
+  }
+}
+
+/* People who ask for less transparency or more contrast get a solid bar. */
+@media (prefers-reduced-transparency: reduce) {
+  .material-bar {
+    background-color: theme('colors.paper.raised');
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
+
+@media (prefers-contrast: more) {
+  .material-bar {
+    background-color: theme('colors.paper.raised');
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    border-bottom-color: theme('colors.navy.900');
   }
 }
 
