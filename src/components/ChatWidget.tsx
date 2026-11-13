@@ -170,7 +170,7 @@ const ChatWidget: React.FC = () => {
   const suggestions = (t('chat.suggestions', { returnObjects: true }) as unknown) as string[];
 
   // The panel grows out of the launcher and shrinks back into it: the scale
-  // pivots on the bottom-right corner, where the button is, so it is obvious
+  // pivots on the bottom-left corner, where the button is, so it is obvious
   // where the panel came from and where it went. A spring with no bounce —
   // nothing was thrown, so nothing should overshoot — and because it is a
   // spring, closing mid-open reverses from wherever the panel has got to.
@@ -203,9 +203,18 @@ const ChatWidget: React.FC = () => {
         carries the press state. They are separate elements because Framer
         writes an inline transform, which would silently override the CSS
         :active scale if both lived on the same node.
+
+        Bottom-left, not the conventional bottom-right. On the live site
+        Netlify's free-tier "Powered by Netlify" badge is injected into the
+        bottom-right corner (197x64) and sat directly on top of this button,
+        so taps went to the badge. That corner is not ours to use; move this
+        back if the badge ever goes away.
+
+        The hairline ring gives the button an edge on the navy bands, where a
+        navy button otherwise has none and reads as loose text.
       */}
       <motion.div
-        className="fixed bottom-5 right-5 z-50 md:bottom-8 md:right-8"
+        className="fixed bottom-5 left-5 z-50 md:bottom-8 md:left-8"
         initial={reduce ? false : { scale: 0.9, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ delay: 0.4, duration: 0.3, ease: 'easeOut' }}
@@ -218,7 +227,7 @@ const ChatWidget: React.FC = () => {
           aria-haspopup="dialog"
           aria-expanded={open}
           aria-controls={PANEL_ID}
-          className="press inline-flex h-12 min-w-12 items-center justify-center gap-2 rounded-md bg-navy-900 px-4 text-sm font-medium text-white shadow-card-hover hover:bg-navy-800"
+          className="press inline-flex h-12 min-w-12 items-center justify-center gap-2 rounded-md bg-navy-900 px-4 text-sm font-medium text-white shadow-card-hover ring-1 ring-white/25 hover:bg-navy-800"
         >
           {open ? <X size={18} /> : <MessageCircle size={18} />}
           <span className="hidden sm:inline">{t('chat.buttonLabel')}</span>
@@ -237,8 +246,8 @@ const ChatWidget: React.FC = () => {
             // on a phone 100vh includes the area under the browser toolbar,
             // which pushed the header out of reach. The 9.5rem leaves the
             // launcher below and the 64px masthead above both uncovered.
-            className="fixed bottom-20 left-3 right-3 z-50 flex h-[min(640px,calc(100vh-9.5rem))] flex-col overflow-hidden rounded-lg border border-navy-100 bg-paper-raised shadow-card-hover focus:outline-none supports-[height:100dvh]:h-[min(640px,calc(100dvh-9.5rem))] sm:left-auto sm:right-5 sm:w-[420px] md:bottom-24 md:right-8"
-            style={{ transformOrigin: 'bottom right' }}
+            className="fixed bottom-20 left-3 right-3 z-50 flex h-[min(640px,calc(100vh-9.5rem))] flex-col overflow-hidden rounded-lg border border-navy-100 bg-paper-raised shadow-card-hover focus:outline-none supports-[height:100dvh]:h-[min(640px,calc(100dvh-9.5rem))] sm:left-5 sm:right-auto sm:w-[420px] md:bottom-24 md:left-8"
+            style={{ transformOrigin: 'bottom left' }}
             role="dialog"
             aria-label={t('chat.title')}
           >

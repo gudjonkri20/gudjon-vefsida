@@ -27,7 +27,9 @@ const Row: React.FC<{ label: string; children: React.ReactNode }> = ({
 const Entry: React.FC<{ title: string; body: string }> = ({ title, body }) => (
   <div className="border-l-2 border-brass-500/40 pl-5">
     <div className="font-display text-lg font-semibold text-navy-900">{title}</div>
-    <div className="mt-1 font-serif leading-relaxed text-muted">{body}</div>
+    {/* Same 68ch measure as every other paragraph on the page. Unbounded,
+        these ran to ~125 characters a line on a wide screen. */}
+    <div className="mt-1 max-w-prose font-serif leading-relaxed text-muted">{body}</div>
   </div>
 );
 

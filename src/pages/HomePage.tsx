@@ -8,7 +8,7 @@ import Section from '../components/Section';
 import ProjectCard from '../components/ProjectCard';
 import Reveal from '../components/Reveal';
 import ConstellationWatermark from '../components/ConstellationWatermark';
-import { getFeaturedProjects } from '../lib/projects';
+import { getAllProjects, getFeaturedProjects } from '../lib/projects';
 import { services } from '../data/services';
 import { useCurrentLocale, localizedHref } from '../lib/i18n';
 
@@ -16,6 +16,7 @@ const HomePage: React.FC = () => {
   const { t } = useTranslation();
   const locale = useCurrentLocale();
   const featured = getFeaturedProjects();
+  const total = getAllProjects().length;
 
   return (
     <>
@@ -35,7 +36,9 @@ const HomePage: React.FC = () => {
           </div>
           <Link
             to={localizedHref('/projects', locale)}
-            className="hit group inline-flex items-center gap-1.5 text-sm font-medium text-brass-700 transition-colors hover:text-navy-900"
+            // From md up only. On a phone the tile that closes the grid below
+            // is the way on, in the place a reader actually ends up.
+            className="hit group hidden items-center gap-1.5 text-sm font-medium text-brass-700 transition-colors hover:text-navy-900 md:inline-flex"
           >
             {t('home.viewAll')}
             <ArrowRight
@@ -53,6 +56,33 @@ const HomePage: React.FC = () => {
               <ProjectCard project={project} compact />
             </Reveal>
           ))}
+
+          {/*
+            The last cell. Five featured projects in a three-column grid left
+            a hole in the bottom-right corner; this fills it with the thing
+            the reader wants next. Dashed, so it reads as "the rest" rather
+            than as a sixth project, and counted the same way the projects
+            page counts ("5 / 14"), so it says how much more there is.
+          */}
+          {featured.length < total && (
+            <Reveal delay={(featured.length % 3) * 0.08} className="h-full">
+              <Link
+                to={localizedHref('/projects', locale)}
+                className="group flex h-full min-h-[11rem] flex-col justify-between rounded-lg border border-dashed border-navy-200 p-6 transition-colors duration-100 hover:border-brass-500/70 hover:bg-paper-raised active:border-brass-500/70 active:bg-paper-sunken"
+              >
+                <span className="font-mono text-xs text-muted">
+                  {featured.length} / {total}
+                </span>
+                <span className="mt-8 inline-flex items-center gap-2 font-display text-lg font-semibold tracking-[-0.01em] text-navy-900">
+                  {t('home.viewAll')}
+                  <ArrowRight
+                    size={18}
+                    className="text-brass-600 transition-transform group-hover:translate-x-0.5"
+                  />
+                </span>
+              </Link>
+            </Reveal>
+          )}
         </div>
       </Section>
 

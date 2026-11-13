@@ -39,20 +39,8 @@ const ProjectDetailPage: React.FC = () => {
         path={localizedHref(`/projects/${project.slug}`, locale)}
       />
 
-      <header className="relative overflow-hidden bg-navy-900 text-white">
-        {/* The project's own category mark, same language as the grid. */}
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute -right-10 top-1/2 hidden -translate-y-1/2 opacity-60 lg:block"
-        >
-          <ConstellationCanvas
-            shapes={detailShapes}
-            pointCount={160}
-            linkDistance={34}
-            className="h-[260px] w-[260px]"
-          />
-        </div>
-        <div className="relative mx-auto max-w-6xl px-5 py-14 sm:px-8 md:py-16">
+      <header className="bg-navy-900 text-white">
+        <div className="mx-auto max-w-6xl px-5 py-14 sm:px-8 md:py-16">
           <Link
             to={localizedHref('/projects', locale)}
             className="hit inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.1em] text-navy-200 transition-colors hover:text-brass-400"
@@ -61,18 +49,34 @@ const ProjectDetailPage: React.FC = () => {
             {t('projectDetail.back')}
           </Link>
 
-          <div className="mt-8 max-w-3xl">
-            <Badge
-              status={project.status}
-              label={statusLabel}
-              className="border-brass-400/40 bg-brass-400/10 text-brass-400"
-            />
-            <h1 className="mt-5 text-balance font-display text-[clamp(2rem,4.5vw,3.25rem)] font-semibold leading-[1.06] tracking-[-0.025em] text-white">
-              {project.title[locale]}
-            </h1>
-            <p className="mt-4 font-serif text-lg leading-relaxed text-navy-100 sm:text-xl">
-              {project.tagline[locale]}
-            </p>
+          {/*
+            The project's own category mark sits on the content grid, right
+            of the title — the same seat the mark has on Projects, About,
+            Services and Contact. It used to be pinned to the edge of the
+            window instead, where a 1440px screen cut 40px off its side.
+          */}
+          <div className="mt-8 grid items-center gap-10 lg:grid-cols-[minmax(0,1fr)_auto]">
+            <div className="max-w-3xl">
+              <Badge
+                status={project.status}
+                label={statusLabel}
+                className="border-brass-400/40 bg-brass-400/10 text-brass-400"
+              />
+              <h1 className="mt-5 text-balance font-display text-[clamp(2rem,4.5vw,3.25rem)] font-semibold leading-[1.06] tracking-[-0.025em] text-white">
+                {project.title[locale]}
+              </h1>
+              <p className="mt-4 font-serif text-lg leading-relaxed text-navy-100 sm:text-xl">
+                {project.tagline[locale]}
+              </p>
+            </div>
+            <div aria-hidden="true" className="hidden lg:block">
+              <ConstellationCanvas
+                shapes={detailShapes}
+                pointCount={160}
+                linkDistance={30}
+                className="h-[220px] w-[220px] cursor-crosshair"
+              />
+            </div>
           </div>
         </div>
       </header>

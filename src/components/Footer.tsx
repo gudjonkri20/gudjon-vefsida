@@ -39,7 +39,9 @@ const Footer: React.FC = () => {
         <Waveform />
       </div>
 
-      <div className="mx-auto max-w-6xl px-5 pb-12 sm:px-8">
+      {/* pt-10: the content used to start flush against the top of the band
+          while the bottom had 48px, so the footer read as cut off. */}
+      <div className="mx-auto max-w-6xl px-5 pb-12 pt-10 sm:px-8 md:pt-12">
         <div className="grid gap-10 md:grid-cols-3">
           <div>
             <Link
