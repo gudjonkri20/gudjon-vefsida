@@ -130,6 +130,20 @@ export default async (req: Request, context: Context): Promise<Response> => {
     return json(403, { error: 'forbidden_origin' });
   }
 
+  // A status probe. The page asks this before it offers the ask bar in the
+  // hero, so the first screen never invites a question the assistant cannot
+  // answer. It reports only whether a key is configured: it calls nothing,
+  // spends nothing, and touches no rate-limit state.
+  if (req.method === 'GET') {
+    return new Response(
+      JSON.stringify({ online: Boolean(process.env.ANTHROPIC_API_KEY) }),
+      {
+        status: 200,
+        headers: { 'content-type': 'application/json', 'cache-control': 'no-store' },
+      },
+    );
+  }
+
   if (req.method !== 'POST') {
     return json(405, { error: 'method_not_allowed' });
   }

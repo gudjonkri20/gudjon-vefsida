@@ -31,6 +31,50 @@ const LIVE = getAllProjects()
     host: new URL(p.link as string).hostname.replace(/^www\./, ''),
   }));
 
+const ONLINE_KEY = 'gk-chat-online';
+
+/**
+ * Whether the assistant can answer right now, as reported by the chat
+ * function's status probe (GET /api/chat).
+ *
+ * The ask bar is the most prominent control on the site, so it must not be
+ * offered when a question would only come back as "AI is offline". It starts
+ * from the last known answer for this tab so it does not blink out and back
+ * in on every visit to the home page, and anything other than a clear "yes"
+ * — a failed request, a non-JSON reply, no key configured — counts as no.
+ */
+const useAssistantOnline = (): boolean => {
+  const [online, setOnline] = useState(() => {
+    try {
+      return window.sessionStorage.getItem(ONLINE_KEY) === '1';
+    } catch {
+      return false;
+    }
+  });
+
+  useEffect(() => {
+    let current = true;
+    fetch('/api/chat')
+      .then((res) => (res.ok ? res.json() : { online: false }))
+      .then((data: { online?: unknown }) => data.online === true)
+      .catch(() => false)
+      .then((value) => {
+        if (!current) return;
+        setOnline(value);
+        try {
+          window.sessionStorage.setItem(ONLINE_KEY, value ? '1' : '0');
+        } catch {
+          /* storage unavailable — the answer just is not remembered */
+        }
+      });
+    return () => {
+      current = false;
+    };
+  }, []);
+
+  return online;
+};
+
 /**
  * Ask his AI, from the first screen.
  *
@@ -171,6 +215,7 @@ const Hero: React.FC = () => {
   const locale = useCurrentLocale();
   const reduce = useReducedMotion();
   const wide = useMediaQuery(WIDE);
+  const assistantOnline = useAssistantOnline();
   const slotRef = useRef<HTMLDivElement>(null);
 
   const headline = t('hero.headline');
@@ -290,8 +335,18 @@ const Hero: React.FC = () => {
                   </CallToAction>
                 </motion.div>
 
-                <motion.div variants={item} className="mt-6">
-                  <AskBar />
+                {/* The row keeps its height whether or not the bar is shown,
+                    so the hero does not jump when the status arrives. */}
+                <motion.div variants={item} className="mt-6 min-h-[3.25rem]">
+                  {assistantOnline && (
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      <AskBar />
+                    </motion.div>
+                  )}
                 </motion.div>
               </div>
 
