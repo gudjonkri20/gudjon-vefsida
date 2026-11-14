@@ -9,7 +9,11 @@ const AboutPage: React.FC = () => {
   const locale = useCurrentLocale();
   return (
     <>
-      <SEO title={t('about.title')} path={localizedHref('/about', locale)} />
+      <SEO
+        title={t('about.title')}
+        description={t('about.subtitle')}
+        path={localizedHref('/about', locale)}
+      />
       <AboutSection />
     </>
   );

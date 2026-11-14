@@ -58,7 +58,11 @@ const ProjectsPage: React.FC = () => {
 
   return (
     <>
-      <SEO title={t('projects.title')} path={localizedHref('/projects', locale)} />
+      <SEO
+        title={t('projects.title')}
+        description={t('projects.subtitle')}
+        path={localizedHref('/projects', locale)}
+      />
 
       <PageHeader
         eyebrow={t('siteTagline')}

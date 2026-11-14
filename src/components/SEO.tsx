@@ -1,6 +1,7 @@
 import React from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
+import { SITE_URL } from '../lib/site';
 
 interface SEOProps {
   title?: string;
@@ -9,7 +10,6 @@ interface SEOProps {
   image?: string;
 }
 
-const SITE_URL = 'https://gudjonkristjansson.com';
 const DEFAULT_IMAGE = `${SITE_URL}/og-image.png`;
 
 const SEO: React.FC<SEOProps> = ({ title, description, path = '/', image }) => {

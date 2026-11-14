@@ -45,7 +45,11 @@ const ContactPage: React.FC = () => {
 
   return (
     <>
-      <SEO title={t('contact.title')} path={localizedHref('/contact', locale)} />
+      <SEO
+        title={t('contact.title')}
+        description={t('contact.subtitle')}
+        path={localizedHref('/contact', locale)}
+      />
 
       <PageHeader
         title={t('contact.title')}

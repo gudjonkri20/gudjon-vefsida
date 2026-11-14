@@ -15,7 +15,11 @@ const ServicesPage: React.FC = () => {
 
   return (
     <>
-      <SEO title={t('services.title')} path={localizedHref('/services', locale)} />
+      <SEO
+        title={t('services.title')}
+        description={t('services.subtitle')}
+        path={localizedHref('/services', locale)}
+      />
 
       <PageHeader
         eyebrow={t('siteTagline')}

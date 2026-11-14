@@ -16,10 +16,29 @@
   to = "/.netlify/functions/:splat"
   status = 200
 
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
+# There is deliberately no "/* -> /index.html 200" catch-all any more.
+#
+# The build writes a real HTML file for every route (scripts/postbuild.mjs),
+# so each page is served with its own title and share card, and an address
+# that matches no file falls through to 404.html with a 404 status. The app
+# still boots inside 404.html and draws the "not found" page. With the
+# catch-all, every address on the site answered 200, real or not.
+
+# Fingerprinted build output: the filename changes whenever the content does,
+# so a browser can keep it for a year without ever asking again. Before this
+# every script, stylesheet and font was re-validated on every visit.
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    X-Frame-Options = "SAMEORIGIN"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=()"
 
 [functions]
   node_bundler = "esbuild"
