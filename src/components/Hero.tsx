@@ -297,14 +297,18 @@ const Hero: React.FC = () => {
 
               {/*
                 The slot: an empty box that only says where the shape goes.
-                On a phone it is kept narrow and pulled left, because shapes
-                are fitted to the box height and centred in its width, and
-                the mark should sit on the same edge as the text above it.
+                On a phone it is kept narrow and nudged left, because shapes
+                are centred in the box and the mark should sit on the same
+                edge as the text above it. The numbers are set by the widest
+                shape: Iceland fills 86% of the box, so at 224px with a 16px
+                pull its west coast lands on the text edge and stays on
+                screen. (A wider box with a bigger pull, which suited the
+                narrower shapes, ran the Westfjords off the side.)
               */}
               <div
                 ref={slotRef}
                 aria-hidden="true"
-                className="-ml-12 mt-10 h-[180px] w-[260px] sm:-ml-10 sm:h-[200px] lg:ml-0 lg:mt-0 lg:h-[340px] lg:w-[340px] xl:h-[440px] xl:w-[440px]"
+                className="-ml-4 mt-10 h-[180px] w-[224px] sm:h-[200px] sm:w-[248px] lg:ml-0 lg:mt-0 lg:h-[340px] lg:w-[340px] xl:h-[440px] xl:w-[440px]"
               />
             </div>
 

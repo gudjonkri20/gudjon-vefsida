@@ -81,7 +81,10 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, compact = false }) =
         )}
       </div>
 
-      <div className="mt-auto flex items-center justify-between gap-3 border-t border-navy-100 pt-4">
+      {/* Each label stays on one line; if both do not fit side by side (the
+          narrower cards in the phone's swipe row) the second drops below,
+          rather than both breaking mid-phrase. */}
+      <div className="mt-auto flex flex-wrap items-center justify-between gap-x-3 gap-y-1 whitespace-nowrap border-t border-navy-100 pt-4">
         {project.link ? (
           <a
             href={project.link}
