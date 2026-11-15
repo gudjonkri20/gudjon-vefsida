@@ -77,6 +77,7 @@ npx netlify link --id 08de3d61-623b-4096-a1bf-186407de5e72
    | `isFeatured` | `true` to show it on the home page and the CV. |
    | `hasDetailPage` | `true` to give it its own page. |
    | `year` | Optional. |
+   | `system` | Optional. Draws the "How it fits together" diagram on the project's page: `input` (what starts it), `core` (what sits in the middle), `parts` (three to six things it connects to) and `notes` (short facts). All `{ en, is }`. See the Icelandia chatbot entry for an example. Only what is already public. |
 
    Keep internal projects at the level of the existing ones (see
    *Confidentiality* below).

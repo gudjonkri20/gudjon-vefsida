@@ -26,7 +26,6 @@
     "ctaPrimary": "Skoða verkefni",
     "ctaSecondary": "Hafa samband",
     "live": "Í notkun núna",
-    "marksLabel": "Form stjörnumerkisins",
     "marks": ["Upphafsstafir", "Ísland", "Tauganet", "Spjallmenni", "Gögn og spár"],
     "stats": {
       "production": "kerfi í framleiðslu",
@@ -78,7 +77,10 @@
     "stack": "Tæknistafli",
     "status": "Staða",
     "year": "Ár",
-    "comingSoon": "Ítarleg lýsing kemur fljótlega."
+    "comingSoon": "Ítarleg lýsing kemur fljótlega.",
+    "system": "Hvernig þetta hangir saman",
+    "systemCore": "Kjarni",
+    "systemSentence": "{{input}} talar við {{core}}, sem notar: {{parts}}."
   },
 
   "services": {

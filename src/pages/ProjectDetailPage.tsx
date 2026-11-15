@@ -7,6 +7,7 @@ import Band from '../components/Band';
 import Section from '../components/Section';
 import Badge from '../components/Badge';
 import TechTag from '../components/TechTag';
+import SystemDiagram from '../components/SystemDiagram';
 import NotFoundPage from './NotFoundPage';
 import ConstellationCanvas from '../components/ConstellationCanvas';
 import { CATEGORY_SHAPE, SHAPES } from '../lib/constellationShapes';
@@ -126,6 +127,8 @@ const ProjectDetailPage: React.FC = () => {
             </div>
           )}
         </div>
+
+        {project.system && <SystemDiagram system={project.system} />}
 
         <div className="mt-14 grid max-w-3xl grid-cols-1 gap-8 border-t border-navy-100 pt-8 sm:grid-cols-[1fr_auto]">
           <div className="min-w-0">

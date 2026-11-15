@@ -26,6 +26,25 @@ export const projects: Project[] = [
     isFeatured: true,
     hasDetailPage: true,
     year: 2026,
+    // Drawn from the description above and nothing else: the five tools it
+    // names, and its stated facts.
+    system: {
+      input: { en: 'Visitor, ~10 languages', is: 'Gestur, um 10 tungumál' },
+      core: { en: 'Tool-using LLM', is: 'Tólanotandi mállíkan' },
+      parts: [
+        { en: 'RAG over tour content', is: 'RAG yfir ferðaefni' },
+        { en: 'Live tour status', is: 'Rauntímastaða ferða' },
+        { en: 'Flybus schedules', is: 'Áætlun Flybus' },
+        { en: 'Secure booking lookup', is: 'Örugg bókunarleit' },
+        { en: 'Handoff to a human', is: 'Afhending til starfsmanns' },
+      ],
+      notes: [
+        { en: '5 tools', is: '5 verkfæri' },
+        { en: 'Semantic caching', is: 'Merkingarleg skyndiminni' },
+        { en: 'Aurora forecast & cancellations', is: 'Norðurljósaspá og afpantanir' },
+        { en: 'Locked to its own domain', is: 'Læst við eigið lén' },
+      ],
+    },
   },
   {
     slug: 'chatbot-analytics-mcp',

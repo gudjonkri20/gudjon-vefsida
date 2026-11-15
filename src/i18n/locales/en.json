@@ -26,7 +26,6 @@
     "ctaPrimary": "See my work",
     "ctaSecondary": "Get in touch",
     "live": "Live now",
-    "marksLabel": "Constellation shapes",
     "marks": ["Initials", "Iceland", "Neural network", "Chatbots", "Data & forecasting"],
     "stats": {
       "production": "production systems shipped",
@@ -78,7 +77,10 @@
     "stack": "Stack",
     "status": "Status",
     "year": "Year",
-    "comingSoon": "Detailed write-up coming soon."
+    "comingSoon": "Detailed write-up coming soon.",
+    "system": "How it fits together",
+    "systemCore": "Core",
+    "systemSentence": "{{input}} talks to a {{core}}, which uses: {{parts}}."
   },
 
   "services": {
