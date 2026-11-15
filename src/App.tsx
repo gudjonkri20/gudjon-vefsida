@@ -17,6 +17,7 @@ import ProjectDetailPage from './pages/ProjectDetailPage';
 import ServicesPage from './pages/ServicesPage';
 import ContactPage from './pages/ContactPage';
 import NotFoundPage from './pages/NotFoundPage';
+import CVPage from './pages/CVPage';
 import { pathWithoutLocale } from './lib/i18n';
 
 const PAGE_ROUTES = [
@@ -26,6 +27,7 @@ const PAGE_ROUTES = [
   { path: 'projects', element: <ProjectsPage /> },
   { path: 'projects/:slug', element: <ProjectDetailPage /> },
   { path: 'contact', element: <ContactPage /> },
+  { path: 'cv', element: <CVPage /> },
 ];
 
 const routeElements = (

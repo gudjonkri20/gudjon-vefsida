@@ -26,6 +26,8 @@
     "ctaPrimary": "Skoða verkefni",
     "ctaSecondary": "Hafa samband",
     "live": "Í notkun núna",
+    "marksLabel": "Form stjörnumerkisins",
+    "marks": ["Upphafsstafir", "Ísland", "Tauganet", "Spjallmenni", "Gögn og spár"],
     "stats": {
       "production": "kerfi í framleiðslu",
       "mcp": "MCP-þjónar í framleiðslu",
@@ -152,6 +154,17 @@
       "title": "Hafa samband",
       "body": "Tölvupóstur eða sími virka best. Ég les hvort tveggja."
     }
+  },
+
+  "cv": {
+    "title": "Ferilskrá",
+    "description": "Ferilskrá Guðjóns Kristjánssonar: AI-sérfræðingur hjá Icelandia sem smíðar spjallmenni, MCP-þjóna, vélnámskeðjur og sjálfvirkni í framleiðslu.",
+    "open": "Skoða ferilskrá",
+    "download": "Sækja PDF",
+    "hint": "Vistast sem A4 PDF úr prentglugganum.",
+    "profile": "Yfirlit",
+    "projects": "Valin verkefni",
+    "link": "Ferilskrá"
   },
 
   "contact": {

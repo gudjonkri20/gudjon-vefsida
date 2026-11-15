@@ -71,7 +71,7 @@ const Navbar: React.FC = () => {
     // below it and over paper everywhere else. No colour-shifting on scroll.
     <nav
       className={clsx(
-        'material-bar sticky top-0 z-40 w-full border-b border-navy-100 transition-shadow duration-200',
+        'material-bar sticky top-0 z-40 w-full border-b border-navy-100 transition-shadow duration-200 print:hidden',
         scrolled && 'shadow-[0_1px_12px_-4px_rgba(11,31,56,0.18)]',
       )}
     >

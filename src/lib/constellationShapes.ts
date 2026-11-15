@@ -108,6 +108,53 @@ export const network: ShapePainter = (ctx, w, h) => {
 };
 
 /**
+ * The neural network as the hero draws it: three layers (3-4-2), every node
+ * joined to every node in the next layer — the picture people recognise.
+ *
+ * `network` above is the same idea tuned for a 48px card mark, where heavy
+ * node rings have to dominate a sample of a few dozen points. At hero size
+ * that balance breaks: almost every point lands on a ring and the edges
+ * vanish, so the shape reads as clumps. Two other layouts were tried and
+ * failed in the cloud: 3-4-3 (24 edges crossing in the middle sample into a
+ * mesh) and 2-3-2 (the seven nodes sit on a hexagon round a centre and read
+ * as a molecule). Uneven column counts, columns far apart and rings that
+ * outweigh the edges keep the layers reading as layers.
+ */
+export const neuralNet: ShapePainter = (ctx, w, h) => {
+  fit(ctx, w, h);
+
+  const layers = [3, 4, 2];
+  const xs = [8, 50, 92];
+  const nodes = layers.map((count, li) =>
+    Array.from({ length: count }, (_, i) => ({
+      x: xs[li],
+      y: 50 + (i - (count - 1) / 2) * 23,
+    })),
+  );
+
+  stroke(ctx, 1.1);
+  for (let li = 0; li < nodes.length - 1; li++) {
+    for (const a of nodes[li]) {
+      for (const b of nodes[li + 1]) {
+        ctx.beginPath();
+        ctx.moveTo(a.x, a.y);
+        ctx.lineTo(b.x, b.y);
+        ctx.stroke();
+      }
+    }
+  }
+
+  ctx.lineWidth = 3;
+  for (const layer of nodes) {
+    for (const n of layer) {
+      ctx.beginPath();
+      ctx.arc(n.x, n.y, 6, 0, Math.PI * 2);
+      ctx.stroke();
+    }
+  }
+};
+
+/**
  * The speech waveform, rebuilt from the same five-syllable envelope as
  * Waveform.tsx — one burst per syllable of "Guð-jón Krist-jáns-son", weighted
  * for Icelandic first-syllable stress, from a fixed seed.
@@ -326,5 +373,10 @@ export const CATEGORY_SHAPE: Record<string, ShapePainter> = {
 /** Morph order on the interior page headers. */
 export const SHAPES: ShapePainter[] = [brain, network, waveform];
 
-/** Morph order in the hero: who, where, what he studies. */
-export const HERO_SHAPES: ShapePainter[] = [initials, iceland, waveform];
+/**
+ * Morph order in the hero: who, where, then what he does — a neural network
+ * for AI, a speech bubble for the chatbots he ships, a bar chart for data and
+ * forecasting. Labelled in order by `hero.marks` in the locale files; keep
+ * the two in step.
+ */
+export const HERO_SHAPES: ShapePainter[] = [initials, iceland, neuralNet, bubble, bars];

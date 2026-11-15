@@ -75,6 +75,7 @@ for (const locale of LOCALES) {
   add('/services', pick(s, 'services.title'), pick(s, 'services.subtitle'));
   add('/projects', pick(s, 'projects.title'), pick(s, 'projects.subtitle'));
   add('/contact', pick(s, 'contact.title'), pick(s, 'contact.subtitle'));
+  add('/cv', pick(s, 'cv.title'), pick(s, 'cv.description'));
   for (const p of projects) {
     add(`/projects/${p.slug}`, p.title[locale], p.tagline[locale], {
       inSitemap: p.hasDetailPage,

@@ -5,7 +5,7 @@ Source for [gudjonkristjansson.com](https://gudjonkristjansson.com) — Guðjón
 ## Stack
 
 - React 18 + TypeScript + Vite 5
-- Tailwind CSS 3 with Geist (`@fontsource/geist`)
+- Tailwind CSS 3; type is Familjen Grotesk, Source Serif 4 and JetBrains Mono (`@fontsource`)
 - React Router DOM 6 (with bilingual `/is/*` mirror)
 - `react-i18next` for EN/IS internationalization
 - `react-helmet-async` for per-page SEO
@@ -31,11 +31,75 @@ npm run preview      # Preview the built bundle locally
 
 ## Deploying
 
-The site auto-deploys on push to `main` via Netlify. Manual deploys:
+Deploys go out from the command line, not from git: pushing to `main` does
+not change the live site.
 
 ```bash
+npm run build
 npm run deploy       # netlify deploy --prod
 ```
+
+To try a build somewhere other than the live site first:
+
+```bash
+npx netlify deploy --dir=dist --alias=preview   # -> https://preview--gudjonkristjansson.netlify.app
+```
+
+## Adding a project
+
+Everything about a project lives in one place, `src/data/projects.ts`. Add an
+entry there and the site picks it up everywhere: the projects page and its
+filters, the project's own page, the home page (if featured), the CV, the
+assistant's knowledge, the sitemap and link previews.
+
+**On a new computer, once:**
+
+```bash
+git clone https://github.com/gudjonkri20/gudjon-vefsida.git
+cd gudjon-vefsida
+npm install
+npx netlify login
+npx netlify link --id 08de3d61-623b-4096-a1bf-186407de5e72
+```
+
+**Each time:**
+
+1. In `src/data/projects.ts`, copy an existing entry and edit it. Fields:
+
+   | Field | What it does |
+   |-------|--------------|
+   | `slug` | The address: `/projects/<slug>`. Lowercase, hyphens. |
+   | `title`, `tagline`, `description` | `{ en, is }` each. The tagline is the one-line summary shown on cards, link previews and the CV. |
+   | `status` | `public`, `internal` (built for Icelandia), `research` or `side`. |
+   | `category` | `chatbot`, `mcp`, `ml`, `automation`, `dashboards`, `data-eng`, `research` or `side`. Decides the filter and the constellation mark. |
+   | `tech` | List of technologies shown as tags. |
+   | `link`, `linkLabel` | Optional. A public `link` also puts the project in the hero's "Live now" line and on the CV. |
+   | `isFeatured` | `true` to show it on the home page and the CV. |
+   | `hasDetailPage` | `true` to give it its own page. |
+   | `year` | Optional. |
+
+   Keep internal projects at the level of the existing ones (see
+   *Confidentiality* below).
+
+2. Draw its share card (the image LinkedIn and Slack show). Needs Edge or
+   Chrome installed:
+
+   ```bash
+   npm run og
+   ```
+
+3. Check it, then put it live:
+
+   ```bash
+   npm run dev       # look at it at http://localhost:5173
+   npm run build     # fails loudly if something is wrong
+   git add -A && git commit -m "Add <project>" && git push
+   npm run deploy
+   ```
+
+The counts in the hero ("14 production systems shipped", "4 MCP servers
+live", …) are typed by hand in `src/components/Hero.tsx` (`INDEX`). They do
+not update themselves, so change them if a new project changes them.
 
 ## Environment variables
 
@@ -56,16 +120,19 @@ netlify env:set ANTHROPIC_API_KEY <key>
 ```
 src/
   components/      Reusable UI (Hero, ProjectCard, ChatWidget, …)
-  pages/           Route components (Home, About, Services, Projects, Contact, ProjectDetail, NotFound)
-  data/            Typed content data (projects.ts, services.ts)
+  pages/           Route components (Home, About, Services, Projects, Contact, ProjectDetail, CV, NotFound)
+  data/            Typed content data (projects.ts, services.ts, about.ts)
   lib/             Pure helpers (i18n locale routing, project filters)
   i18n/            i18n init + locale JSON (en, is)
   types.ts         Shared types
 netlify/functions/
   chat.ts          Anthropic proxy for "Ask Guðjón AI" — POST /api/chat
   _chatContext.ts  Sanitized system-prompt builder
+scripts/
+  postbuild.mjs    After `vite build`: one HTML file per route (own title and share card), 404.html, sitemap.xml, robots.txt
+  og-cards.mjs     `npm run og`: draws the share cards into public/og/
 public/
-  favicon.svg, robots.txt, profile.jpg
+  favicon.svg, profile.jpg, og-image.png, og/   (share cards are generated; see above)
 ```
 
 ## Confidentiality
@@ -82,5 +149,6 @@ Most of Guðjón's strongest production work was built **for Icelandia** (former
 | `/projects/:slug` | Project detail |
 | `/about` | About |
 | `/contact` | Contact |
+| `/cv` | One-page CV; "Download PDF" prints it to A4 |
 | `/is/*` | Icelandic mirror of all of the above |
 | `*` | 404 |

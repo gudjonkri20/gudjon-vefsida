@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { ArrowUp, ArrowUpRight, MessageCircle } from 'lucide-react';
+import clsx from 'clsx';
 import Band from './Band';
 import CallToAction from './CallToAction';
 import ConstellationCanvas from './ConstellationCanvas';
@@ -19,6 +20,9 @@ const INDEX = [
 ] as const;
 
 const EASE = [0.22, 1, 0.36, 1] as const;
+
+/** How long the hero mark holds a shape before moving on to the next. */
+const MARK_HOLD_MS = 5000;
 
 /**
  * The things a visitor can go and use right now: public projects with a live
@@ -175,6 +179,27 @@ const Hero: React.FC = () => {
   const assistantOnline = useAssistantOnline();
   const slotRef = useRef<HTMLDivElement>(null);
 
+  // Which shape the mark is holding. It moves on by itself every few
+  // seconds; a visitor can also pick one (the dots under it) or click the
+  // mark to step on. A pick restarts the timer, so a shape someone chose is
+  // not swapped out from under them a moment later. With reduced motion it
+  // never moves on its own — only when asked.
+  const marks = t('hero.marks', { returnObjects: true }) as unknown as string[];
+  const [mark, setMark] = useState(0);
+  const [picks, setPicks] = useState(0);
+  const pick = (i: number) => {
+    setMark(((i % HERO_SHAPES.length) + HERO_SHAPES.length) % HERO_SHAPES.length);
+    setPicks((n) => n + 1);
+  };
+  useEffect(() => {
+    if (reduce) return;
+    const id = window.setInterval(
+      () => setMark((m) => (m + 1) % HERO_SHAPES.length),
+      MARK_HOLD_MS,
+    );
+    return () => window.clearInterval(id);
+  }, [reduce, picks]);
+
   const headline = t('hero.headline');
 
   const item = reduce
@@ -230,7 +255,8 @@ const Hero: React.FC = () => {
         <ConstellationCanvas
           shapes={HERO_SHAPES}
           shapeSlot={slotRef}
-          ariaLabel="Guðjón Kristjánsson — a constellation that gathers into his initials, then the coastline of Iceland, then a speech waveform"
+          active={mark}
+          ariaLabel="Guðjón Kristjánsson — a constellation that forms his initials, the coastline of Iceland, a neural network, a speech bubble and a bar chart"
           pointCount={wide ? 260 : undefined}
           linkDistance={wide ? 34 : 24}
           cursorRadius={wide ? 130 : 90}
@@ -317,11 +343,62 @@ const Hero: React.FC = () => {
                 screen. (A wider box with a bigger pull, which suited the
                 narrower shapes, ran the Westfjords off the side.)
               */}
-              <div
-                ref={slotRef}
-                aria-hidden="true"
-                className="-ml-4 mt-10 h-[180px] w-[224px] sm:h-[200px] sm:w-[248px] lg:ml-0 lg:mt-0 lg:h-[340px] lg:w-[340px] xl:h-[440px] xl:w-[440px]"
-              />
+              <motion.div variants={item} className="mt-10 lg:mt-0">
+                {/* Clicking the mark steps to the next shape. Pointer only:
+                    the dots below are the same control for keyboards and
+                    screen readers. */}
+                <div
+                  ref={slotRef}
+                  aria-hidden="true"
+                  onClick={() => pick(mark + 1)}
+                  className="-ml-4 h-[180px] w-[224px] cursor-pointer sm:h-[200px] sm:w-[248px] lg:ml-0 lg:h-[340px] lg:w-[340px] xl:h-[440px] xl:w-[440px]"
+                />
+
+                {/*
+                  The caption. Without it the mark reads as a screensaver;
+                  with it, as five things he chose to say about himself. It
+                  is also the mark's controls: each dot jumps to its shape.
+                */}
+                <div className="mt-3 flex items-center gap-3 lg:justify-center">
+                  {/* 44px wide on touch screens, 28px beside a pointer; the
+                      negative margin puts the first visible dot on the text
+                      edge either way. */}
+                  <div
+                    role="group"
+                    aria-label={t('hero.marksLabel')}
+                    className="-ml-[19px] flex lg:-ml-[11px]"
+                  >
+                    {HERO_SHAPES.map((_, i) => (
+                      <button
+                        key={i}
+                        type="button"
+                        onClick={() => pick(i)}
+                        aria-label={marks[i]}
+                        aria-pressed={i === mark}
+                        className="group grid h-11 w-11 place-items-center lg:w-7"
+                      >
+                        <span
+                          className={clsx(
+                            'block h-1.5 rounded-full transition-[width,background-color] duration-300',
+                            i === mark
+                              ? 'w-4 bg-brass-400'
+                              : 'w-1.5 bg-white/25 group-hover:bg-white/60',
+                          )}
+                        />
+                      </button>
+                    ))}
+                  </div>
+                  <p className="min-w-0 font-mono text-xs text-navy-200" aria-live="polite">
+                    <span className="text-brass-400">
+                      {String(mark + 1).padStart(2, '0')}
+                    </span>{' '}
+                    / {String(HERO_SHAPES.length).padStart(2, '0')}
+                    <span className="ml-2 uppercase tracking-[0.12em] text-white/80">
+                      {marks[mark]}
+                    </span>
+                  </p>
+                </div>
+              </motion.div>
             </div>
 
             {/*

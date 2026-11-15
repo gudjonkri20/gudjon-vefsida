@@ -307,7 +307,7 @@ const ChatWidget: React.FC = () => {
         navy button otherwise has none and reads as loose text.
       */}
       <motion.div
-        className="fixed bottom-[5.25rem] right-5 z-50 md:right-8"
+        className="fixed bottom-[5.25rem] right-5 z-50 md:right-8 print:hidden"
         style={{ pointerEvents: launcherHidden ? 'none' : 'auto' }}
         initial={reduce ? false : { scale: 0.9, opacity: 0 }}
         animate={launcherHidden ? { scale: 0.9, opacity: 0 } : { scale: 1, opacity: 1 }}
@@ -342,7 +342,7 @@ const ChatWidget: React.FC = () => {
             // on a phone 100vh includes the area under the browser toolbar,
             // which pushed the header out of reach. The 13.75rem leaves the
             // raised launcher below and the 64px masthead above uncovered.
-            className="fixed bottom-[9.25rem] left-3 right-3 z-50 flex h-[min(640px,calc(100vh-13.75rem))] flex-col overflow-hidden rounded-lg border border-navy-100 bg-paper-raised shadow-card-hover focus:outline-none supports-[height:100dvh]:h-[min(640px,calc(100dvh-13.75rem))] sm:left-auto sm:right-5 sm:w-[420px] md:right-8"
+            className="fixed bottom-[9.25rem] left-3 right-3 z-50 flex print:hidden h-[min(640px,calc(100vh-13.75rem))] flex-col overflow-hidden rounded-lg border border-navy-100 bg-paper-raised shadow-card-hover focus:outline-none supports-[height:100dvh]:h-[min(640px,calc(100dvh-13.75rem))] sm:left-auto sm:right-5 sm:w-[420px] md:right-8"
             style={{ transformOrigin: 'bottom right' }}
             role="dialog"
             aria-label={t('chat.title')}

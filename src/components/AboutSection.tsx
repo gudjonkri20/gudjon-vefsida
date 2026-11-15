@@ -4,11 +4,9 @@ import PageHeader from './PageHeader';
 import Section from './Section';
 import ConstellationCanvas from './ConstellationCanvas';
 import ContactBand from './ContactBand';
-
-const EDU_KEYS = ['aarhus', 'ru', 'hi'] as const;
-const EXPERIENCE_KEYS = ['icelandia', 'cyberpilot', 'reykjavikurborg'] as const;
-const LANG_KEYS = ['is', 'en', 'da', 'de'] as const;
-const SKILL_KEYS = ['ai', 'languages', 'stack', 'ml'] as const;
+import CallToAction from './CallToAction';
+import { EDU_KEYS, EXPERIENCE_KEYS, LANG_KEYS, SKILL_KEYS } from '../data/about';
+import { useCurrentLocale, localizedHref } from '../lib/i18n';
 
 /** Label-left, content-right. One row per topic, separated by a hairline. */
 const Row: React.FC<{ label: string; children: React.ReactNode }> = ({
@@ -33,6 +31,7 @@ const Entry: React.FC<{ title: string; body: string }> = ({ title, body }) => (
 
 const AboutSection: React.FC = () => {
   const { t } = useTranslation();
+  const locale = useCurrentLocale();
 
   return (
     <>
@@ -46,7 +45,14 @@ const AboutSection: React.FC = () => {
             className="hidden h-[300px] w-[300px] cursor-crosshair lg:block xl:h-[340px] xl:w-[340px]"
           />
         }
-      />
+      >
+        {/* The whole page, on one sheet, to forward or print. */}
+        <div className="mt-8">
+          <CallToAction to={localizedHref('/cv', locale)} variant="secondary" onNavy withArrow>
+            {t('cv.open')}
+          </CallToAction>
+        </div>
+      </PageHeader>
 
       <Section tone="paper">
         {/* Portrait sits with the "currently" statement rather than in the

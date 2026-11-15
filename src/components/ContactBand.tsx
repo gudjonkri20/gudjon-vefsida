@@ -2,7 +2,7 @@ import React, { useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useInView } from 'framer-motion';
-import { Mail, Phone, Linkedin, Github } from 'lucide-react';
+import { Mail, Phone, Linkedin, Github, FileText } from 'lucide-react';
 import Section from './Section';
 import Waveform from './Waveform';
 import { useCurrentLocale, localizedHref } from '../lib/i18n';
@@ -109,6 +109,13 @@ const ContactBand: React.FC = () => {
           className="inline-flex items-center gap-2 text-navy-200 transition-colors hover:text-brass-400"
         >
           {t('nav.contact')}
+        </Link>
+        <Link
+          to={localizedHref('/cv', locale)}
+          className="inline-flex min-w-11 items-center gap-2 text-navy-200 transition-colors hover:text-brass-400"
+        >
+          <FileText size={15} />
+          {t('cv.link')}
         </Link>
       </div>
     </Section>

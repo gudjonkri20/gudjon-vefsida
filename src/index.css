@@ -219,6 +219,40 @@
   }
 }
 
+/* Printing (the CV's "Download PDF", or anyone pressing Ctrl+P): paper is
+   white and ink is navy whatever the screen's colour scheme, so a visitor in
+   dark mode does not print a navy page. Site chrome is hidden with `print:`
+   classes on the masthead, footer and chat. */
+@media print {
+  :root {
+    --paper: 255 255 255;
+    --paper-raised: 255 255 255;
+    --paper-sunken: 244 246 249;
+    --ink: 11 31 56;
+    --ink-soft: 27 66 112;
+    --ink-faint: 42 93 151;
+    --muted: 64 80 100;
+    --rule: 210 220 232;
+    --rule-strong: 195 210 228;
+    --tint: 239 244 249;
+    --tint-strong: 222 231 241;
+    --accent-text: 138 101 36;
+    --accent-icon: 160 116 44;
+    color-scheme: light;
+  }
+
+  @page {
+    size: A4;
+    margin: 14mm;
+  }
+
+  html,
+  body {
+    background: #fff !important;
+    font-size: 13px;
+  }
+}
+
 /* People who ask for less transparency or more contrast get a solid bar. */
 @media (prefers-reduced-transparency: reduce) {
   .material-bar {

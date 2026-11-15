@@ -33,7 +33,7 @@ const Footer: React.FC = () => {
       : {};
 
   return (
-    <footer className="bg-navy-950 text-navy-200">
+    <footer className="bg-navy-950 text-navy-200 print:hidden">
       {/* The waveform closes the page as quietly as it opened it. */}
       <div className="text-navy-800">
         <Waveform />

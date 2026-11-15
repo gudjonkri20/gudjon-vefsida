@@ -26,6 +26,8 @@
     "ctaPrimary": "See my work",
     "ctaSecondary": "Get in touch",
     "live": "Live now",
+    "marksLabel": "Constellation shapes",
+    "marks": ["Initials", "Iceland", "Neural network", "Chatbots", "Data & forecasting"],
     "stats": {
       "production": "production systems shipped",
       "mcp": "MCP servers live",
@@ -152,6 +154,17 @@
       "title": "Get in touch",
       "body": "Best on email or phone. I read both."
     }
+  },
+
+  "cv": {
+    "title": "CV",
+    "description": "Guðjón Kristjánsson's CV: AI Specialist at Icelandia, building production chatbots, MCP servers, ML pipelines and automation.",
+    "open": "View CV",
+    "download": "Download PDF",
+    "hint": "Saves as an A4 PDF from the print dialog.",
+    "profile": "Profile",
+    "projects": "Selected projects",
+    "link": "CV"
   },
 
   "contact": {
