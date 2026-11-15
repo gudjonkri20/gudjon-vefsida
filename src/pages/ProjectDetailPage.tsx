@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { ArrowLeft, ExternalLink } from 'lucide-react';
+import { ArrowLeft, ExternalLink, MessageCircle } from 'lucide-react';
 import SEO from '../components/SEO';
 import Band from '../components/Band';
 import Section from '../components/Section';
@@ -12,6 +12,7 @@ import ConstellationCanvas from '../components/ConstellationCanvas';
 import { CATEGORY_SHAPE, SHAPES } from '../lib/constellationShapes';
 import { getProjectBySlug } from '../lib/projects';
 import { useCurrentLocale, localizedHref } from '../lib/i18n';
+import { askAssistant, useAssistantOnline } from '../lib/useAssistantOnline';
 
 const ProjectDetailPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -25,6 +26,7 @@ const ProjectDetailPage: React.FC = () => {
     () => [(project && CATEGORY_SHAPE[project.category]) || SHAPES[0]],
     [project],
   );
+  const assistantOnline = useAssistantOnline();
 
   if (!project) {
     return <NotFoundPage />;
@@ -88,16 +90,39 @@ const ProjectDetailPage: React.FC = () => {
             {project.description[locale]}
           </p>
 
-          {project.link && (
-            <a
-              href={project.link}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="press mt-8 inline-flex min-h-11 items-center gap-2 rounded-md bg-navy-900 px-5 py-2.5 text-sm font-medium text-white hover:bg-navy-800 dark:bg-brass-500 dark:text-navy-950 dark:hover:bg-brass-400"
-            >
-              {project.linkLabel?.[locale] ?? t('projects.openLink')}
-              <ExternalLink size={15} />
-            </a>
+          {(project.link || assistantOnline) && (
+            <div className="mt-8 flex flex-wrap gap-3">
+              {project.link && (
+                <a
+                  href={project.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="press inline-flex min-h-11 items-center gap-2 rounded-md bg-navy-900 px-5 py-2.5 text-sm font-medium text-white hover:bg-navy-800 dark:bg-brass-500 dark:text-navy-950 dark:hover:bg-brass-400"
+                >
+                  {project.linkLabel?.[locale] ?? t('projects.openLink')}
+                  <ExternalLink size={15} />
+                </a>
+              )}
+
+              {/*
+                Most of these pages are one paragraph, and the assistant
+                knows more about the project than the page says. This asks
+                it, about this project, in one click. Shown only when the
+                assistant can answer.
+              */}
+              {assistantOnline && (
+                <button
+                  type="button"
+                  onClick={() =>
+                    askAssistant(t('chat.askAboutQuestion', { title: project.title[locale] }))
+                  }
+                  className="press inline-flex min-h-11 items-center gap-2 rounded-md border border-navy-200 bg-paper-raised px-5 py-2.5 text-sm font-medium text-navy-900 hover:border-navy-600 hover:bg-navy-50"
+                >
+                  <MessageCircle size={15} className="text-brass-600" />
+                  {t('chat.askAbout')}
+                </button>
+              )}
+            </div>
           )}
         </div>
 

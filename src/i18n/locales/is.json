@@ -182,6 +182,8 @@
     "errorMessage": "Eitthvað fór úrskeiðis. Reyndu aftur eða sendu mér tölvupóst beint.",
     "rateLimited": "Þú hefur náð notkunarmörkum þessarar klukkustundar. Komdu aftur síðar eða sendu mér tölvupóst.",
     "disclaimer": "AI-aðstoðarmaður — ekki Guðjón sjálfur.",
+    "askAbout": "Spyrja gervigreindina um þetta verkefni",
+    "askAboutQuestion": "Segðu mér frá verkefninu {{title}}.",
     "suggestions": [
       "Hvað gerir Guðjón?",
       "Segðu mér frá MCP-vinnunni hans",

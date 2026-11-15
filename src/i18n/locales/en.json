@@ -182,6 +182,8 @@
     "errorMessage": "Something went wrong. Try again or email me directly.",
     "rateLimited": "You've hit the rate limit for this hour. Please come back later or email me directly.",
     "disclaimer": "AI assistant — not Guðjón himself.",
+    "askAbout": "Ask my AI about this project",
+    "askAboutQuestion": "Tell me about the {{title}} project.",
     "suggestions": [
       "What does Guðjón do?",
       "Tell me about his MCP work",

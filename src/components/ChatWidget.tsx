@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { MessageCircle, X, Send, RefreshCcw } from 'lucide-react';
 import Waveform from './Waveform';
+import AssistantMessage from './AssistantMessage';
 import { useCurrentLocale } from '../lib/i18n';
 import type { ChatMessage } from '../types';
 
@@ -52,10 +53,16 @@ const ChatWidget: React.FC = () => {
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState('');
+  // Two phases of waiting. `pending`: the question is sent and nothing has
+  // come back yet, so the "thinking" bubble shows. `streaming`: the reply has
+  // started and is being written into its bubble as it arrives.
   const [pending, setPending] = useState(false);
+  const [streaming, setStreaming] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const listRef = useRef<HTMLDivElement>(null);
+  /** Whether the list should follow new text. False once the reader scrolls up. */
+  const stick = useRef(true);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const launcherRef = useRef<HTMLButtonElement>(null);
 
@@ -64,10 +71,11 @@ const ChatWidget: React.FC = () => {
     setMessages(loadHistory());
   }, []);
 
-  // Persist on every change
+  // Persist on every change — except while a reply is arriving, which is
+  // dozens of changes a second; it is saved once, when it is complete.
   useEffect(() => {
-    saveHistory(messages);
-  }, [messages]);
+    if (!streaming) saveHistory(messages);
+  }, [messages, streaming]);
 
   // How many messages have already been on screen. A bubble past this count
   // is new and rises in; everything before it — restored history, or the
@@ -77,9 +85,11 @@ const ChatWidget: React.FC = () => {
     seenCount.current = messages.length;
   }, [messages]);
 
-  // Auto-scroll to bottom on new messages
+  // Follow new text to the bottom — unless the reader has scrolled up to
+  // re-read something, in which case a streaming reply must not drag them
+  // back down with every word.
   useEffect(() => {
-    if (open && listRef.current) {
+    if (open && listRef.current && stick.current) {
       listRef.current.scrollTop = listRef.current.scrollHeight;
     }
   }, [messages, open, pending]);
@@ -106,6 +116,13 @@ const ChatWidget: React.FC = () => {
     launcherRef.current?.focus();
   }, []);
 
+  // A link in a reply goes to another page. On a phone the panel covers the
+  // whole screen, so it has to get out of the way or the page that was just
+  // opened is hidden behind it. On a wide screen it can stay.
+  const leaveForPage = useCallback(() => {
+    if (window.matchMedia('(max-width: 639px)').matches) setOpen(false);
+  }, []);
+
   // Escape closes, from anywhere on the page while the panel is open.
   useEffect(() => {
     if (!open) return;
@@ -125,19 +142,20 @@ const ChatWidget: React.FC = () => {
 
   const send = async (raw: string) => {
     const text = raw.trim();
-    if (!text || pending) return;
+    if (!text || pending || streaming) return;
 
     const next: ChatMessage[] = [...messages, { role: 'user', content: text }];
     setMessages(next);
     setInput('');
     setError(null);
     setPending(true);
+    stick.current = true;
 
     try {
       const res = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ messages: next, language: locale }),
+        body: JSON.stringify({ messages: next, language: locale, stream: true }),
       });
 
       if (res.status === 503) {
@@ -150,6 +168,32 @@ const ChatWidget: React.FC = () => {
       }
       if (!res.ok) {
         setError(t('chat.errorMessage'));
+        return;
+      }
+
+      // The reply as it is written. The function answers in plain text when
+      // it can stream; every error above, and an older deployment of the
+      // function, still answers in JSON and is handled below.
+      const type = res.headers.get('content-type') ?? '';
+      if (type.startsWith('text/plain') && res.body) {
+        const reader = res.body.getReader();
+        const decoder = new TextDecoder();
+        let written = '';
+        setStreaming(true);
+        try {
+          for (;;) {
+            const { value, done } = await reader.read();
+            if (done) break;
+            written += decoder.decode(value, { stream: true });
+            if (!written) continue;
+            // The first words replace the "thinking" bubble.
+            setPending(false);
+            setMessages([...next, { role: 'assistant', content: written }]);
+          }
+        } finally {
+          setStreaming(false);
+        }
+        if (!written.trim()) setError(t('chat.errorMessage'));
         return;
       }
 
@@ -308,7 +352,7 @@ const ChatWidget: React.FC = () => {
               <div className="flex min-w-0 items-center gap-3">
                 {/* The mark pulses while a reply is being written. */}
                 <span className="w-8 flex-none text-brass-500" aria-hidden>
-                  <Waveform speaking={pending} />
+                  <Waveform speaking={pending || streaming} />
                 </span>
                 <div className="min-w-0">
                   <div className="font-display text-sm font-semibold text-navy-900">
@@ -342,12 +386,18 @@ const ChatWidget: React.FC = () => {
               </div>
             </div>
 
-            {/* Body. role="log" so a screen reader announces each reply as it
-                arrives instead of leaving it silently on screen. */}
+            {/* Body. role="log" so a screen reader announces each reply instead
+                of leaving it silently on screen. aria-busy while one is
+                arriving, so it is read once when complete, not word by word. */}
             <div
               ref={listRef}
               role="log"
               aria-live="polite"
+              aria-busy={streaming}
+              onScroll={(e) => {
+                const el = e.currentTarget;
+                stick.current = el.scrollHeight - el.scrollTop - el.clientHeight < 64;
+              }}
               className="flex-1 space-y-3 overflow-y-auto overscroll-contain px-4 py-4"
             >
               {messages.length === 0 && (
@@ -376,18 +426,19 @@ const ChatWidget: React.FC = () => {
                   initial={i >= seenCount.current ? BUBBLE_FROM : false}
                   animate={BUBBLE_TO}
                   transition={BUBBLE_TRANSITION}
-                  className={
-                    m.role === 'user'
-                      ? 'ml-auto max-w-[85%] rounded-lg rounded-br-sm bg-navy-900 px-3.5 py-2 text-sm text-white dark:bg-navy-700'
-                      : 'mr-auto max-w-[90%] rounded-lg rounded-bl-sm border border-navy-100 bg-paper px-3.5 py-2 text-sm text-navy-900'
-                  }
                 >
-                  {m.content.split('\n').map((line, j) => (
-                    <React.Fragment key={j}>
-                      {line}
-                      {j < m.content.split('\n').length - 1 && <br />}
-                    </React.Fragment>
-                  ))}
+                  {m.role === 'user' ? (
+                    // What the visitor typed is shown exactly as typed.
+                    <div className="ml-auto w-fit max-w-[85%] whitespace-pre-wrap rounded-lg rounded-br-sm bg-navy-900 px-3.5 py-2 text-sm text-white dark:bg-navy-700">
+                      {m.content}
+                    </div>
+                  ) : (
+                    <AssistantMessage
+                      content={m.content}
+                      streaming={streaming && i === messages.length - 1}
+                      onNavigate={leaveForPage}
+                    />
+                  )}
                 </motion.div>
               ))}
 
@@ -443,7 +494,7 @@ const ChatWidget: React.FC = () => {
                 />
                 <button
                   type="submit"
-                  disabled={pending || !input.trim()}
+                  disabled={pending || streaming || !input.trim()}
                   aria-label={t('chat.send')}
                   className="press grid h-11 w-11 flex-none place-items-center rounded bg-navy-900 text-white hover:bg-navy-800 disabled:cursor-not-allowed disabled:bg-navy-100 disabled:text-navy-600 disabled:active:scale-100 dark:bg-brass-500 dark:text-navy-950 dark:hover:bg-brass-400 dark:disabled:bg-navy-100 dark:disabled:text-navy-600"
                 >

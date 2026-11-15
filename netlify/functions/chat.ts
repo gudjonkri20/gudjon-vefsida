@@ -11,6 +11,8 @@ interface IncomingMessage {
 interface ChatRequestBody {
   messages: IncomingMessage[];
   language?: 'en' | 'is';
+  /** Send the reply as it is written, as plain text, instead of all at once. */
+  stream?: boolean;
 }
 
 const MODEL = 'claude-haiku-4-5-20251001';
@@ -87,6 +89,88 @@ const json = (status: number, body: unknown): Response =>
     status,
     headers: { 'content-type': 'application/json' },
   });
+
+const upstreamError = (): Response =>
+  json(502, {
+    error: 'upstream_error',
+    message:
+      'Something went wrong on the AI side. Try again, or email gudjonk6@gmail.com directly.',
+  });
+
+/**
+ * The reply as plain text, written to the response as the model produces it.
+ *
+ * The first piece of text is awaited before anything is returned. That keeps
+ * the failures that matter honest: if the model call fails outright, or ends
+ * without saying anything, the visitor gets the same 502 and message as the
+ * non-streaming path, not a 200 with an empty body. Only once there is text
+ * to show does the response commit to streaming.
+ *
+ * If the call fails after that, the stream simply ends with what was already
+ * sent; a status code cannot be changed once the body has started.
+ *
+ * If the visitor closes the panel or leaves the page, the request to the
+ * model is aborted, so an answer nobody will read is not paid for.
+ */
+const streamReply = async (
+  client: Anthropic,
+  request: Anthropic.MessageCreateParamsNonStreaming,
+): Promise<Response> => {
+  const stream = client.messages.stream(request);
+  const events = stream[Symbol.asyncIterator]();
+  const encoder = new TextEncoder();
+
+  /** The next piece of reply text, or null when the model has finished. */
+  const nextText = async (): Promise<string | null> => {
+    for (;;) {
+      const { value, done } = await events.next();
+      if (done) return null;
+      if (value.type === 'content_block_delta' && value.delta.type === 'text_delta') {
+        return value.delta.text;
+      }
+    }
+  };
+
+  let first: string | null;
+  try {
+    first = await nextText();
+  } catch (err) {
+    console.error('Anthropic API error:', err instanceof Error ? err.message : 'unknown_error');
+    return upstreamError();
+  }
+  if (first === null) return upstreamError();
+
+  const opening = first;
+  const body = new ReadableStream<Uint8Array>({
+    start(controller) {
+      controller.enqueue(encoder.encode(opening));
+    },
+    async pull(controller) {
+      try {
+        const text = await nextText();
+        if (text === null) controller.close();
+        else controller.enqueue(encoder.encode(text));
+      } catch (err) {
+        console.error(
+          'Anthropic stream error:',
+          err instanceof Error ? err.message : 'unknown_error',
+        );
+        controller.close();
+      }
+    },
+    cancel() {
+      stream.abort();
+    },
+  });
+
+  return new Response(body, {
+    status: 200,
+    headers: {
+      'content-type': 'text/plain; charset=utf-8',
+      'cache-control': 'no-store',
+    },
+  });
+};
 
 // The widget is same-origin, so no third party has a reason to preflight
 // this endpoint. Echoing back "*" invited any page on the web to spend the
@@ -223,22 +307,29 @@ export default async (req: Request, context: Context): Promise<Response> => {
 
   const client = new Anthropic({ apiKey });
 
+  // One request, sent either way: all at once, or as a stream.
+  const request: Anthropic.MessageCreateParamsNonStreaming = {
+    model: MODEL,
+    max_tokens: MAX_TOKENS,
+    system: [
+      {
+        type: 'text',
+        text: systemPrompt,
+        cache_control: { type: 'ephemeral' },
+      },
+    ],
+    messages: body.messages.map((m) => ({
+      role: m.role,
+      content: m.content,
+    })),
+  };
+
+  if (body.stream === true) {
+    return streamReply(client, request);
+  }
+
   try {
-    const response = await client.messages.create({
-      model: MODEL,
-      max_tokens: MAX_TOKENS,
-      system: [
-        {
-          type: 'text',
-          text: systemPrompt,
-          cache_control: { type: 'ephemeral' },
-        },
-      ],
-      messages: body.messages.map((m) => ({
-        role: m.role,
-        content: m.content,
-      })),
-    });
+    const response = await client.messages.create(request);
 
     const text = response.content
       .filter((block): block is Anthropic.TextBlock => block.type === 'text')
@@ -258,11 +349,7 @@ export default async (req: Request, context: Context): Promise<Response> => {
   } catch (err) {
     const message = err instanceof Error ? err.message : 'unknown_error';
     console.error('Anthropic API error:', message);
-    return json(502, {
-      error: 'upstream_error',
-      message:
-        'Something went wrong on the AI side. Try again, or email gudjonk6@gmail.com directly.',
-    });
+    return upstreamError();
   }
 };
 
