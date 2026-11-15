@@ -19,6 +19,7 @@
  *     they cannot drift from the pages that exist.
  */
 import { build } from 'esbuild';
+import { existsSync } from 'node:fs';
 import { mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 import { dirname, join, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
@@ -77,6 +78,7 @@ for (const locale of LOCALES) {
   for (const p of projects) {
     add(`/projects/${p.slug}`, p.title[locale], p.tagline[locale], {
       inSitemap: p.hasDetailPage,
+      slug: p.slug,
     });
   }
 }
@@ -116,10 +118,27 @@ const person = (locale) =>
     ],
   });
 
+/**
+ * The share card for a page (drawn by scripts/og-cards.mjs). A project has
+ * its own, in the page's language; everything else uses the home card for
+ * that language. Falls back to the English home card if a file is missing —
+ * a project added without re-running `npm run og`, say — so a page never
+ * points at an image that is not there.
+ */
+const shareCard = (route) => {
+  const dir = route.locale === 'is' ? '/og/is' : '/og';
+  const wanted = route.slug
+    ? `${dir}/${route.slug}.png`
+    : route.locale === 'is'
+      ? '/og/is/default.png'
+      : '/og-image.png';
+  return existsSync(join(DIST, wanted)) ? wanted : '/og-image.png';
+};
+
 const head = (route, { noindex = false } = {}) => {
   const title = fullTitle(route.locale, route.title);
   const url = SITE_URL + route.url;
-  const image = `${SITE_URL}/og-image.png`;
+  const image = SITE_URL + shareCard(route);
   // data-rh marks a tag as one the app's head manager owns, so when the app
   // boots it replaces these rather than adding a second copy beside them.
   const rh = 'data-rh="true"';

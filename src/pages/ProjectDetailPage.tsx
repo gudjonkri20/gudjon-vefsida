@@ -40,6 +40,7 @@ const ProjectDetailPage: React.FC = () => {
         title={project.title[locale]}
         description={project.tagline[locale]}
         path={localizedHref(`/projects/${project.slug}`, locale)}
+        image={`/og${locale === 'is' ? '/is' : ''}/${project.slug}.png`}
       />
 
       <Band as="header" className="bg-navy-900 text-white">

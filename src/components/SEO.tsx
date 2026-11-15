@@ -10,7 +10,8 @@ interface SEOProps {
   image?: string;
 }
 
-const DEFAULT_IMAGE = `${SITE_URL}/og-image.png`;
+/** The home share card for each language; see scripts/og-cards.mjs. */
+const DEFAULT_IMAGE = { en: '/og-image.png', is: '/og/is/default.png' } as const;
 
 const SEO: React.FC<SEOProps> = ({ title, description, path = '/', image }) => {
   const { t, i18n } = useTranslation();
@@ -18,8 +19,9 @@ const SEO: React.FC<SEOProps> = ({ title, description, path = '/', image }) => {
   const fullTitle = title ? `${title} · ${siteTitle}` : `${siteTitle} — ${t('siteTagline')}`;
   const desc = description ?? t('metaDescription');
   const url = `${SITE_URL}${path}`;
-  const ogImage = image ?? DEFAULT_IMAGE;
   const lang = i18n.language || 'en';
+  // `image` is a path on this site, e.g. "/og/flybus-ai-chatbot.png".
+  const ogImage = SITE_URL + (image ?? DEFAULT_IMAGE[lang === 'is' ? 'is' : 'en']);
 
   return (
     <Helmet>
