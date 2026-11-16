@@ -376,7 +376,6 @@ export const SHAPES: ShapePainter[] = [brain, network, waveform];
 /**
  * Morph order in the hero: who, where, then what he does — a neural network
  * for AI, a speech bubble for the chatbots he ships, a bar chart for data and
- * forecasting. Labelled in order by `hero.marks` in the locale files; keep
- * the two in step.
+ * forecasting.
  */
 export const HERO_SHAPES: ShapePainter[] = [initials, iceland, neuralNet, bubble, bars];

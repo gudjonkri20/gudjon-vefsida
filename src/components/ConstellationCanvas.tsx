@@ -66,12 +66,6 @@ interface Props {
    * else decides what the mark should be — the project in focus, say.
    */
   active?: number;
-  /**
-   * Called with the index of the shape the mark is becoming, halfway through
-   * each morph, so a caption elsewhere can change with it. Not called in
-   * controlled mode, where the caller already knows.
-   */
-  onShapeChange?: (index: number) => void;
   className?: string;
   ariaLabel?: string;
 }
@@ -153,18 +147,11 @@ const ConstellationCanvas: React.FC<Props> = ({
   cursorRadius: cursorRadiusProp,
   shapeSlot,
   active,
-  onShapeChange,
   className = '',
   ariaLabel,
 }) => {
   const hostRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-
-  // Read through a ref so a new callback does not rebuild the canvas.
-  const onShapeChangeRef = useRef(onShapeChange);
-  useEffect(() => {
-    onShapeChangeRef.current = onShapeChange;
-  });
 
   // The index is read from a ref inside the frame loop, so changing it does
   // not tear the canvas down and rebuild it — the points just get a new
@@ -330,9 +317,6 @@ const ConstellationCanvas: React.FC<Props> = ({
       }
     };
 
-    /** The shape index last reported through onShapeChange. */
-    let announced = -1;
-
     const draw = (time: number) => {
       if (!startedAt) startedAt = time;
       const elapsed = (time - startedAt) / 1000;
@@ -347,15 +331,6 @@ const ConstellationCanvas: React.FC<Props> = ({
       const i = ((floor % n) + n) % n;
       const f = pos - floor;
       const next = (i + 1) % n;
-
-      // Tell a caption which shape this is becoming, once past halfway.
-      if (!controlled) {
-        const showing = f >= 0.5 ? next : i;
-        if (showing !== announced) {
-          announced = showing;
-          onShapeChangeRef.current?.(showing);
-        }
-      }
 
       // How loosely the points hold the shape right now: wide open on
       // arrival and closing over GATHER seconds, then whatever the band's

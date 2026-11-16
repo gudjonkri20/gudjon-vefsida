@@ -174,13 +174,6 @@ const Hero: React.FC = () => {
   const assistantOnline = useAssistantOnline();
   const slotRef = useRef<HTMLDivElement>(null);
 
-  // Which shape the mark is showing, for the caption under it. The mark runs
-  // its own slow cycle (hold, then a long eased morph) and reports each new
-  // shape halfway through the morph; the caption only follows. Nothing here
-  // can be clicked: the mark is something to watch, not a control.
-  const marks = t('hero.marks', { returnObjects: true }) as unknown as string[];
-  const [mark, setMark] = useState(0);
-
   const headline = t('hero.headline');
 
   const item = reduce
@@ -236,7 +229,6 @@ const Hero: React.FC = () => {
         <ConstellationCanvas
           shapes={HERO_SHAPES}
           shapeSlot={slotRef}
-          onShapeChange={setMark}
           ariaLabel="Guðjón Kristjánsson — a constellation that forms his initials, the coastline of Iceland, a neural network, a speech bubble and a bar chart"
           pointCount={wide ? 260 : undefined}
           linkDistance={wide ? 34 : 24}
@@ -330,34 +322,6 @@ const Hero: React.FC = () => {
                   aria-hidden="true"
                   className="-ml-4 h-[180px] w-[224px] sm:h-[200px] sm:w-[248px] lg:ml-0 lg:h-[340px] lg:w-[340px] xl:h-[440px] xl:w-[440px]"
                 />
-
-                {/*
-                  The caption: what the mark is right now. Without it the mark
-                  reads as a screensaver; with it, as five things he chose to
-                  say about himself. It only follows the mark — nothing here
-                  can be clicked — and it changes halfway through each morph,
-                  fading across rather than snapping. Hidden from screen
-                  readers, which have the canvas's own description and should
-                  not be told about a new shape every few seconds.
-                */}
-                <p
-                  aria-hidden="true"
-                  className="mt-3 flex h-5 items-center gap-2 font-mono text-xs text-navy-200 lg:justify-center"
-                >
-                  <span className="h-px w-6 bg-brass-400/70" />
-                  <AnimatePresence mode="wait" initial={false}>
-                    <motion.span
-                      key={mark}
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      transition={{ duration: 0.4, ease: 'easeOut' }}
-                      className="uppercase tracking-[0.14em] text-white/75"
-                    >
-                      {marks[mark]}
-                    </motion.span>
-                  </AnimatePresence>
-                </p>
               </motion.div>
             </div>
 
